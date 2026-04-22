@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  username String @unique
+  password String
+}
+
+model Seller {
+  id        String   @id @default(uuid())
+  name      String
+  whatsapp  String
+  photoUrl  String?
+  clicks    Int      @default(0)
+  events    SellerClickEvent[]
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SystemStats {
+  id           String @id @default(uuid())
+  initialClicks Int    @default(0) // Total clicks on the main link
+}
+
+model PageClickEvent {
+  id        String   @id @default(uuid())
+  source    String   @default("direct") // direct, qr, instagram, etc
+  createdAt DateTime @default(now())
+}
+
+model SellerClickEvent {
+  id        String   @id @default(uuid())
+  sellerId  String
+  seller    Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  source    String   @default("direct") // direct, qr, instagram, etc
+  createdAt DateTime @default(now())
+}
+
+model QrCode {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  url       String
+  visits    Int      @default(0)
+  clicks    Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
