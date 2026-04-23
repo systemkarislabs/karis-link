@@ -9,38 +9,38 @@ export default async function TenantAdminPage(props: any) {
   const params = await props.params;
   const searchParams = await props.searchParams;
   const { slug } = params;
-  const period = searchParams?.period || '7'; // Dias
+  const period = searchParams?.period || '7';
   const { tenantId } = await requireTenantAuth(slug);
 
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - parseInt(period));
 
-  // Buscamos os vendedores e contamos os eventos DELES no período selecionado
-  const [tenant, sellersData, totalVisits, recentClicks] = await Promise.all([
+  // Buscamos os dados separadamente para evitar erros de tipagem do Prisma
+  const [tenant, allSellers, totalVisits, recentClicks, clickCounts] = await Promise.all([
     prisma.tenant.findUnique({ where: { id: tenantId } }),
-    prisma.seller.findMany({ 
-      where: { tenantId },
-      include: {
-        _count: {
-          where: { createdAt: { gte: startDate } },
-          select: { events: true }
-        }
-      }
-    }),
+    prisma.seller.findMany({ where: { tenantId } }),
     prisma.pageClickEvent.count({ where: { tenantId, createdAt: { gte: startDate } } }),
     prisma.sellerClickEvent.findMany({ 
       where: { seller: { tenantId }, createdAt: { gte: startDate } },
       take: 8,
       orderBy: { createdAt: 'desc' },
       include: { seller: true }
+    }),
+    prisma.sellerClickEvent.groupBy({
+      by: ['sellerId'],
+      where: { seller: { tenantId }, createdAt: { gte: startDate } },
+      _count: { id: true }
     })
   ]);
 
-  // Mapeamos para facilitar o uso no layout e ordenamos pelo maior número de cliques no período
-  const sellers = sellersData.map(s => ({
-    ...s,
-    periodClicks: s._count.events
-  })).sort((a, b) => b.periodClicks - a.periodClicks);
+  // Cruzamos os dados dos vendedores com os cliques contados no período
+  const sellers = allSellers.map(s => {
+    const countData = clickCounts.find(c => c.sellerId === s.id);
+    return {
+      ...s,
+      periodClicks: countData?._count.id || 0
+    };
+  }).sort((a, b) => b.periodClicks - a.periodClicks);
 
   const totalClicksInPeriod = sellers.reduce((acc, s) => acc + s.periodClicks, 0);
   const conversion = totalVisits > 0 ? ((totalClicksInPeriod / totalVisits) * 100).toFixed(1) : '0';
@@ -61,13 +61,11 @@ export default async function TenantAdminPage(props: any) {
                 <option value="1">Hoje</option>
                 <option value="7">Últimos 7 dias</option>
                 <option value="30">Últimos 30 dias</option>
-                <option value="90">Últimos 90 dias</option>
              </select>
-             <button type="submit" style={{ padding: '10px 20px', borderRadius: 10, background: 'var(--sidebar-active-text)', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Atualizar</button>
+             <button type="submit" style={{ padding: '10px 20px', borderRadius: 10, background: 'var(--sidebar-active-text)', color: '#fff', border: 'none', fontWeight: 600 }}>Atualizar</button>
           </form>
         </header>
 
-        {/* Stats Cards Corrigidos */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24, marginBottom: 40 }}>
           {[
             { label: 'Visitas no Link', value: totalVisits, icon: 'chart', color: '#6366f1' },
@@ -86,33 +84,23 @@ export default async function TenantAdminPage(props: any) {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: 32 }}>
-          
-          {/* Performance Detalhada por Vendedor */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 32 }}>
           <div style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 32, border: '1px solid var(--border)' }}>
-            <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Ranking de Performance</h3>
+            <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Performance por Vendedor</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {sellers.map((s, idx) => (
                 <div key={s.id}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                        <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--sidebar-text)', width: 20 }}>{idx + 1}º</span>
-                       {s.image ? (
-                          <img src={s.image} style={{ width: 32, height: 32, borderRadius: '50%' }} />
-                       ) : (
-                          <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>{s.name[0]}</div>
-                       )}
                        <span style={{ fontWeight: 600, fontSize: 14 }}>{s.name}</span>
                     </div>
                     <span style={{ fontWeight: 700, color: '#17DB4E', fontSize: 14 }}>{s.periodClicks} cliques</span>
                   </div>
-                  {/* Barra de Progresso Visual */}
                   <div style={{ width: '100%', height: 6, background: 'var(--bg-main)', borderRadius: 3, overflow: 'hidden' }}>
                     <div style={{ 
                       width: `${totalClicksInPeriod > 0 ? (s.periodClicks / totalClicksInPeriod) * 100 : 0}%`, 
-                      height: '100%', 
-                      background: '#17DB4E',
-                      borderRadius: 3
+                      height: '100%', background: '#17DB4E', borderRadius: 3
                     }}></div>
                   </div>
                 </div>
@@ -120,15 +108,14 @@ export default async function TenantAdminPage(props: any) {
             </div>
           </div>
 
-          {/* Timeline de Cliques (Data e Hora) */}
           <div style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 32, border: '1px solid var(--border)' }}>
-            <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Linha do Tempo</h3>
+            <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Histórico Recente</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {recentClicks.map(log => (
                 <div key={log.id} style={{ display: 'flex', alignItems: 'center', gap: 12, paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#17DB4E' }}></div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600 }}>{log.seller.name} recebeu um clique</div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600 }}>{log.seller.name}</div>
                     <div style={{ fontSize: 11, color: 'var(--sidebar-text)' }}>
                       {new Date(log.createdAt).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                     </div>
@@ -137,7 +124,6 @@ export default async function TenantAdminPage(props: any) {
               ))}
             </div>
           </div>
-
         </div>
       </main>
     </div>
