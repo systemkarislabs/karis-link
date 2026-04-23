@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import { requireSuperAuth } from '@/lib/auth';
 import { Icon } from '@/components/Icon';
 import Link from 'next/link';
+import { handleSuperLogout } from '../actions';
 
 export const dynamic = 'force-dynamic';
 

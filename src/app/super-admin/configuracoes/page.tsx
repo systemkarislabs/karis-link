@@ -1,7 +1,7 @@
 import { requireSuperAuth } from '@/lib/auth';
 import { Icon } from '@/components/Icon';
 import Link from 'next/link';
-import { handleSuperLogout } from './actions';
+import { handleSuperLogout } from '../actions';
 
 export default async function SettingsPage() {
   await requireSuperAuth();
