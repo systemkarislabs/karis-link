@@ -9,34 +9,25 @@ datasource db {
 }
 
 model Tenant {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String   @unique
-  logo        String?
-  description String?
-  active      Boolean  @default(true)
-  adminUser   String
-  adminPass   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  sellers    Seller[]
-  qrCodes    QrCode[]
-  pageClicks PageClickEvent[]
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  adminUser String
+  adminPass String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  sellers   Seller[]
+  qrcodes   QrCode[]
 }
 
 model Seller {
   id        String   @id @default(cuid())
   name      String
-  whatsapp  String
-  role      String?
-  active    Boolean  @default(true)
-  featured  Boolean  @default(false)
+  phone     String
+  image     String?
   clicks    Int      @default(0)
-  photo     String?
-  createdAt DateTime @default(now())
   tenantId  String
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
   events    SellerClickEvent[]
 }
 
@@ -45,26 +36,21 @@ model QrCode {
   name      String
   slug      String
   url       String
-  active    Boolean  @default(true)
-  visits    Int      @default(0)
-  clicks    Int      @default(0)
-  createdAt DateTime @default(now())
   tenantId  String
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 model PageClickEvent {
   id        String   @id @default(cuid())
-  source    String   @default("direct")
-  createdAt DateTime @default(now())
   tenantId  String
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  source    String?
+  createdAt DateTime @default(now())
 }
 
 model SellerClickEvent {
   id        String   @id @default(cuid())
   sellerId  String
-  source    String   @default("direct")
+  seller    Seller   @relation(fields: [sellerId], references: [id])
   createdAt DateTime @default(now())
-  seller    Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 }
