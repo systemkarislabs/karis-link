@@ -19,15 +19,15 @@ export default function AdminSidebar({
     { label: 'Configurações', href: '/super-admin/configuracoes', icon: 'settings' },
   ] : [
     { label: 'Dashboard', href: `/${slug}/admin`, icon: 'home' },
-    { label: 'Vendedores', href: `/${slug}/admin/vendedores', icon: 'users' },
-    { label: 'Campanhas QR', href: `/${slug}/admin/qrcodes', icon: 'link' },
+    { label: 'Vendedores', href: `/${slug}/admin/vendedores`, icon: 'users' },
+    { label: 'Campanhas QR', href: `/${slug}/admin/qrcodes`, icon: 'link' },
   ];
 
   const activeStyle = { background: 'var(--sidebar-active-bg)', color: 'var(--sidebar-active-text)', fontWeight: 600 };
 
   return (
     <>
-      {/* Botão Hambúrguer para Mobile */}
+      {/* Botão Mobile */}
       <div style={{ 
         display: 'none', 
         position: 'fixed', 
@@ -38,24 +38,18 @@ export default function AdminSidebar({
         zIndex: 99, 
         alignItems: 'center', 
         padding: '0 20px',
-        justifyContent: 'space-between',
-        '@media (max-width: 1024px)': { display: 'flex' } 
+        justifyContent: 'space-between'
       } as any} className="mobile-header">
         <img src="/karis-labs-logo.png" alt="Logo" style={{ width: 90 }} />
-        <button onClick={() => setIsOpen(!isOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-          <Icon name={isOpen ? 'plus' : 'home'} size={24} color="var(--text-main)" />
+        <button onClick={() => setIsOpen(!isOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8 }}>
+          <Icon name="home" size={24} color="var(--text-main)" />
         </button>
       </div>
 
-      {/* Overlay para fechar ao clicar fora no mobile */}
       {isOpen && (
-        <div 
-          onClick={() => setIsOpen(false)}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 100 }}
-        />
+        <div onClick={() => setIsOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100 }} />
       )}
 
-      {/* Sidebar Principal */}
       <aside style={{ 
         width: 280, 
         background: 'var(--sidebar-bg)', 
@@ -67,14 +61,12 @@ export default function AdminSidebar({
         height: '100vh',
         boxSizing: 'border-box',
         zIndex: 101,
-        transition: 'transform 0.3s ease',
-        transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
-        '@media (min-width: 1025px)': { transform: 'translateX(0)' }
-      } as any} className="sidebar-container">
+        transition: 'transform 0.3s ease'
+      } as any} className={`sidebar-container ${isOpen ? 'open' : ''}`}>
         
-        <div style={{ marginBottom: 40, padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginBottom: 40, padding: '0 16px' }}>
           <img src="/karis-labs-logo.png" alt="Karis Labs" style={{ width: '120px' }} />
-          <button className="mobile-close" onClick={() => setIsOpen(false)} style={{ display: 'none', background: 'none', border: 'none' }}>×</button>
+          {!isSuper && <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, marginTop: 4, textTransform: 'uppercase' }}>{tenantName}</div>}
         </div>
 
         <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -100,11 +92,11 @@ export default function AdminSidebar({
         </nav>
       </aside>
 
-      <style jsx>{`
+      <style jsx global>{`
         @media (max-width: 1024px) {
           .mobile-header { display: flex !important; }
-          .sidebar-container { transform: ${isOpen ? 'translateX(0)' : 'translateX(-100%)'} !important; }
-          .mobile-close { display: block !important; font-size: 24px; color: var(--text-main); }
+          .sidebar-container { transform: translateX(-100%); }
+          .sidebar-container.open { transform: translateX(0); }
         }
         @media (min-width: 1025px) {
           .sidebar-container { transform: translateX(0) !important; }
