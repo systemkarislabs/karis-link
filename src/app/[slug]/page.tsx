@@ -32,7 +32,7 @@ export default async function PublicTenantPage({ params, searchParams }: any) {
       alignItems: 'center'
     }}>
       {/* Título da aba para confirmar o deploy */}
-      <title>DESIGN CLEAN ATIVO - {tenant.name}</title>
+      <title>{`DESIGN CLEAN ATIVO - ${tenant.name}`}</title>
       
       {/* Logo Circular */}
       <div style={{
