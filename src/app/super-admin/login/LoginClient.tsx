@@ -8,7 +8,7 @@ type S = { error?: string } | null;
 const Btn = () => { 
   const { pending } = useFormStatus(); 
   return (
-    <button type="submit" disabled={pending} style={{ padding: '14px', borderRadius: 12, background: '#e11d48', color: '#fff', border: 'none', fontWeight: 700, fontSize: 15, cursor: 'pointer', marginTop: 8, boxShadow: '0 8px 20px rgba(225, 29, 72, 0.2)' }}>
+    <button type="submit" disabled={pending} style={{ padding: '14px', borderRadius: 12, background: '#17DB4E', color: '#fff', border: 'none', fontWeight: 700, fontSize: 15, cursor: 'pointer', marginTop: 8, boxShadow: '0 8px 20px rgba(23, 219, 78, 0.22)' }}>
       {pending ? 'Autenticando…' : 'Entrar no Sistema'}
     </button>
   ); 
