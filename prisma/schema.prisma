@@ -53,6 +53,7 @@ model SellerClickEvent {
   id        String   @id @default(cuid())
   sellerId  String
   seller    Seller   @relation(fields: [sellerId], references: [id])
+  source    String?  // Adicionado para rastrear a origem (ex: qr, bio, etc)
   campaign  String?
   createdAt DateTime @default(now())
 }
