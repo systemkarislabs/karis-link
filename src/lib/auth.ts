@@ -15,7 +15,7 @@ export async function getTenantSession() {
 
 export async function requireTenantAuth(slug: string) {
   const s = await getTenantSession();
-  if (!s || s.slug !== slug) redirect(`/${slug}/admin/login`);
+  if (!s || s.slug !== slug) redirect(`/${slug}/login`);
   return s;
 }
 
