@@ -4,24 +4,50 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { handleSuperLogin } from '../actions';
 
 type S = { error?: string } | null;
-const Btn = () => { const { pending } = useFormStatus(); return <button type="submit" disabled={pending} style={{ padding: '12px', borderRadius: 8, background: '#111', color: '#17DB4E', border: 'none', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>{pending ? 'Entrando…' : 'Entrar'}</button>; };
+
+const Btn = () => { 
+  const { pending } = useFormStatus(); 
+  return (
+    <button type="submit" disabled={pending} style={{ padding: '14px', borderRadius: 12, background: '#e11d48', color: '#fff', border: 'none', fontWeight: 700, fontSize: 15, cursor: 'pointer', marginTop: 8, boxShadow: '0 8px 20px rgba(225, 29, 72, 0.2)' }}>
+      {pending ? 'Autenticando…' : 'Entrar no Sistema'}
+    </button>
+  ); 
+};
 
 export default function SuperLoginClient() {
   const [state, formAction] = useFormState<S, FormData>(handleSuperLogin as any, null);
-  const inp: React.CSSProperties = { padding: '11px 14px', borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 14, outline: 'none' };
+  const inp: React.CSSProperties = { padding: '12px 16px', borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 14, outline: 'none', background: '#f8fafc' };
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#111', fontFamily: 'Poppins, sans-serif' }}>
-      <div style={{ background: '#1a1a1a', borderRadius: 16, padding: 40, width: '100%', maxWidth: 360, border: '1px solid #27272a' }}>
-        <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#17DB4E', marginBottom: 4 }}>Karis Link</div>
-          <div style={{ color: '#6b7280', fontSize: 13 }}>Super Admin</div>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
+      <div style={{ background: '#fff', borderRadius: 24, padding: 48, width: '100%', maxWidth: 400, boxShadow: '0 20px 60px rgba(0,0,0,0.05)', border: '1px solid #f1f5f9' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <img src="/karis-labs-logo.png" alt="Karis Labs" style={{ width: '140px', marginBottom: 16 }} />
+          <h1 style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', margin: 0 }}>Acesso Administrativo</h1>
+          <p style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>Entre com suas credenciais de super-admin.</p>
         </div>
-        {state?.error && <div style={{ background: '#450a0a', color: '#fca5a5', padding: '10px 14px', borderRadius: 8, marginBottom: 16, fontSize: 13 }}>{state.error}</div>}
-        <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <input name="username" placeholder="Usuário" required style={{ ...inp, background: '#111', color: '#fff', borderColor: '#374151' }} />
-          <input name="password" type="password" placeholder="Senha" required style={{ ...inp, background: '#111', color: '#fff', borderColor: '#374151' }} />
+        
+        {state?.error && (
+          <div style={{ background: '#fff1f2', color: '#e11d48', padding: '12px 16px', borderRadius: 12, marginBottom: 20, fontSize: 13, fontWeight: 600, border: '1px solid #fecdd3' }}>
+            {state.error}
+          </div>
+        )}
+
+        <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div>
+            <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: 6, display: 'block', letterSpacing: '0.5px' }}>Usuário</label>
+            <input name="username" placeholder="Digite seu usuário" required style={{ ...inp, width: '100%', boxSizing: 'border-box' }} />
+          </div>
+          <div>
+            <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: 6, display: 'block', letterSpacing: '0.5px' }}>Senha</label>
+            <input name="password" type="password" placeholder="••••••••" required style={{ ...inp, width: '100%', boxSizing: 'border-box' }} />
+          </div>
           <Btn />
         </form>
+        
+        <div style={{ textAlign: 'center', marginTop: 32 }}>
+          <p style={{ fontSize: 12, color: '#94a3b8' }}>Karis Labs &copy; 2026 · Todos os direitos reservados</p>
+        </div>
       </div>
     </div>
   );
