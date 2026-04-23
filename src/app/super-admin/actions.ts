@@ -8,15 +8,14 @@ import {
   verifyPassword,
 } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { ensureSuperAdminTableAvailable, findStoredSuperAdminAccount } from '@/lib/super-admin';
 import { redirect } from 'next/navigation';
 
 export async function handleSuperLogin(_: unknown, formData: FormData) {
   const user = String(formData.get('username') || '').trim();
   const pass = String(formData.get('password') || '');
 
-  const storedAccount = await prisma.superAdminAccount.findFirst({
-    orderBy: { createdAt: 'asc' },
-  });
+  const storedAccount = await findStoredSuperAdminAccount();
 
   if (storedAccount) {
     const passwordMatches = await verifyPassword(pass, storedAccount.passwordHash);
@@ -99,21 +98,23 @@ export async function updateSuperAdminCredentials(formData: FormData) {
     throw new Error('A confirmacao da senha nao confere.');
   }
 
-  const existingAccount = await prisma.superAdminAccount.findFirst({
-    orderBy: { createdAt: 'asc' },
-  });
-
   const passwordHash = await hashPassword(password);
 
-  if (existingAccount) {
-    await prisma.superAdminAccount.update({
-      where: { id: existingAccount.id },
-      data: { username, passwordHash },
-    });
-  } else {
-    await prisma.superAdminAccount.create({
-      data: { username, passwordHash },
-    });
+  try {
+    const existingAccount = await findStoredSuperAdminAccount();
+
+    if (existingAccount) {
+      await prisma.superAdminAccount.update({
+        where: { id: existingAccount.id },
+        data: { username, passwordHash },
+      });
+    } else {
+      await prisma.superAdminAccount.create({
+        data: { username, passwordHash },
+      });
+    }
+  } catch (error) {
+    ensureSuperAdminTableAvailable(error);
   }
 
   redirect('/super-admin/configuracoes');

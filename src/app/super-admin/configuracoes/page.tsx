@@ -1,15 +1,13 @@
 import { requireSuperAuth } from '@/lib/auth';
-import prisma from '@/lib/prisma';
 import AdminSidebar from '@/components/AdminSidebar';
+import { findStoredSuperAdminAccount } from '@/lib/super-admin';
 import { updateSuperAdminCredentials } from '../actions';
 import ThemeToggle from '@/components/ThemeToggle';
 
 export default async function SettingsPage() {
   await requireSuperAuth();
 
-  const storedAccount = await prisma.superAdminAccount.findFirst({
-    orderBy: { createdAt: 'asc' },
-  });
+  const storedAccount = await findStoredSuperAdminAccount();
   const defaultUser = storedAccount?.username || process.env.SUPER_ADMIN_USER || process.env.ADMIN_USERNAME || 'superadmin';
 
   return (
