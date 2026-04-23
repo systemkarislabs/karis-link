@@ -66,6 +66,50 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
         style={{
           width: '100%',
           maxWidth: '460px',
+          margin: '0 auto 18px',
+          display: 'flex',
+          justifyContent: 'flex-end',
+        }}
+      >
+        <a
+          href={`/${slug}/login`}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '10px 14px',
+            borderRadius: '999px',
+            textDecoration: 'none',
+            background: 'rgba(255,255,255,0.92)',
+            color: '#334155',
+            border: '1px solid #dbe3ee',
+            boxShadow: '0 10px 22px rgba(148, 163, 184, 0.12)',
+            fontSize: '13px',
+            fontWeight: 700,
+          }}
+        >
+          <span
+            style={{
+              width: '24px',
+              height: '24px',
+              borderRadius: '999px',
+              background: '#eef2f7',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+            }}
+          >
+            ⚙
+          </span>
+          Acesso da empresa
+        </a>
+      </div>
+
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '460px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
@@ -202,6 +246,35 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
               </a>
             );
           })}
+        </div>
+
+        <div
+          style={{
+            marginTop: '24px',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <a
+            href={`/${slug}/admin`}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '12px 18px',
+              borderRadius: '12px',
+              textDecoration: 'none',
+              color: '#0f172a',
+              background: 'rgba(255,255,255,0.72)',
+              border: '1px solid #dbe3ee',
+              boxShadow: '0 8px 18px rgba(148, 163, 184, 0.12)',
+              fontSize: '14px',
+              fontWeight: 700,
+            }}
+          >
+            Entrar no painel administrativo
+          </a>
         </div>
       </div>
     </div>
