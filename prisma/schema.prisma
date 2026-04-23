@@ -20,6 +20,14 @@ model Tenant {
   qrcodes   QrCode[]
 }
 
+model SuperAdminAccount {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 model Seller {
   id        String   @id @default(cuid())
   name      String
