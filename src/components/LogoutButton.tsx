@@ -6,7 +6,6 @@ export default function LogoutButton() {
   const handle = async () => {
     try {
       await execLogout();
-      // Força o navegador a ir para o login mesmo se o redirect falhar
       window.location.href = '/super-admin/login';
     } catch (e) {
       window.location.href = '/super-admin/login';
@@ -14,17 +13,25 @@ export default function LogoutButton() {
   };
 
   return (
-    <button 
+    <div 
       onClick={handle}
       style={{ 
-        width: '100%', padding: '12px', borderRadius: 12, border: 'none', 
-        background: 'var(--bg-main)', color: 'var(--sidebar-text)', 
-        cursor: 'pointer', fontSize: 14, fontWeight: 600, 
-        display: 'flex', alignItems: 'center', gap: 12 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: 12, 
+        padding: '12px 16px', 
+        borderRadius: 12, 
+        color: 'var(--sidebar-text)', 
+        cursor: 'pointer', 
+        fontSize: 14, 
+        fontWeight: 500,
+        transition: 'all 0.2s'
       }}
+      onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
+      onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
     >
       <Icon name="logout" size={20} color="var(--sidebar-text)" />
-      Sair do Painel
-    </button>
+      <span>Sair</span>
+    </div>
   );
 }

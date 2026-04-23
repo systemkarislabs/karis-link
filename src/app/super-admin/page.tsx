@@ -18,7 +18,6 @@ export default async function SuperAdminPage() {
     return (
       <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
         
-        {/* Sidebar Compacta e Rolável */}
         <aside style={{ 
           width: 280, 
           background: 'var(--sidebar-bg)', 
@@ -28,8 +27,7 @@ export default async function SuperAdminPage() {
           flexDirection: 'column', 
           position: 'fixed', 
           height: '100vh',
-          boxSizing: 'border-box',
-          overflowY: 'auto'
+          boxSizing: 'border-box'
         }}>
           <div style={{ marginBottom: 32, padding: '0 16px' }}>
             <img src="/karis-labs-logo.png" alt="Karis Labs" style={{ width: '110px' }} />
@@ -49,14 +47,12 @@ export default async function SuperAdminPage() {
              <Link href="/super-admin/configuracoes" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12, color: 'var(--sidebar-text)', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>
                 <Icon name="settings" size={20} color="var(--sidebar-text)" /> Configurações
              </Link>
-          </nav>
 
-          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16, marginTop: 16 }}>
-            <LogoutButton />
-          </div>
+             {/* Botão de Sair agora faz parte do menu */}
+             <LogoutButton />
+          </nav>
         </aside>
 
-        {/* Content */}
         <main style={{ marginLeft: 280, flex: 1, padding: '40px 60px' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <header style={{ marginBottom: 40 }}>
