@@ -1,41 +1,43 @@
 'use server';
+
 import prisma from '@/lib/prisma';
-import { requireTenantAuth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 export async function createSeller(formData: FormData) {
-  const slug = formData.get('slug') as string;
-  const { tenantId } = await requireTenantAuth(slug);
-  
   const name = formData.get('name') as string;
   const phone = formData.get('phone') as string;
-  const photoFile = formData.get('photo') as File;
-  
-  let imageUrl = null;
+  const slug = formData.get('slug') as string; // Agora pegamos o slug do formulário
+  const imageFile = formData.get('image') as File;
 
-  // Processar a imagem se ela existir
-  if (photoFile && photoFile.size > 0) {
-    const buffer = Buffer.from(await photoFile.arrayBuffer());
-    const base64Image = buffer.toString('base64');
-    imageUrl = `data:${photoFile.type};base64,${base64Image}`;
+  let imageBase64 = null;
+  if (imageFile && imageFile.size > 0) {
+    const buffer = Buffer.from(await imageFile.arrayBuffer());
+    imageBase64 = `data:${imageFile.type};base64,${buffer.toString('base64')}`;
   }
 
+  const tenant = await prisma.tenant.findUnique({ where: { slug } });
+  if (!tenant) return;
+
   await prisma.seller.create({
-    data: { name, phone, image: imageUrl, tenantId }
+    data: {
+      name,
+      phone,
+      image: imageBase64,
+      tenantId: tenant.id
+    }
   });
 
   revalidatePath(`/${slug}/admin/vendedores`);
-  redirect(`/${slug}/admin/vendedores`);
 }
 
 export async function deleteSeller(formData: FormData) {
-  const slug = formData.get('slug') as string;
   const id = formData.get('id') as string;
-  const { tenantId } = await requireTenantAuth(slug);
-  
-  await prisma.seller.deleteMany({ where: { id, tenantId } });
-  
-  revalidatePath(`/${slug}/admin/vendedores`);
-  redirect(`/${slug}/admin/vendedores`);
+  const slug = formData.get('slug') as string;
+
+  try {
+    await prisma.seller.delete({ where: { id } });
+    revalidatePath(`/${slug}/admin/vendedores`);
+  } catch (error) {
+    console.error('Delete error:', error);
+  }
 }

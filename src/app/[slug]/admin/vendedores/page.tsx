@@ -12,11 +12,10 @@ export default async function VendedoresPage(props: any) {
 
   const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
   
-  // Busca vendedores com tipagem correta para o TypeScript não reclamar
   const sellers = await prisma.seller.findMany({
     where: { tenantId },
     orderBy: { name: 'asc' }
-  }).catch(() => []);
+  });
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
@@ -30,7 +29,8 @@ export default async function VendedoresPage(props: any) {
 
         <section style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 32, border: '1px solid var(--border)', marginBottom: 40 }}>
           <h3 style={{ margin: '0 0 20px', fontSize: 18, fontWeight: 700 }}>Novo Vendedor</h3>
-          <form action={(fd) => createSeller(fd, slug)} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+          <form action={createSeller} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+            <input type="hidden" name="slug" value={slug} />
             <input name="name" placeholder="Nome do Vendedor" required style={{ padding: '12px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)' }} />
             <input name="phone" placeholder="WhatsApp (ex: 5511999999999)" required style={{ padding: '12px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)' }} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -55,7 +55,9 @@ export default async function VendedoresPage(props: any) {
                   <div style={{ fontSize: 13, color: 'var(--sidebar-text)' }}>{s.phone}</div>
                 </div>
               </div>
-              <form action={() => deleteSeller(s.id, slug)}>
+              <form action={deleteSeller}>
+                <input type="hidden" name="id" value={s.id} />
+                <input type="hidden" name="slug" value={slug} />
                 <button type="submit" style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>Excluir</button>
               </form>
             </div>
