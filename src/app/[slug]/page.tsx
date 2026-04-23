@@ -11,20 +11,22 @@ export default async function PublicTenantPage(props: any) {
   const source = searchParams?.source;
   const campaign = searchParams?.campaign;
 
+  // 1. Busca o tenant primeiro
   const tenant = await prisma.tenant.findUnique({
-    where: { slug },
-    include: {
-      sellers: {
-        where: { name: { not: "" } },
-        orderBy: { name: 'asc' }
-      }
-    }
+    where: { slug }
   });
 
   if (!tenant) notFound();
 
-  // Registrar o acesso de forma segura (não trava a página se der erro)
+  // 2. Busca os vendedores separadamente para evitar erros de join complexos
+  const sellers = await prisma.seller.findMany({
+    where: { tenantId: tenant.id },
+    orderBy: { name: 'asc' }
+  });
+
+  // 3. Registrar o acesso em background
   try {
+    // Usamos um create simples
     await prisma.pageClickEvent.create({
       data: {
         tenantId: tenant.id,
@@ -33,7 +35,7 @@ export default async function PublicTenantPage(props: any) {
       }
     });
   } catch (e) {
-    console.error('Erro ao registrar scan:', e);
+    console.error('Erro silent tracking:', e);
   }
 
   return (
@@ -43,7 +45,7 @@ export default async function PublicTenantPage(props: any) {
         <p style={{ color: '#94a3b8', marginBottom: 40, fontSize: 16 }}>Escolha um vendedor para iniciar o atendimento no WhatsApp:</p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {tenant.sellers.map((seller) => (
+          {sellers.length > 0 ? sellers.map((seller) => (
             <Link 
               key={seller.id}
               href={`/api/redirect?sellerId=${seller.id}${source ? `&source=${source}` : ''}${campaign ? `&campaign=${encodeURIComponent(campaign)}` : ''}`}
@@ -70,7 +72,9 @@ export default async function PublicTenantPage(props: any) {
                 <div style={{ fontSize: 12, color: '#10b981' }}>Disponível agora</div>
               </div>
             </Link>
-          ))}
+          )) : (
+            <div style={{ padding: 40, color: '#94a3b8' }}>Nenhum vendedor cadastrado ainda.</div>
+          )}
         </div>
 
         <footer style={{ marginTop: 60, color: '#475569', fontSize: 12 }}>
