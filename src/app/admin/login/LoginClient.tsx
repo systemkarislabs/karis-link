@@ -4,6 +4,8 @@ import { Icon } from '@/components/Icon';
 import { handleLogin } from "../auth-actions";
 import { useFormState, useFormStatus } from 'react-dom';
 
+type LoginState = { error?: string } | null;
+
 const SubmitButton = () => {
   const { pending } = useFormStatus();
   return (
@@ -31,7 +33,7 @@ const navItems = [
 
 export const LoginClient = () => {
   const [focused, setFocused] = useState('');
-  const [state, formAction] = useFormState(handleLogin as any, null);
+  const [state, formAction] = useFormState<LoginState, FormData>(handleLogin as any, null);
 
   const inpStyle = (field: string): React.CSSProperties => ({
     width: '100%', background: '#FAFBFC',
