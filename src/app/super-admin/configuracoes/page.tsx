@@ -1,6 +1,7 @@
 import { requireSuperAuth } from '@/lib/auth';
 import { Icon } from '@/components/Icon';
 import Link from 'next/link';
+import { handleSuperLogout } from './actions';
 
 export default async function SettingsPage() {
   await requireSuperAuth();
@@ -22,6 +23,14 @@ export default async function SettingsPage() {
               <Icon name="settings" size={20} color="#e11d48" /> Configurações
            </Link>
         </nav>
+
+        <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 20 }}>
+          <form action={handleSuperLogout}>
+            <button style={{ width: '100%', padding: '12px', borderRadius: 12, border: 'none', background: '#f8fafc', color: '#64748b', cursor: 'pointer', fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <Icon name="logout" size={20} color="#64748b" /> Sair do Painel
+            </button>
+          </form>
+        </div>
       </aside>
 
       <main style={{ marginLeft: 280, flex: 1, padding: '40px 60px' }}>
