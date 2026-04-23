@@ -2,9 +2,25 @@ import prisma from '@/lib/prisma';
 import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
 import { createQrCode, deleteQrCode } from './actions';
-import Link from 'next/link';
+import QrCodesClient from './QrCodesClient';
 
 export const dynamic = 'force-dynamic';
+
+type QrCodeMetric = {
+  id: string;
+  name: string;
+  slug: string;
+  url: string;
+  visits: number;
+  clicks: number;
+  conversion: string;
+  topSellerName: string | null;
+  recentChoices: Array<{
+    id: string;
+    sellerName: string;
+    createdAtLabel: string;
+  }>;
+};
 
 export default async function QrCodesPage(props: any) {
   const params = await props.params;
@@ -13,10 +29,62 @@ export default async function QrCodesPage(props: any) {
 
   const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
 
-  const qrcodes = await prisma.qrCode.findMany({
-    where: { tenantId },
-    orderBy: { createdAt: 'desc' }
+  const [qrcodes, pageVisits, sellerChoices] = await Promise.all([
+    prisma.qrCode.findMany({
+      where: { tenantId },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.pageClickEvent.findMany({
+      where: { tenantId, source: 'qr' },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.sellerClickEvent.findMany({
+      where: { source: 'qr', seller: { tenantId } },
+      orderBy: { createdAt: 'desc' },
+      include: { seller: true },
+    }),
+  ]);
+
+  const qrMetrics: QrCodeMetric[] = qrcodes.map((qr) => {
+    const visits = pageVisits.filter((event) => event.campaign === qr.slug);
+    const choices = sellerChoices.filter((event) => event.campaign === qr.slug);
+
+    const sellerCount = choices.reduce<Record<string, { name: string; total: number }>>((acc, event) => {
+      if (!acc[event.sellerId]) {
+        acc[event.sellerId] = { name: event.seller.name, total: 0 };
+      }
+      acc[event.sellerId].total += 1;
+      return acc;
+    }, {});
+
+    const topSeller = Object.values(sellerCount).sort((a, b) => b.total - a.total)[0] || null;
+    const conversion = visits.length > 0 ? ((choices.length / visits.length) * 100).toFixed(1) : '0';
+
+    return {
+      id: qr.id,
+      name: qr.name,
+      slug: qr.slug,
+      url: qr.url,
+      visits: visits.length,
+      clicks: choices.length,
+      conversion,
+      topSellerName: topSeller?.name || null,
+      recentChoices: choices.slice(0, 5).map((event) => ({
+        id: event.id,
+        sellerName: event.seller.name,
+        createdAtLabel: new Date(event.createdAt).toLocaleString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      })),
+    };
   });
+
+  const totalScans = qrMetrics.reduce((sum, qr) => sum + qr.visits, 0);
+  const totalChoices = qrMetrics.reduce((sum, qr) => sum + qr.clicks, 0);
+  const averageConversion = totalScans > 0 ? ((totalChoices / totalScans) * 100).toFixed(1) : '0';
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
@@ -25,38 +93,90 @@ export default async function QrCodesPage(props: any) {
       <main className="main-content">
         <header style={{ marginBottom: 32 }}>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Campanhas de QR Code</h1>
-          <p style={{ color: 'var(--sidebar-text)' }}>Crie links curtos para rastrear scans de mesas, folhetos ou anúncios.</p>
+          <p style={{ color: 'var(--sidebar-text)' }}>
+            Gere QR Codes rastreáveis e acompanhe quantos scans viraram escolha de vendedor.
+          </p>
         </header>
 
-        <section style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 32, border: '1px solid var(--border)', marginBottom: 40 }}>
-          <h3 style={{ margin: '0 0 20px', fontSize: 18, fontWeight: 700 }}>Novo QR Code</h3>
-          <form action={(fd) => createQrCode(fd, slug)} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
-            <input name="name" placeholder="Nome (ex: Mesa 01)" required style={{ padding: '12px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)' }} />
-            <input name="slug" placeholder="Identificador (ex: mesa-01)" required style={{ padding: '12px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)' }} />
-            <button type="submit" style={{ background: 'var(--sidebar-active-text)', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 600, cursor: 'pointer' }}>Gerar QR Code</button>
-          </form>
-        </section>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
-          {qrcodes.map((qr) => (
-            <div key={qr.id} style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 24, border: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>{qr.name}</h4>
-                  <code style={{ fontSize: 12, color: 'var(--sidebar-text)' }}>/go/{qr.slug}</code>
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <Link href={`/${slug}/go/${qr.slug}`} target="_blank" style={{ padding: '6px 12px', borderRadius: 8, background: 'var(--bg-main)', border: '1px solid var(--border)', color: 'var(--text-main)', fontSize: 13, textDecoration: 'none' }}>Testar</Link>
-                  <form action={deleteQrCode}>
-                    <input type="hidden" name="id" value={qr.id} />
-                    <input type="hidden" name="slug" value={slug} />
-                    <button type="submit" style={{ padding: '6px 12px', borderRadius: 8, background: '#ef444415', border: '1px solid #ef444430', color: '#ef4444', fontSize: 13, cursor: 'pointer' }}>Excluir</button>
-                  </form>
-                </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20, marginBottom: 28 }}>
+          {[
+            { label: 'Campanhas ativas', value: qrMetrics.length },
+            { label: 'Scans via QR', value: totalScans },
+            { label: 'Escolhas de vendedor', value: totalChoices },
+            { label: 'Conversão média', value: `${averageConversion}%` },
+          ].map((item) => (
+            <div
+              key={item.label}
+              style={{
+                background: 'var(--card-bg)',
+                borderRadius: 18,
+                padding: 22,
+                border: '1px solid var(--border)',
+                boxShadow: '0 10px 24px rgba(148, 163, 184, 0.12)',
+              }}
+            >
+              <div style={{ color: 'var(--sidebar-text)', fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+                {item.label}
               </div>
+              <div style={{ color: 'var(--text-main)', fontSize: 30, fontWeight: 800 }}>{item.value}</div>
             </div>
           ))}
         </div>
+
+        <section
+          style={{
+            background: 'var(--card-bg)',
+            borderRadius: 20,
+            padding: 32,
+            border: '1px solid var(--border)',
+            marginBottom: 32,
+          }}
+        >
+          <h2 style={{ margin: '0 0 20px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Nova campanha QR</h2>
+          <form action={createQrCode} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+            <input type="hidden" name="tenantSlug" value={slug} />
+            <input
+              name="name"
+              placeholder="Nome da campanha (ex: Mesa 01)"
+              required
+              style={{
+                padding: '12px 16px',
+                borderRadius: 10,
+                border: '1px solid var(--border)',
+                background: 'var(--bg-main)',
+                color: 'var(--text-main)',
+              }}
+            />
+            <input
+              name="slug"
+              placeholder="Identificador (ex: mesa-01)"
+              required
+              style={{
+                padding: '12px 16px',
+                borderRadius: 10,
+                border: '1px solid var(--border)',
+                background: 'var(--bg-main)',
+                color: 'var(--text-main)',
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                background: 'var(--sidebar-active-text)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 10,
+                fontWeight: 700,
+                cursor: 'pointer',
+                padding: '12px 18px',
+              }}
+            >
+              Gerar QR Code rastreável
+            </button>
+          </form>
+        </section>
+
+        <QrCodesClient qrCodes={qrMetrics} slug={slug} deleteAction={deleteQrCode} />
       </main>
     </div>
   );

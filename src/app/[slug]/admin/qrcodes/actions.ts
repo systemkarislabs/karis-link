@@ -5,13 +5,13 @@ import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-export async function createQrCode(formData: FormData, slug: string) {
-  const normalizedSlug = slug.trim().toLowerCase();
+export async function createQrCode(formData: FormData) {
+  const slug = String(formData.get('tenantSlug') || '').trim().toLowerCase();
   const name = String(formData.get('name') || '').trim();
   const qrSlug = String(formData.get('slug') || '').trim().toLowerCase();
-  const { tenantId } = await requireTenantAuth(normalizedSlug);
+  const { tenantId } = await requireTenantAuth(slug);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
-  const finalUrl = `${baseUrl}/${normalizedSlug}?source=qr&campaign=${qrSlug}`;
+  const finalUrl = `${baseUrl}/${slug}/go/${qrSlug}`;
 
   if (!name || !qrSlug) {
     throw new Error('Nome e identificador do QR Code são obrigatórios.');
@@ -26,8 +26,8 @@ export async function createQrCode(formData: FormData, slug: string) {
     },
   });
 
-  revalidatePath(`/${normalizedSlug}/admin/qrcodes`);
-  redirect(`/${normalizedSlug}/admin/qrcodes`);
+  revalidatePath(`/${slug}/admin/qrcodes`);
+  redirect(`/${slug}/admin/qrcodes`);
 }
 
 export async function deleteQrCode(formData: FormData) {

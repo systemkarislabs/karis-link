@@ -68,6 +68,14 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
   const tenant = await prisma.tenant.findUnique({ where: { slug } });
   if (!tenant) notFound();
 
+  await prisma.pageClickEvent.create({
+    data: {
+      tenantId: tenant.id,
+      source,
+      campaign,
+    },
+  });
+
   const sellers = await prisma.seller.findMany({
     where: { tenantId: tenant.id },
     orderBy: { name: 'asc' },
