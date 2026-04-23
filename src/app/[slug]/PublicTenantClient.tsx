@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { handleTenantLogin } from './admin/auth-actions';
+import { Icon } from '@/components/Icon';
 
 type SellerCard = {
   id: string;
@@ -30,54 +31,6 @@ function getInitials(name: string) {
     .join('');
 }
 
-function WhatsAppIcon({ color }: { color: string }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M20.52 3.48A11.86 11.86 0 0 0 12.07 0C5.56 0 .28 5.28.28 11.79c0 2.08.54 4.11 1.57 5.91L0 24l6.48-1.7a11.8 11.8 0 0 0 5.59 1.42h.01c6.5 0 11.79-5.28 11.79-11.79 0-3.15-1.23-6.1-3.35-8.45Z"
-        fill={color}
-      />
-      <path
-        d="M17.03 13.93c-.27-.14-1.6-.79-1.85-.88-.25-.09-.44-.14-.62.14-.18.27-.7.88-.86 1.06-.16.18-.31.2-.58.07-.27-.14-1.13-.42-2.15-1.35-.8-.71-1.33-1.58-1.49-1.85-.16-.27-.02-.41.12-.54.12-.12.27-.31.4-.46.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.47-.62-.48h-.53c-.18 0-.48.07-.73.34-.25.27-.96.94-.96 2.29s.98 2.66 1.11 2.84c.14.18 1.92 2.94 4.66 4.12.65.28 1.16.44 1.56.56.65.21 1.24.18 1.71.11.52-.08 1.6-.65 1.83-1.27.23-.61.23-1.13.16-1.24-.06-.11-.25-.18-.52-.32Z"
-        fill={color === '#ffffff' ? '#050816' : '#ffffff'}
-      />
-    </svg>
-  );
-}
-
-function LockIcon({ color = '#64748b' }: { color?: string }) {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M7 10V8a5 5 0 0 1 10 0v2"
-        stroke={color}
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <rect
-        x="5"
-        y="10"
-        width="14"
-        height="10"
-        rx="3"
-        stroke={color}
-        strokeWidth="1.8"
-      />
-      <circle cx="12" cy="15" r="1.4" fill={color} />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M18 6L6 18" stroke="#64748b" strokeWidth="1.9" strokeLinecap="round" />
-      <path d="M6 6L18 18" stroke="#64748b" strokeWidth="1.9" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function SubmitButton() {
   const { pending } = useFormStatus();
 
@@ -90,7 +43,7 @@ function SubmitButton() {
         marginTop: 4,
         padding: '12px 16px',
         borderRadius: 12,
-        background: '#0f172a',
+        background: 'var(--brand-dark)',
         color: '#fff',
         border: 'none',
         fontWeight: 700,
@@ -124,8 +77,8 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
         minHeight: '100vh',
         background:
           'radial-gradient(circle at top, rgba(255,255,255,0.98) 0%, rgba(247,249,252,1) 38%, rgba(242,245,249,1) 100%)',
-        color: '#0f172a',
-        fontFamily: "'Inter', sans-serif",
+        color: 'var(--text-main)',
+        fontFamily: 'var(--font-body)',
         padding: '36px 20px 72px',
       }}
     >
@@ -150,10 +103,10 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
               padding: '7px 11px',
               borderRadius: '999px',
               textDecoration: 'none',
-              background: 'rgba(15, 23, 42, 0.08)',
-              color: '#0f172a',
+              background: 'rgba(2, 5, 21, 0.08)',
+              color: 'var(--brand-dark)',
               border: '1px solid rgba(203, 213, 225, 0.95)',
-              boxShadow: '0 6px 14px rgba(148, 163, 184, 0.08)',
+              boxShadow: 'var(--shadow-soft)',
               fontSize: 11,
               fontWeight: 700,
               letterSpacing: '0.01em',
@@ -164,13 +117,13 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                 width: 18,
                 height: 18,
                 borderRadius: '999px',
-                background: 'rgba(15, 23, 42, 0.08)',
+                background: 'rgba(2, 5, 21, 0.08)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <LockIcon color="#0f172a" />
+              <Icon name="lock" size={13} color="var(--brand-dark)" />
             </span>
             Ir para o painel
           </a>
@@ -185,9 +138,9 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
               padding: '7px 11px',
               borderRadius: '999px',
               background: 'rgba(255,255,255,0.55)',
-              color: '#64748b',
+              color: 'var(--text-soft)',
               border: '1px solid rgba(219, 227, 238, 0.9)',
-              boxShadow: '0 6px 14px rgba(148, 163, 184, 0.08)',
+              boxShadow: 'var(--shadow-soft)',
               fontSize: 11,
               fontWeight: 600,
               letterSpacing: '0.01em',
@@ -205,7 +158,7 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                 justifyContent: 'center',
               }}
             >
-              <LockIcon />
+              <Icon name="lock" size={13} color="var(--text-soft)" />
             </span>
             Acesso da empresa
           </button>
@@ -224,22 +177,20 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
       >
         <div
           style={{
-            width: 88,
-            height: 88,
-            borderRadius: '999px',
-            background: '#050816',
-            border: '2px solid #22c55e',
+            width: 124,
+            minHeight: 124,
+            borderRadius: 28,
+            background: '#fff',
+            border: '1px solid var(--border)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#ffffff',
-            fontSize: 32,
-            fontWeight: 800,
-            boxShadow: '0 12px 30px rgba(15, 23, 42, 0.16)',
+            boxShadow: 'var(--shadow-soft)',
             marginBottom: 22,
+            padding: 18,
           }}
         >
-          {tenantName.charAt(0).toUpperCase()}
+          <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: '100%', maxWidth: 84, objectFit: 'contain' }} />
         </div>
 
         <header style={{ textAlign: 'center', marginBottom: 30 }}>
@@ -248,22 +199,22 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
               fontSize: 24,
               lineHeight: 1.15,
               fontWeight: 800,
-              color: '#172033',
+              color: 'var(--text-main)',
               margin: '0 0 10px',
             }}
           >
-            Fale com um Especialista
+            {tenantName}
           </h1>
           <p
             style={{
-              color: '#64748b',
+              color: 'var(--text-soft)',
               maxWidth: 360,
               margin: '0 auto',
               fontSize: 15,
               lineHeight: 1.35,
             }}
           >
-            Escolha um consultor disponivel e inicie sua conversa agora mesmo.
+            Conecte seus leads ao especialista certo com a experiencia Karis Link.
           </p>
         </header>
 
@@ -278,12 +229,12 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                 justifyContent: 'space-between',
                 gap: 18,
                 padding: '14px 18px',
-                background: '#ffffff',
-                color: '#172033',
+                background: 'var(--card-bg)',
+                color: 'var(--text-main)',
                 borderRadius: 14,
                 textDecoration: 'none',
-                border: '1px solid #dbe3ee',
-                boxShadow: '0 10px 24px rgba(148, 163, 184, 0.14)',
+                border: '1px solid var(--border)',
+                boxShadow: 'var(--shadow-soft)',
                 transition: 'transform 0.18s ease, box-shadow 0.18s ease',
               }}
             >
@@ -336,14 +287,31 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  background: 'rgba(34,197,94,0.08)',
+                  background: 'rgba(23, 219, 78, 0.08)',
                   flexShrink: 0,
                 }}
               >
-                <WhatsAppIcon color="#22c55e" />
+                <Icon name="whatsapp" size={18} color="var(--brand-accent)" />
               </div>
             </a>
           ))}
+        </div>
+
+        <div
+          style={{
+            marginTop: 26,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 11,
+            fontWeight: 700,
+            color: 'var(--text-soft)',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+          }}
+        >
+          <span>Powered by</span>
+          <img src="/karis-labs-logo.png" alt="Karis Labs" style={{ height: 16, objectFit: 'contain' }} />
         </div>
       </div>
 
@@ -376,8 +344,11 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 18 }}>
               <div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: '#172033', marginBottom: 4 }}>Entrar no painel</div>
-                <div style={{ fontSize: 13, color: '#64748b' }}>Acesse a administracao da empresa sem sair da pagina publica.</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                  <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: 34, objectFit: 'contain' }} />
+                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-main)' }}>Entrar no painel</div>
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--text-soft)' }}>Acesse a administracao da empresa sem sair da pagina publica.</div>
               </div>
               <button
                 type="button"
@@ -395,7 +366,7 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                   flexShrink: 0,
                 }}
               >
-                <CloseIcon />
+                <Icon name="x" size={16} color="var(--text-soft)" />
               </button>
             </div>
 

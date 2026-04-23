@@ -25,13 +25,14 @@ export default function LogoutButton() {
         cursor: 'pointer', 
         fontSize: 14, 
         fontWeight: 500,
-        transition: 'all 0.2s'
+        transition: 'all 0.2s',
+        marginTop: 'auto'
       }}
-      onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
+      onMouseOver={(e) => e.currentTarget.style.background = 'var(--sidebar-active-bg)'}
       onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
     >
       <Icon name="logout" size={20} color="var(--sidebar-text)" />
-      <span>Sair</span>
+      <span>Sair do Painel</span>
     </div>
   );
 }

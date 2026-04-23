@@ -40,9 +40,9 @@ export default function AdminSidebar({
         padding: '0 20px',
         justifyContent: 'space-between'
       } as any} className="mobile-header">
-        <img src="/karis-labs-logo.png" alt="Logo" style={{ width: 90 }} />
+        <img src={isSuper ? "/karis-labs-logo.png" : "/karis-link-logo.png"} alt="Logo" style={{ width: 98 }} />
         <button onClick={() => setIsOpen(!isOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8 }}>
-          <Icon name="home" size={24} color="var(--text-main)" />
+          <Icon name="menu" size={24} color="var(--text-main)" />
         </button>
       </div>
 
@@ -64,13 +64,20 @@ export default function AdminSidebar({
         transition: 'transform 0.3s ease'
       } as any} className={`sidebar-container ${isOpen ? 'open' : ''}`}>
         
-        <div style={{ marginBottom: 40, padding: '0 16px' }}>
-          <img src="/karis-labs-logo.png" alt="Karis Labs" style={{ width: '120px' }} />
-          {!isSuper && <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, marginTop: 4, textTransform: 'uppercase' }}>{tenantName}</div>}
+        <div style={{ marginBottom: 32, padding: '0 16px' }}>
+          <img src={isSuper ? "/karis-labs-logo.png" : "/karis-link-logo.png"} alt={isSuper ? "Karis Labs" : "Karis Link"} style={{ width: isSuper ? '122px' : '114px' }} />
+          <div style={{ fontSize: 10, color: 'var(--text-soft)', fontWeight: 700, marginTop: 8, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+            {isSuper ? 'Ecossistema KarisLabs' : tenantName}
+          </div>
+          {!isSuper && (
+            <div style={{ fontSize: 11, color: 'var(--text-soft)', marginTop: 6 }}>
+              Operacao da empresa no Karis Link
+            </div>
+          )}
         </div>
 
-        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-           <div style={{ color: '#94a3b8', fontSize: 10, fontWeight: 700, padding: '0 16px 8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Menu Principal</div>
+        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, minHeight: 0 }}>
+           <div style={{ color: 'var(--text-soft)', fontSize: 10, fontWeight: 700, padding: '0 16px 8px', textTransform: 'uppercase', letterSpacing: '0.14em' }}>Menu Principal</div>
            
            {menuItems.map((item) => (
              <Link 
@@ -78,7 +85,7 @@ export default function AdminSidebar({
                 href={item.href} 
                 onClick={() => setIsOpen(false)}
                 style={{ 
-                  display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12, 
+                  display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 14, 
                   textDecoration: 'none', fontSize: 14, color: 'var(--sidebar-text)',
                   ...(pathname === item.href ? activeStyle : {})
                 }}
