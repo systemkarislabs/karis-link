@@ -30,13 +30,13 @@ export default async function SuperAdminPage() {
                 <Icon name="home" size={20} color="#e11d48" /> Empresas
              </Link>
              
-             <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12, color: '#64748b', fontSize: 14, fontWeight: 500, cursor: 'not-allowed' }}>
+             <Link href="/super-admin/relatorios" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12, color: '#64748b', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>
                 <Icon name="chart" size={20} color="#64748b" /> Relatórios
-             </div>
+             </Link>
 
-             <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12, color: '#64748b', fontSize: 14, fontWeight: 500, cursor: 'not-allowed' }}>
+             <Link href="/super-admin/configuracoes" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12, color: '#64748b', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>
                 <Icon name="settings" size={20} color="#64748b" /> Configurações
-             </div>
+             </Link>
           </nav>
 
           <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 20 }}>
@@ -77,7 +77,6 @@ export default async function SuperAdminPage() {
                 ))}
               </div>
 
-              {/* Form Lateral Slim */}
               <div style={{ background: '#fff', borderRadius: 20, padding: 32, border: '1px solid #e2e8f0' }}>
                 <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700 }}>Nova Empresa</h3>
                 <form action={createTenant} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -95,6 +94,7 @@ export default async function SuperAdminPage() {
       </div>
     );
   } catch (e) {
+    if (e instanceof Error && e.message.includes('NEXT_REDIRECT')) throw e;
     return <div style={{ padding: 40 }}>Erro no banco de dados.</div>;
   }
 }
