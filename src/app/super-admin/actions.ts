@@ -13,7 +13,7 @@ export async function handleSuperLogin(_: any, formData: FormData) {
   redirect('/super-admin');
 }
 
-export async function handleSuperLogout() {
+export async function execLogout() {
   await clearSuperSession();
   redirect('/super-admin/login');
 }
