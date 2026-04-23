@@ -4,21 +4,19 @@ import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default async function TenantPage({
-  params, searchParams,
-}: {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{ source?: string; campaign?: string }>;
-}) {
-  const { slug } = await params;
-  const sParams = await searchParams;
-  const source   = sParams?.source   || 'direct';
-  const campaign = sParams?.campaign || null;
+export default async function TenantPage(props: any) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+  
+  const { slug } = params;
+  const source   = searchParams?.source   || 'direct';
+  const campaign = searchParams?.campaign || null;
 
   const tenant = await prisma.tenant.findUnique({
     where: { slug, active: true },
     include: { sellers: { where: { active: true }, orderBy: { clicks: 'desc' } } },
   });
+  
   if (!tenant) notFound();
 
   try {
