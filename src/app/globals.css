@@ -29,3 +29,17 @@ body {
   color: var(--text-main);
   transition: background 0.3s, color 0.3s;
 }
+
+.main-content {
+  margin-left: 280px;
+  flex: 1;
+  padding: 40px 60px;
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0 !important;
+    padding: 80px 20px 40px !important;
+  }
+}
