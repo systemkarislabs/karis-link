@@ -66,9 +66,9 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
         style={{
           width: '100%',
           maxWidth: '460px',
-          margin: '0 auto 18px',
+          margin: '0 auto 10px',
           display: 'flex',
-          justifyContent: 'flex-end',
+          justifyContent: 'center',
         }}
       >
         <a
@@ -77,27 +77,28 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            padding: '10px 14px',
+            padding: '6px 10px',
             borderRadius: '999px',
             textDecoration: 'none',
-            background: 'rgba(255,255,255,0.92)',
-            color: '#334155',
-            border: '1px solid #dbe3ee',
-            boxShadow: '0 10px 22px rgba(148, 163, 184, 0.12)',
-            fontSize: '13px',
-            fontWeight: 700,
+            background: 'rgba(255,255,255,0.55)',
+            color: '#64748b',
+            border: '1px solid rgba(219, 227, 238, 0.9)',
+            boxShadow: '0 6px 14px rgba(148, 163, 184, 0.08)',
+            fontSize: '11px',
+            fontWeight: 600,
+            letterSpacing: '0.01em',
           }}
         >
           <span
             style={{
-              width: '24px',
-              height: '24px',
+              width: '18px',
+              height: '18px',
               borderRadius: '999px',
-              background: '#eef2f7',
+              background: 'rgba(226, 232, 240, 0.9)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '12px',
+              fontSize: '10px',
             }}
           >
             ⚙
@@ -246,35 +247,6 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
               </a>
             );
           })}
-        </div>
-
-        <div
-          style={{
-            marginTop: '24px',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          <a
-            href={`/${slug}/admin`}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '12px 18px',
-              borderRadius: '12px',
-              textDecoration: 'none',
-              color: '#0f172a',
-              background: 'rgba(255,255,255,0.72)',
-              border: '1px solid #dbe3ee',
-              boxShadow: '0 8px 18px rgba(148, 163, 184, 0.12)',
-              fontSize: '14px',
-              fontWeight: 700,
-            }}
-          >
-            Entrar no painel administrativo
-          </a>
         </div>
       </div>
     </div>
