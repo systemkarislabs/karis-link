@@ -26,7 +26,10 @@ export async function createQrCode(formData: FormData, slug: string) {
   redirect(`/${slug}/admin/qrcodes`);
 }
 
-export async function deleteQrCode(id: string, slug: string) {
+export async function deleteQrCode(formData: FormData) {
+  const id = formData.get('id') as string;
+  const slug = formData.get('slug') as string;
+  
   try {
     await prisma.qrCode.delete({ where: { id } });
     revalidatePath(`/${slug}/admin/qrcodes`);
