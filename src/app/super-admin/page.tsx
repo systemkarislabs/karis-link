@@ -6,8 +6,20 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
 export default async function SuperAdminPage() {
-  await requireSuperAuth();
-  const tenants = await prisma.tenant.findMany({ orderBy: { createdAt: 'desc' }, include: { _count: { select: { sellers: true } } } });
+  try {
+    await requireSuperAuth();
+    const tenants = await prisma.tenant.findMany({ 
+      orderBy: { createdAt: 'desc' }, 
+      include: { _count: { select: { sellers: true } } } 
+    });
+    // ... restante do código
+  } catch (e) {
+    console.error("Erro no SuperAdmin:", e);
+    // Se for erro de redirect do próprio Next, ele deve seguir
+    if (e instanceof Error && e.message.includes('NEXT_REDIRECT')) throw e;
+    return <div style={{ padding: 20 }}>Erro ao carregar banco de dados. Verifique as variáveis DATABASE_URL no Netlify.</div>;
+  }
+
 
   return (
     <div style={{ minHeight: '100vh', background: '#f4f6f8', fontFamily: 'Poppins, sans-serif' }}>
