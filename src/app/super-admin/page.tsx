@@ -1,6 +1,7 @@
 import { requireSuperAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { execLogout, createTenant, toggleTenant } from './actions';
+import { createTenant, toggleTenant } from './actions';
+import LogoutButton from '@/components/LogoutButton';
 import Link from 'next/link';
 import { Icon } from '@/components/Icon';
 
@@ -39,12 +40,8 @@ export default async function SuperAdminPage() {
              </Link>
           </nav>
 
-          <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 20 }}>
-            <form action={execLogout}>
-              <button style={{ width: '100%', padding: '12px', borderRadius: 12, border: 'none', background: '#f8fafc', color: '#64748b', cursor: 'pointer', fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Icon name="logout" size={20} color="#64748b" /> Sair do Painel
-              </button>
-            </form>
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 20 }}>
+            <LogoutButton />
           </div>
         </aside>
 
