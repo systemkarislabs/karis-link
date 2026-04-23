@@ -39,11 +39,13 @@ export default async function SuperAdminPage() {
              </div>
           </nav>
 
-          <form action={handleSuperLogout}>
-            <button style={{ width: '100%', padding: '12px', borderRadius: 12, border: 'none', background: '#f1f5f9', color: '#64748b', cursor: 'pointer', fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              Sair
-            </button>
-          </form>
+          <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 20 }}>
+            <form action={handleSuperLogout}>
+              <button style={{ width: '100%', padding: '12px', borderRadius: 12, border: 'none', background: '#f8fafc', color: '#64748b', cursor: 'pointer', fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Icon name="logout" size={20} color="#64748b" /> Sair do Painel
+              </button>
+            </form>
+          </div>
         </aside>
 
         {/* Content */}
