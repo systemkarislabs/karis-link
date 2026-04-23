@@ -12,16 +12,11 @@ export default async function VendedoresPage(props: any) {
 
   const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
   
-  // Busca vendedores de forma segura
-  let sellers = [];
-  try {
-    sellers = await prisma.seller.findMany({
-      where: { tenantId },
-      orderBy: { name: 'asc' }
-    });
-  } catch (e) {
-    console.error('Erro ao buscar vendedores:', e);
-  }
+  // Busca vendedores com tipagem correta para o TypeScript não reclamar
+  const sellers = await prisma.seller.findMany({
+    where: { tenantId },
+    orderBy: { name: 'asc' }
+  }).catch(() => []);
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
@@ -47,7 +42,7 @@ export default async function VendedoresPage(props: any) {
         </section>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
-          {sellers.map((s) => (
+          {sellers.map((s: any) => (
             <div key={s.id} style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 24, border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 {s.image ? (
