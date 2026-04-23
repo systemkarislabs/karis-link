@@ -1,43 +1,57 @@
-import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-const secretKey = "super-secret-key-change-me-in-production";
-const key = new TextEncoder().encode(secretKey);
+const SESSION_COOKIE = 'kl_session';
+const SUPER_COOKIE   = 'kl_super';
 
-export async function encrypt(payload: any) {
-  return await new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("10h")
-    .sign(key);
+// ── Tenant Auth ──────────────────────────────────────────────────────────────
+export async function getTenantSession() {
+  const store = await cookies();
+  const c = store.get(SESSION_COOKIE);
+  if (!c) return null;
+  try { return JSON.parse(c.value) as { slug: string; tenantId: string }; }
+  catch { return null; }
 }
 
-export async function decrypt(input: string): Promise<any> {
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ["HS256"],
+export async function requireTenantAuth(slug: string) {
+  const s = await getTenantSession();
+  if (!s || s.slug !== slug) redirect(`/${slug}/admin/login`);
+  return s;
+}
+
+export async function setTenantSession(slug: string, tenantId: string) {
+  const store = await cookies();
+  store.set(SESSION_COOKIE, JSON.stringify({ slug, tenantId }), {
+    httpOnly: true, secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax', maxAge: 60 * 60 * 24 * 7,
   });
-  return payload;
 }
 
-export async function login(username: string) {
-  const user = { username };
-  const expires = new Date(Date.now() + 10 * 60 * 60 * 1000);
-  const session = await encrypt({ user, expires });
-
-  // Save the session in a cookie
-  (await cookies()).set("session", session, { expires, httpOnly: true });
+export async function clearTenantSession() {
+  const store = await cookies();
+  store.delete(SESSION_COOKIE);
 }
 
-export async function logout() {
-  (await cookies()).set("session", "", { expires: new Date(0) });
+// ── Super Admin Auth ──────────────────────────────────────────────────────────
+export async function getSuperSession() {
+  const store = await cookies();
+  return store.get(SUPER_COOKIE)?.value === 'ok';
 }
 
-export async function getSession() {
-  const session = (await cookies()).get("session")?.value;
-  if (!session) return null;
-  try {
-    return await decrypt(session);
-  } catch (err) {
-    return null;
-  }
+export async function requireSuperAuth() {
+  const ok = await getSuperSession();
+  if (!ok) redirect('/super-admin/login');
+}
+
+export async function setSuperSession() {
+  const store = await cookies();
+  store.set(SUPER_COOKIE, 'ok', {
+    httpOnly: true, secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax', maxAge: 60 * 60 * 24 * 7,
+  });
+}
+
+export async function clearSuperSession() {
+  const store = await cookies();
+  store.delete(SUPER_COOKIE);
 }

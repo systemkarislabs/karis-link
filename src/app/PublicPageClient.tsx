@@ -3,11 +3,11 @@ import React from 'react';
 import './public.css';
 import { Icon } from '@/components/Icon';
 
-export const PublicPageClient = ({ sellers, sourceProp = 'direct', campaignProp = '' }: { sellers: any[], sourceProp?: string, campaignProp?: string }) => {
+export const PublicPageClient = ({ sellers, sourceProp = 'direct', campaignProp = '', tenantSlug = '', tenantName = 'Fale com um Especialista' }: { sellers: any[], sourceProp?: string, campaignProp?: string, tenantSlug?: string, tenantName?: string }) => {
   return (
     <div className="public-body" style={{ position: 'relative' }}>
       {/* Botão Admin */}
-      <a href="/admin" title="Acessar Painel" style={{ position: 'absolute', top: 16, right: 16, width: 40, height: 40, background: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e5e7eb', boxShadow: 'var(--shadow-soft)', color: '#9ca3af', textDecoration: 'none', zIndex: 10 }}>
+      <a href={`/${tenantSlug}/admin`} title="Acessar Painel" style={{ position: 'absolute', top: 16, right: 16, width: 40, height: 40, background: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e5e7eb', boxShadow: 'var(--shadow-soft)', color: '#9ca3af', textDecoration: 'none', zIndex: 10 }}>
         <Icon name="lock" size={16} />
       </a>
       
@@ -15,8 +15,8 @@ export const PublicPageClient = ({ sellers, sourceProp = 'direct', campaignProp 
         
         {/* Header/Perfil */}
         <div className="profile-section">
-          <div className="profile-logo">K</div>
-          <h1>Fale com um Especialista</h1>
+          <div className="profile-logo">{tenantName.charAt(0).toUpperCase()}</div>
+          <h1>{tenantName}</h1>
           <p>Escolha um consultor disponível e inicie sua conversa agora mesmo.</p>
         </div>
 
@@ -29,7 +29,7 @@ export const PublicPageClient = ({ sellers, sourceProp = 'direct', campaignProp 
             return (
               <a 
                 key={seller.id} 
-                href={`/api/redirect?sellerId=${seller.id}&source=${sourceProp}${campaignProp ? `&campaign=${campaignProp}` : ''}`} 
+                href={`/api/redirect?sellerId=${seller.id}&tenantSlug=${tenantSlug}&source=${sourceProp}${campaignProp ? `&campaign=${campaignProp}` : ''}`} 
                 target="_blank" 
                 className={`link-item ${isFeatured ? 'featured' : ''}`}
               >
