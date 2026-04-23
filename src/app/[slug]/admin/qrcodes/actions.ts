@@ -9,12 +9,28 @@ export async function createQrCode(formData: FormData) {
   const slug = String(formData.get('tenantSlug') || '').trim().toLowerCase();
   const name = String(formData.get('name') || '').trim();
   const qrSlug = String(formData.get('slug') || '').trim().toLowerCase();
+  const channel = String(formData.get('channel') || 'qr').trim().toLowerCase();
   const { tenantId } = await requireTenantAuth(slug);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
-  const finalUrl = `${baseUrl}/${slug}/go/${qrSlug}`;
+  const channelPath = channel === 'bio' ? 'bio' : 'go';
+  const finalUrl = `${baseUrl}/${slug}/${channelPath}/${qrSlug}`;
 
   if (!name || !qrSlug) {
     throw new Error('Nome e identificador do QR Code são obrigatórios.');
+  }
+
+  const existingCampaign = await prisma.qrCode.findFirst({
+    where: {
+      tenantId,
+      slug: qrSlug,
+      url: {
+        contains: `/${channelPath}/`,
+      },
+    },
+  });
+
+  if (existingCampaign) {
+    throw new Error('Já existe uma campanha com esse identificador para essa origem.');
   }
 
   await prisma.qrCode.create({

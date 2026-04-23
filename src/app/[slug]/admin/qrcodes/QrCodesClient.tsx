@@ -14,6 +14,7 @@ type QrCodeCard = {
   name: string;
   slug: string;
   url: string;
+  channel: 'qr' | 'bio';
   visits: number;
   clicks: number;
   conversion: string;
@@ -55,7 +56,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
           color: 'var(--sidebar-text)',
         }}
       >
-        Nenhuma campanha criada ainda. Gere o primeiro QR Code para começar a rastrear scans e escolhas de vendedores.
+        Nenhuma campanha criada ainda. Gere seu primeiro QR Code ou link da bio para comecar a rastrear acessos e escolhas de vendedores.
       </div>
     );
   }
@@ -73,44 +74,94 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
             boxShadow: '0 10px 24px rgba(148, 163, 184, 0.12)',
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 18 }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: 16,
+              marginBottom: 18,
+            }}
+          >
             <div>
               <h3 style={{ margin: 0, fontSize: 18, color: 'var(--text-main)' }}>{qr.name}</h3>
-              <div style={{ marginTop: 6, fontSize: 12, color: 'var(--sidebar-text)' }}>/{slug}/go/{qr.slug}</div>
+              <div style={{ marginTop: 6, fontSize: 12, color: 'var(--sidebar-text)' }}>
+                /{slug}/{qr.channel === 'bio' ? 'bio' : 'go'}/{qr.slug}
+              </div>
             </div>
-            <div
-              style={{
-                padding: '6px 10px',
-                borderRadius: 999,
-                background: 'rgba(34, 197, 94, 0.08)',
-                color: '#16a34a',
-                fontSize: 12,
-                fontWeight: 700,
-              }}
-            >
-              {qr.conversion}% conversão
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+              <div
+                style={{
+                  padding: '6px 10px',
+                  borderRadius: 999,
+                  background: qr.channel === 'bio' ? 'rgba(59, 130, 246, 0.08)' : 'rgba(34, 197, 94, 0.08)',
+                  color: qr.channel === 'bio' ? '#2563eb' : '#16a34a',
+                  fontSize: 12,
+                  fontWeight: 700,
+                }}
+              >
+                {qr.channel === 'bio' ? 'Link da bio' : 'QR Code'}
+              </div>
+              <div
+                style={{
+                  padding: '6px 10px',
+                  borderRadius: 999,
+                  background: 'rgba(15, 23, 42, 0.05)',
+                  color: 'var(--text-main)',
+                  fontSize: 12,
+                  fontWeight: 700,
+                }}
+              >
+                {qr.conversion}% conversao
+              </div>
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: 20, alignItems: 'center', marginBottom: 22, flexWrap: 'wrap' }}>
-            <div
-              style={{
-                background: '#ffffff',
-                padding: 14,
-                borderRadius: 16,
-                border: '1px solid var(--border)',
-                minWidth: 120,
-              }}
-            >
-              <QRCodeSVG id={`qr-${qr.id}`} value={qr.url} size={108} />
-            </div>
+            {qr.channel === 'qr' ? (
+              <div
+                style={{
+                  background: '#ffffff',
+                  padding: 14,
+                  borderRadius: 16,
+                  border: '1px solid var(--border)',
+                  minWidth: 120,
+                }}
+              >
+                <QRCodeSVG id={`qr-${qr.id}`} value={qr.url} size={108} />
+              </div>
+            ) : (
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 100%)',
+                  padding: 18,
+                  borderRadius: 16,
+                  border: '1px solid #bfdbfe',
+                  minWidth: 120,
+                  maxWidth: 180,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: '#2563eb',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    marginBottom: 10,
+                  }}
+                >
+                  Link da bio
+                </div>
+                <div style={{ fontSize: 12, color: '#1e293b', lineHeight: 1.45, wordBreak: 'break-word' }}>{qr.url}</div>
+              </div>
+            )}
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(90px, 1fr))', gap: 12, flex: 1 }}>
               {[
-                { label: 'Scans', value: qr.visits },
+                { label: 'Acessos', value: qr.visits },
                 { label: 'Escolhas', value: qr.clicks },
                 { label: 'Melhor vendedor', value: qr.topSellerName || 'Sem dados' },
-                { label: 'Destino', value: 'WhatsApp' },
+                { label: 'Origem', value: qr.channel === 'bio' ? 'Instagram Bio' : 'QR Code' },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -126,7 +177,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
                   </div>
                   <div
                     style={{
-                      fontSize: item.label === 'Melhor vendedor' ? 13 : 22,
+                      fontSize: item.label === 'Melhor vendedor' || item.label === 'Origem' ? 13 : 22,
                       fontWeight: 800,
                       color: 'var(--text-main)',
                       lineHeight: 1.15,
@@ -141,7 +192,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
 
           <div style={{ marginBottom: 18 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)', marginBottom: 10 }}>
-              Histórico recente da campanha
+              Historico recente da campanha
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {qr.recentChoices.length > 0 ? (
@@ -163,32 +214,34 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
                 ))
               ) : (
                 <div style={{ fontSize: 13, color: 'var(--sidebar-text)' }}>
-                  Ainda não houve escolha de vendedor a partir desta campanha.
+                  Ainda nao houve escolha de vendedor a partir desta campanha.
                 </div>
               )}
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              onClick={() => downloadSVG(`qr-${qr.id}`, qr.slug)}
-              style={{
-                padding: '10px 14px',
-                borderRadius: 10,
-                border: '1px solid #cbd5e1',
-                background: '#fff',
-                color: 'var(--text-main)',
-                fontSize: 13,
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              Baixar QR
-            </button>
+            {qr.channel === 'qr' ? (
+              <button
+                type="button"
+                onClick={() => downloadSVG(`qr-${qr.id}`, qr.slug)}
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: 10,
+                  border: '1px solid #cbd5e1',
+                  background: '#fff',
+                  color: 'var(--text-main)',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                Baixar QR
+              </button>
+            ) : null}
 
             <a
-              href={`/${slug}/go/${qr.slug}`}
+              href={`/${slug}/${qr.channel === 'bio' ? 'bio' : 'go'}/${qr.slug}`}
               target="_blank"
               style={{
                 padding: '10px 14px',
@@ -201,7 +254,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
                 textDecoration: 'none',
               }}
             >
-              Testar link
+              {qr.channel === 'bio' ? 'Abrir link da bio' : 'Testar link'}
             </a>
 
             <form action={deleteAction}>

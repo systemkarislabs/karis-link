@@ -11,6 +11,7 @@ type QrCodeMetric = {
   name: string;
   slug: string;
   url: string;
+  channel: 'qr' | 'bio';
   visits: number;
   clicks: number;
   conversion: string;
@@ -35,19 +36,20 @@ export default async function QrCodesPage(props: any) {
       orderBy: { createdAt: 'desc' },
     }),
     prisma.pageClickEvent.findMany({
-      where: { tenantId, source: 'qr' },
+      where: { tenantId, source: { in: ['qr', 'bio'] } },
       orderBy: { createdAt: 'desc' },
     }),
     prisma.sellerClickEvent.findMany({
-      where: { source: 'qr', seller: { tenantId } },
+      where: { source: { in: ['qr', 'bio'] }, seller: { tenantId } },
       orderBy: { createdAt: 'desc' },
       include: { seller: true },
     }),
   ]);
 
   const qrMetrics: QrCodeMetric[] = qrcodes.map((qr) => {
-    const visits = pageVisits.filter((event) => event.campaign === qr.slug);
-    const choices = sellerChoices.filter((event) => event.campaign === qr.slug);
+    const channel = qr.url.includes('/bio/') ? 'bio' : 'qr';
+    const visits = pageVisits.filter((event) => event.campaign === qr.slug && event.source === channel);
+    const choices = sellerChoices.filter((event) => event.campaign === qr.slug && event.source === channel);
 
     const sellerCount = choices.reduce<Record<string, { name: string; total: number }>>((acc, event) => {
       if (!acc[event.sellerId]) {
@@ -65,6 +67,7 @@ export default async function QrCodesPage(props: any) {
       name: qr.name,
       slug: qr.slug,
       url: qr.url,
+      channel,
       visits: visits.length,
       clicks: choices.length,
       conversion,
@@ -82,9 +85,13 @@ export default async function QrCodesPage(props: any) {
     };
   });
 
-  const totalScans = qrMetrics.reduce((sum, qr) => sum + qr.visits, 0);
+  const totalAccesses = qrMetrics.reduce((sum, qr) => sum + qr.visits, 0);
   const totalChoices = qrMetrics.reduce((sum, qr) => sum + qr.clicks, 0);
-  const averageConversion = totalScans > 0 ? ((totalChoices / totalScans) * 100).toFixed(1) : '0';
+  const averageConversion = totalAccesses > 0 ? ((totalChoices / totalAccesses) * 100).toFixed(1) : '0';
+  const qrCampaigns = qrMetrics.filter((item) => item.channel === 'qr');
+  const bioCampaigns = qrMetrics.filter((item) => item.channel === 'bio');
+  const qrScans = qrCampaigns.reduce((sum, item) => sum + item.visits, 0);
+  const bioVisits = bioCampaigns.reduce((sum, item) => sum + item.visits, 0);
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
@@ -92,18 +99,19 @@ export default async function QrCodesPage(props: any) {
 
       <main className="main-content">
         <header style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Campanhas de QR Code</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Campanhas rastreaveis</h1>
           <p style={{ color: 'var(--sidebar-text)' }}>
-            Gere QR Codes rastreáveis e acompanhe quantos scans viraram escolha de vendedor.
+            Gere QR Codes e links de bio com contagem separada para medir acessos e escolhas de vendedor por origem.
           </p>
         </header>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20, marginBottom: 28 }}>
           {[
             { label: 'Campanhas ativas', value: qrMetrics.length },
-            { label: 'Scans via QR', value: totalScans },
+            { label: 'Scans via QR', value: qrScans },
+            { label: 'Acessos via bio', value: bioVisits },
             { label: 'Escolhas de vendedor', value: totalChoices },
-            { label: 'Conversão média', value: `${averageConversion}%` },
+            { label: 'Conversao media', value: `${averageConversion}%` },
           ].map((item) => (
             <div
               key={item.label}
@@ -132,48 +140,100 @@ export default async function QrCodesPage(props: any) {
             marginBottom: 32,
           }}
         >
-          <h2 style={{ margin: '0 0 20px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Nova campanha QR</h2>
-          <form action={createQrCode} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            <input type="hidden" name="tenantSlug" value={slug} />
-            <input
-              name="name"
-              placeholder="Nome da campanha (ex: Mesa 01)"
-              required
-              style={{
-                padding: '12px 16px',
-                borderRadius: 10,
-                border: '1px solid var(--border)',
-                background: 'var(--bg-main)',
-                color: 'var(--text-main)',
-              }}
-            />
-            <input
-              name="slug"
-              placeholder="Identificador (ex: mesa-01)"
-              required
-              style={{
-                padding: '12px 16px',
-                borderRadius: 10,
-                border: '1px solid var(--border)',
-                background: 'var(--bg-main)',
-                color: 'var(--text-main)',
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                background: 'var(--sidebar-active-text)',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 10,
-                fontWeight: 700,
-                cursor: 'pointer',
-                padding: '12px 18px',
-              }}
-            >
-              Gerar QR Code rastreável
-            </button>
-          </form>
+          <h2 style={{ margin: '0 0 8px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Nova campanha</h2>
+          <p style={{ margin: '0 0 24px', color: 'var(--sidebar-text)' }}>
+            Crie campanhas para materiais fisicos e tambem um link exclusivo para a bio do Instagram.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18 }}>
+            {[
+              {
+                title: 'QR Code rastreavel',
+                description: 'Ideal para mesas, panfletos, vitrine, fachada e eventos.',
+                channel: 'qr',
+                namePlaceholder: 'Nome da campanha (ex: Mesa 01)',
+                slugPlaceholder: 'Identificador (ex: mesa-01)',
+                buttonLabel: 'Gerar QR Code',
+                accent: '#16a34a',
+                background: 'rgba(34, 197, 94, 0.06)',
+              },
+              {
+                title: 'Link da bio do Instagram',
+                description: 'Cria um link rastreavel para medir os acessos vindos da bio.',
+                channel: 'bio',
+                namePlaceholder: 'Nome da campanha (ex: Bio Instagram)',
+                slugPlaceholder: 'Identificador (ex: bio-instagram)',
+                buttonLabel: 'Gerar link da bio',
+                accent: '#2563eb',
+                background: 'rgba(59, 130, 246, 0.06)',
+              },
+            ].map((campaign) => (
+              <form
+                key={campaign.channel}
+                action={createQrCode}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 14,
+                  padding: 20,
+                  borderRadius: 18,
+                  border: '1px solid var(--border)',
+                  background: campaign.background,
+                }}
+              >
+                <input type="hidden" name="tenantSlug" value={slug} />
+                <input type="hidden" name="channel" value={campaign.channel} />
+
+                <div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-main)', marginBottom: 6 }}>
+                    {campaign.title}
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--sidebar-text)', lineHeight: 1.5 }}>
+                    {campaign.description}
+                  </div>
+                </div>
+
+                <input
+                  name="name"
+                  placeholder={campaign.namePlaceholder}
+                  required
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: 10,
+                    border: '1px solid var(--border)',
+                    background: '#fff',
+                    color: 'var(--text-main)',
+                  }}
+                />
+                <input
+                  name="slug"
+                  placeholder={campaign.slugPlaceholder}
+                  required
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: 10,
+                    border: '1px solid var(--border)',
+                    background: '#fff',
+                    color: 'var(--text-main)',
+                  }}
+                />
+                <button
+                  type="submit"
+                  style={{
+                    background: campaign.accent,
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 10,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    padding: '12px 18px',
+                  }}
+                >
+                  {campaign.buttonLabel}
+                </button>
+              </form>
+            ))}
+          </div>
         </section>
 
         <QrCodesClient qrCodes={qrMetrics} slug={slug} deleteAction={deleteQrCode} />

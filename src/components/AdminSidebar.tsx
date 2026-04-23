@@ -20,7 +20,7 @@ export default function AdminSidebar({
   ] : [
     { label: 'Dashboard', href: `/${slug}/admin`, icon: 'home' },
     { label: 'Vendedores', href: `/${slug}/admin/vendedores`, icon: 'users' },
-    { label: 'Campanhas QR', href: `/${slug}/admin/qrcodes`, icon: 'link' },
+    { label: 'Campanhas', href: `/${slug}/admin/qrcodes`, icon: 'link' },
   ];
 
   const activeStyle = { background: 'var(--sidebar-active-bg)', color: 'var(--sidebar-active-text)', fontWeight: 600 };
