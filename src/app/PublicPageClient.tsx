@@ -21,174 +21,104 @@ export default function PublicPageClient({ tenantName, sellers, slug, source, ca
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#020617',
-      backgroundImage: `
-        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-        radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%)
-      `,
-      color: '#fff',
-      fontFamily: "'Inter', system-ui, sans-serif",
-      padding: '80px 20px',
+      background: '#f8fafc',
+      color: '#1e293b',
+      fontFamily: "'Inter', sans-serif",
+      padding: '60px 20px',
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      overflowX: 'hidden'
+      alignItems: 'center'
     }}>
-      {/* Container Principal com Animação */}
+      
+      {/* Logo Circular */}
       <div style={{
-        width: '100%',
-        maxWidth: '500px',
-        animation: 'fadeIn 1s ease-out'
+        width: '80px',
+        height: '80px',
+        background: '#000',
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff',
+        fontSize: '32px',
+        fontWeight: 800,
+        marginBottom: '24px',
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
       }}>
-        
-        {/* Header de Alto Nível */}
-        <header style={{ textAlign: 'center', marginBottom: 56 }}>
-          <div style={{
-            display: 'inline-block',
-            padding: '8px 16px',
-            borderRadius: '100px',
-            background: 'rgba(56, 189, 248, 0.1)',
-            border: '1px solid rgba(56, 189, 248, 0.2)',
-            color: '#38bdf8',
-            fontSize: '0.75rem',
-            fontWeight: 700,
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            marginBottom: '16px'
-          }}>
-            Plataforma Karis
-          </div>
-          <h1 style={{ 
-            fontSize: '3rem', 
-            fontWeight: 900, 
-            marginBottom: '16px',
-            letterSpacing: '-0.04em',
-            lineHeight: 1
-          }}>
-            {tenantName}
-          </h1>
-          <p style={{ color: '#94a3b8', fontSize: '1.125rem', fontWeight: 400 }}>
-            Escolha um consultor para atendimento imediato.
-          </p>
-        </header>
-
-        {/* Lista de Vendedores Estilo Premium */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {sellers.map((seller, index) => (
-            <a
-              key={seller.id}
-              href={`/api/redirect?sellerId=${seller.id}&source=${source}&campaign=${campaign}`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '20px',
-                background: 'rgba(15, 23, 42, 0.6)',
-                backdropFilter: 'blur(16px)',
-                borderRadius: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.05)',
-                textDecoration: 'none',
-                color: '#fff',
-                transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
-                animation: `slideIn 0.6s ease-out ${index * 0.1}s both`,
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.03) translateY(-4px)';
-                e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.4)';
-                e.currentTarget.style.background = 'rgba(15, 23, 42, 0.8)';
-                e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1) translateY(0)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-                e.currentTarget.style.background = 'rgba(15, 23, 42, 0.6)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              {/* Avatar com Borda Gradiente */}
-              <div style={{ 
-                position: 'relative',
-                padding: '3px',
-                borderRadius: '20px',
-                background: 'linear-gradient(135deg, #38bdf8, #8b5cf6)',
-                marginRight: '20px'
-              }}>
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  borderRadius: '17px',
-                  overflow: 'hidden',
-                  background: '#0f172a'
-                }}>
-                  {seller.image ? (
-                    <img src={seller.image} alt={seller.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>👤</div>
-                  )}
-                </div>
-                {/* Badge de Online */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: '-2px',
-                  right: '-2px',
-                  width: '18px',
-                  height: '18px',
-                  background: '#10b981',
-                  borderRadius: '50%',
-                  border: '3px solid #020617',
-                  boxShadow: '0 0 12px rgba(16, 185, 129, 0.5)'
-                }} />
-              </div>
-
-              {/* Informações */}
-              <div style={{ flex: 1 }}>
-                <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 700, letterSpacing: '-0.01em' }}>
-                  {seller.name}
-                </h3>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                  <span style={{ fontSize: '0.8125rem', color: '#10b981', fontWeight: 600 }}>Online via WhatsApp</span>
-                </div>
-              </div>
-
-              {/* Ícone de Ação */}
-              <div style={{ 
-                width: '40px', 
-                height: '40px', 
-                borderRadius: '12px', 
-                background: 'rgba(255,255,255,0.03)', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                border: '1px solid rgba(255,255,255,0.05)'
-              }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </div>
-            </a>
-          ))}
-        </div>
-
-        {/* Footer Minimalista */}
-        <footer style={{ marginTop: '80px', textAlign: 'center', opacity: 0.3 }}>
-          <p style={{ fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.05em' }}>
-            Powered by <strong>KARIS LINK</strong>
-          </p>
-        </footer>
+        {tenantName.charAt(0).toUpperCase()}
       </div>
 
+      {/* Header Centralizado */}
+      <header style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', marginBottom: '12px' }}>
+          Fale com um Especialista
+        </h1>
+        <p style={{ color: '#64748b', maxWidth: '400px', margin: '0 auto', fontSize: '15px', lineHeight: 1.5 }}>
+          Escolha um consultor disponível e inicie sua conversa agora mesmo.
+        </p>
+      </header>
+
+      {/* Lista de Vendedores Estilo Card Clean */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        width: '100%',
+        maxWidth: '420px'
+      }}>
+        {sellers.map((seller) => (
+          <a
+            key={seller.id}
+            href={`/api/redirect?sellerId=${seller.id}&source=${source}&campaign=${campaign}`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '16px 24px',
+              background: '#fff',
+              borderRadius: '16px',
+              textDecoration: 'none',
+              color: '#1e293b',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+              border: '1px solid #e2e8f0',
+              justifyContent: 'space-between'
+            }}
+            className="seller-card"
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              {/* Foto ou Placeholder */}
+              <div style={{ width: '44px', height: '44px', borderRadius: '50%', overflow: 'hidden', background: '#f1f5f9' }}>
+                {seller.image ? (
+                  <img src={seller.image} alt={seller.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>👤</div>
+                )}
+              </div>
+              <span style={{ fontWeight: 600, fontSize: '16px' }}>{seller.name}</span>
+            </div>
+
+            {/* Ícone WhatsApp */}
+            <div className="whatsapp-icon" style={{ color: '#22c55e' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-10.6 8.38 8.38 0 0 1 3.9.9L22 4z"/>
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {/* Estilos Globais para o Hover (Mudança de Cor) */}
       <style jsx global>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+        .seller-card:hover {
+          background: #020617 !important;
+          color: #fff !important;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
         }
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateX(-10px); }
-          to { opacity: 1; transform: translateX(0); }
+        .seller-card:hover .whatsapp-icon {
+          color: #fff !important;
         }
-        body { margin: 0; background: #020617; }
-        * { box-sizing: border-box; }
+        body { margin: 0; background: #f8fafc; }
       `}</style>
     </div>
   );
