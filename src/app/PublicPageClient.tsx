@@ -1,73 +1,167 @@
-"use client";
+'use client';
+
 import React from 'react';
-import './public.css';
-import { Icon } from '@/components/Icon';
 
-export const PublicPageClient = ({ sellers, sourceProp = 'direct', campaignProp = '', tenantSlug = '', tenantName = 'Fale com um Especialista' }: { sellers: any[], sourceProp?: string, campaignProp?: string, tenantSlug?: string, tenantName?: string }) => {
+interface Seller {
+  id: string;
+  name: string;
+  phone: string;
+  image?: string | null;
+}
+
+interface PublicPageClientProps {
+  tenantName: string;
+  sellers: Seller[];
+  slug: string;
+  source: string;
+  campaign: string;
+}
+
+export default function PublicPageClient({ tenantName, sellers, slug, source, campaign }: PublicPageClientProps) {
   return (
-    <div className="public-body" style={{ position: 'relative' }}>
-      {/* Botão Admin */}
-      <a href={`/${tenantSlug}/admin`} title="Acessar Painel" style={{ position: 'absolute', top: 16, right: 16, width: 40, height: 40, background: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e5e7eb', boxShadow: 'var(--shadow-soft)', color: '#9ca3af', textDecoration: 'none', zIndex: 10 }}>
-        <Icon name="lock" size={16} />
-      </a>
-      
-      <div className="links-container">
-        
-        {/* Header/Perfil */}
-        <div className="profile-section">
-          <div className="profile-logo">{tenantName.charAt(0).toUpperCase()}</div>
-          <h1>{tenantName}</h1>
-          <p>Escolha um consultor disponível e inicie sua conversa agora mesmo.</p>
-        </div>
+    <div style={{
+      minHeight: '100vh',
+      background: 'radial-gradient(circle at top left, #1e293b, #0f172a)',
+      color: '#fff',
+      fontFamily: "'Inter', sans-serif",
+      padding: '60px 20px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}>
+      {/* Header Premium */}
+      <header style={{ textAlign: 'center', marginBottom: 48, maxWidth: 600 }}>
+        <h1 style={{ 
+          fontSize: '2.5rem', 
+          fontWeight: 900, 
+          marginBottom: 12, 
+          background: 'linear-gradient(to right, #60a5fa, #a855f7)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          letterSpacing: '-0.02em'
+        }}>
+          {tenantName}
+        </h1>
+        <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: 1.6 }}>
+          Escolha um consultor abaixo para iniciar seu atendimento personalizado via WhatsApp.
+        </p>
+      </header>
 
-        {/* Os Links (Buttons) */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {sellers.map((seller, idx) => {
-            // Pode colocar o primeiro como "featured" ou algo assim se quiser, ou apenas renderizar
-            const isFeatured = idx === 0 && sellers.length > 1; // Exemplo de destaque para o primeiro da fila
-            
-            return (
-              <a 
-                key={seller.id} 
-                href={`/api/redirect?sellerId=${seller.id}&tenantSlug=${tenantSlug}&source=${sourceProp}${campaignProp ? `&campaign=${campaignProp}` : ''}`} 
-                target="_blank" 
-                className={`link-item ${isFeatured ? 'featured' : ''}`}
-              >
-                {/* Avatar (opcional no novo design, mas fica bom manter a foto ou ícone) */}
-                {seller.photoUrl ? (
-                  <img 
-                    src={seller.photoUrl} 
-                    alt={seller.name} 
-                    style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} 
-                  />
-                ) : (
-                  <div style={{ 
-                    width: 36, height: 36, borderRadius: '50%', 
-                    background: isFeatured ? '#ffffff33' : '#f3f4f6', 
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: isFeatured ? '#fff' : '#6b7280', fontWeight: 'bold'
-                  }}>
-                    {seller.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                
-                <span style={{ flex: 1, textAlign: 'left', marginLeft: 8 }}>
-                  {seller.name}
-                </span>
+      {/* Grid de Vendedores */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        gap: '20px',
+        width: '100%',
+        maxWidth: '480px'
+      }}>
+        {sellers.map((seller, index) => (
+          <a
+            key={seller.id}
+            href={`/api/redirect?sellerId=${seller.id}&source=${source}&campaign=${campaign}`}
+            style={{
+              textDecoration: 'none',
+              background: 'rgba(30, 41, 59, 0.4)',
+              backdropFilter: 'blur(12px)',
+              borderRadius: '24px',
+              padding: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '20px',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+              e.currentTarget.style.background = 'rgba(30, 41, 59, 0.6)';
+              e.currentTarget.style.borderColor = 'rgba(96, 165, 250, 0.3)';
+              e.currentTarget.style.boxShadow = '0 20px 40px -15px rgba(0, 0, 0, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              e.currentTarget.style.background = 'rgba(30, 41, 59, 0.4)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            {/* Avatar */}
+            <div style={{ position: 'relative' }}>
+              {seller.image ? (
+                <img 
+                  src={seller.image} 
+                  alt={seller.name} 
+                  style={{ width: '64px', height: '64px', borderRadius: '20px', objectFit: 'cover' }} 
+                />
+              ) : (
+                <div style={{ 
+                  width: '64px', 
+                  height: '64px', 
+                  borderRadius: '20px', 
+                  background: 'linear-gradient(135deg, #334155, #1e293b)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '24px',
+                  border: '1px solid rgba(255,255,255,0.1)'
+                }}>
+                  👤
+                </div>
+              )}
+              <div style={{
+                position: 'absolute',
+                bottom: '-4px',
+                right: '-4px',
+                width: '16px',
+                height: '16px',
+                background: '#10b981',
+                borderRadius: '50%',
+                border: '3px solid #0f172a',
+                boxShadow: '0 0 10px #10b981'
+              }} />
+            </div>
 
-                <Icon name="whatsapp" size={18} color={isFeatured ? "#fff" : "var(--accent-color)"} />
-              </a>
-            );
-          })}
-        </div>
+            {/* Info */}
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 800, fontSize: '1.2rem', color: '#f8fafc', marginBottom: '4px' }}>
+                {seller.name}
+              </div>
+              <div style={{ 
+                fontSize: '0.85rem', 
+                color: '#10b981', 
+                fontWeight: 600, 
+                display: 'flex', 
+                alignItems: 'center',
+                gap: '6px' 
+              }}>
+                <span style={{ width: '6px', height: '6px', background: '#10b981', borderRadius: '50%' }} />
+                Disponível agora
+              </div>
+            </div>
 
-        {/* Rodapé */}
-        <div className="footer-brand" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Com tecnologia</span>
-          <img src="/karis-labs-logo.png" alt="Karis Labs" style={{ height: '60px', objectFit: 'contain' }} />
-        </div>
-
+            {/* Seta */}
+            <div style={{ opacity: 0.4 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </a>
+        ))}
       </div>
+
+      {/* Footer Branding */}
+      <footer style={{ marginTop: 'auto', paddingTop: '60px', opacity: 0.5, fontSize: '0.8rem', textAlign: 'center' }}>
+        <p>Desenvolvido por <strong>Karis Link</strong></p>
+      </footer>
+
+      {/* Estilos Globais de Animação */}
+      <style jsx global>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        body { margin: 0; }
+      `}</style>
     </div>
   );
-};
+}
