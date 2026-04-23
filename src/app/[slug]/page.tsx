@@ -33,6 +33,30 @@ function WhatsAppIcon({ color }: { color: string }) {
   );
 }
 
+function LockIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M7 10V8a5 5 0 0 1 10 0v2"
+        stroke="#64748b"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <rect
+        x="5"
+        y="10"
+        width="14"
+        height="10"
+        rx="3"
+        stroke="#64748b"
+        strokeWidth="1.8"
+      />
+      <circle cx="12" cy="15" r="1.4" fill="#64748b" />
+    </svg>
+  );
+}
+
 export default async function PublicTenantPage({ params, searchParams }: PublicTenantPageProps) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
@@ -68,7 +92,7 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
           maxWidth: '460px',
           margin: '0 auto 10px',
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'flex-end',
         }}
       >
         <a
@@ -77,7 +101,7 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            padding: '6px 10px',
+            padding: '7px 11px',
             borderRadius: '999px',
             textDecoration: 'none',
             background: 'rgba(255,255,255,0.55)',
@@ -101,7 +125,7 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
               fontSize: '10px',
             }}
           >
-            ⚙
+            <LockIcon />
           </span>
           Acesso da empresa
         </a>
@@ -163,9 +187,7 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
         </header>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
-          {sellers.map((seller, index) => {
-            const featured = index === 0;
-
+          {sellers.map((seller) => {
             return (
               <a
                 key={seller.id}
@@ -176,14 +198,12 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
                   justifyContent: 'space-between',
                   gap: '18px',
                   padding: '14px 18px',
-                  background: featured ? '#050816' : '#ffffff',
-                  color: featured ? '#ffffff' : '#172033',
+                  background: '#ffffff',
+                  color: '#172033',
                   borderRadius: '14px',
                   textDecoration: 'none',
-                  border: featured ? '1px solid #050816' : '1px solid #dbe3ee',
-                  boxShadow: featured
-                    ? '0 12px 26px rgba(5, 8, 22, 0.22)'
-                    : '0 10px 24px rgba(148, 163, 184, 0.14)',
+                  border: '1px solid #dbe3ee',
+                  boxShadow: '0 10px 24px rgba(148, 163, 184, 0.14)',
                   transition: 'transform 0.18s ease, box-shadow 0.18s ease',
                 }}
               >
@@ -195,13 +215,11 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
                       borderRadius: '999px',
                       overflow: 'hidden',
                       flexShrink: 0,
-                      background: featured
-                        ? 'linear-gradient(135deg, #334155 0%, #94a3b8 100%)'
-                        : 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
+                      background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: featured ? '#ffffff' : '#334155',
+                      color: '#334155',
                       fontWeight: 700,
                       fontSize: '12px',
                     }}
@@ -238,11 +256,11 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: featured ? 'rgba(255,255,255,0.08)' : 'rgba(34,197,94,0.08)',
+                    background: 'rgba(34,197,94,0.08)',
                     flexShrink: 0,
                   }}
                 >
-                  <WhatsAppIcon color={featured ? '#ffffff' : '#22c55e'} />
+                  <WhatsAppIcon color="#22c55e" />
                 </div>
               </a>
             );
