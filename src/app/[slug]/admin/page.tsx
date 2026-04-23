@@ -5,8 +5,8 @@ import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-export default async function TenantAdminPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function TenantAdminPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const { tenantId } = await requireTenantAuth(slug);
 
   const [tenant, sellers, totalVisits, totalClicks] = await Promise.all([

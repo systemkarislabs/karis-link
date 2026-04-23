@@ -7,12 +7,13 @@ export const dynamic = 'force-dynamic';
 export default async function TenantPage({
   params, searchParams,
 }: {
-  params: { slug: string };
-  searchParams: { source?: string; campaign?: string };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ source?: string; campaign?: string }>;
 }) {
-  const { slug } = params;
-  const source   = searchParams?.source   || 'direct';
-  const campaign = searchParams?.campaign || null;
+  const { slug } = await params;
+  const sParams = await searchParams;
+  const source   = sParams?.source   || 'direct';
+  const campaign = sParams?.campaign || null;
 
   const tenant = await prisma.tenant.findUnique({
     where: { slug, active: true },

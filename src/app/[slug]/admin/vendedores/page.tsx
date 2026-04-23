@@ -5,8 +5,8 @@ import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-export default async function TenantVendedoresPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function TenantVendedoresPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const { tenantId } = await requireTenantAuth(slug);
   const sellers = await prisma.seller.findMany({ where: { tenantId }, orderBy: { name: 'asc' } });
 
