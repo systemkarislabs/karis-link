@@ -66,8 +66,18 @@ export default async function SuperAdminPage() {
         </main>
       </div>
     );
-  } catch (e) {
-    if (e instanceof Error && e.message.includes('NEXT_REDIRECT')) throw e;
-    return <div style={{ padding: 40 }}>Erro no banco de dados.</div>;
+  } catch (e: any) {
+    // Se for um redirect do Next.js, deixa ele acontecer
+    if (e.message?.includes('NEXT_REDIRECT') || e.digest?.includes('NEXT_REDIRECT')) throw e;
+    
+    return (
+      <div style={{ padding: 40, fontFamily: 'sans-serif' }}>
+        <h2 style={{ color: '#e11d48' }}>Erro Técnico Detectado</h2>
+        <p>Por favor, envie este código para o suporte:</p>
+        <pre style={{ background: '#f1f5f9', padding: 20, borderRadius: 8, overflow: 'auto' }}>
+          {e.message || 'Erro desconhecido'}
+        </pre>
+      </div>
+    );
   }
 }
