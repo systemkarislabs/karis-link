@@ -105,7 +105,7 @@ export default async function QrCodesPage(props: any) {
 
       <main className="main-content">
         <header style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Campanhas rastreaveis</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Campanhas Rastreáveis</h1>
           <p style={{ color: 'var(--sidebar-text)' }}>
             Gere QR Codes e links de bio com contagem separada para medir acessos e escolhas de vendedor por origem.
           </p>
@@ -117,7 +117,7 @@ export default async function QrCodesPage(props: any) {
             { label: 'Scans via QR', value: qrScans },
             { label: 'Acessos via bio', value: bioVisits },
             { label: 'Escolhas de vendedor', value: totalChoices },
-            { label: 'Conversao media', value: `${averageConversion}%` },
+            { label: 'Conversão média', value: `${averageConversion}%` },
           ].map((item) => (
             <div
               key={item.label}
@@ -148,7 +148,7 @@ export default async function QrCodesPage(props: any) {
         >
           <h2 style={{ margin: '0 0 8px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Nova campanha</h2>
           <p style={{ margin: '0 0 24px', color: 'var(--sidebar-text)' }}>
-            Crie campanhas para materiais fisicos e tambem um link exclusivo para a bio do Instagram.
+            Crie campanhas para materiais físicos e também um link exclusivo para a bio do Instagram.
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18 }}>

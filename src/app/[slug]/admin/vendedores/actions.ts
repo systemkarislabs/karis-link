@@ -56,7 +56,7 @@ export async function updateSeller(formData: FormData) {
   const { tenantId } = await requireTenantAuth(slug);
 
   if (!id || !name || !phone) {
-    throw new Error('Nome e telefone do vendedor sao obrigatorios.');
+    throw new Error('Nome e telefone do vendedor são obrigatórios.');
   }
 
   const seller = await prisma.seller.findFirst({
@@ -65,7 +65,7 @@ export async function updateSeller(formData: FormData) {
   });
 
   if (!seller) {
-    throw new Error('Vendedor nao encontrado.');
+    throw new Error('Vendedor não encontrado.');
   }
 
   let imageValue = seller.image;

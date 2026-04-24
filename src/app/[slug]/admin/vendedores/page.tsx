@@ -105,7 +105,7 @@ export default async function VendedoresPage(props: any) {
 
       <main className="main-content">
         <header style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Gestao de Vendedores</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Gestão de Vendedores</h1>
           <p style={{ color: 'var(--sidebar-text)' }}>
             Cadastre sua equipe e acompanhe quantos leads cada vendedor recebeu por QR Code, bio e acesso direto.
           </p>
@@ -163,7 +163,7 @@ export default async function VendedoresPage(props: any) {
             />
             <input
               name="phone"
-              placeholder="WhatsApp (ex: 5511999999999)"
+              placeholder="WhatsApp (ex: 55119 9999-9999)"
               required
               style={{
                 padding: '12px 16px',
@@ -235,7 +235,7 @@ export default async function VendedoresPage(props: any) {
                   <div style={{ minWidth: 0 }}>
                     <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: 18 }}>{seller.name}</div>
                     <div style={{ fontSize: 13, color: 'var(--sidebar-text)' }}>{seller.phone}</div>
-                    <div style={{ marginTop: 6, fontSize: 12, color: '#2563eb', fontWeight: 700 }}>{seller.recentSourceLabel}</div>
+                    <div style={{ marginTop: 6, fontSize: 12, color: '#2563eb', fontWeight: 600 }}>{seller.recentSourceLabel}</div>
                   </div>
                 </div>
 

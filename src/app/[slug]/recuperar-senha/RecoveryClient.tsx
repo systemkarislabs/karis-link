@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import React, { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { handleTenantPasswordRecovery } from '../admin/auth-actions';
 
 type State = { error?: string } | null;
@@ -31,7 +31,10 @@ function SubmitButton() {
 }
 
 export default function RecoveryClient({ slug }: { slug: string }) {
-  const [state, formAction] = useFormState<State, FormData>(handleTenantPasswordRecovery as never, null);
+  const [state, formAction] = useActionState<State, FormData>(
+    handleTenantPasswordRecovery,
+    null,
+  );
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '12px 14px',
@@ -41,17 +44,42 @@ export default function RecoveryClient({ slug }: { slug: string }) {
     outline: 'none',
     background: '#f8fafc',
     color: '#172033',
-    boxSizing: 'border-box',
   };
 
   return (
     <form action={formAction} style={{ display: 'grid', gap: 12 }}>
       <input type="hidden" name="slug" value={slug} />
-      <input name="recoveryEmail" type="email" placeholder="Email de recuperacao" required style={inputStyle} />
-      <input name="newPassword" type="password" placeholder="Nova senha" required style={inputStyle} />
-      <input name="confirmPassword" type="password" placeholder="Confirmar nova senha" required style={inputStyle} />
+      <input
+        name="recoveryEmail"
+        type="email"
+        placeholder="E-mail de recuperação"
+        required
+        style={inputStyle}
+      />
+      <input
+        name="newPassword"
+        type="password"
+        placeholder="Nova senha"
+        required
+        style={inputStyle}
+      />
+      <input
+        name="confirmPassword"
+        type="password"
+        placeholder="Confirmar nova senha"
+        required
+        style={inputStyle}
+      />
       {state?.error ? (
-        <div style={{ background: '#fff1f2', color: '#be123c', padding: '10px 12px', borderRadius: 10, fontSize: 13 }}>
+        <div
+          style={{
+            background: '#fff1f2',
+            color: '#be123c',
+            padding: '10px 12px',
+            borderRadius: 10,
+            fontSize: 13,
+          }}
+        >
           {state.error}
         </div>
       ) : null}

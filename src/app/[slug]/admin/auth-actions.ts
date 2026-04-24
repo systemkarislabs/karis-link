@@ -28,9 +28,10 @@ export async function handleTenantLogin(_: unknown, formData: FormData) {
   const passwordMatches = tenant ? await verifyPassword(pass, tenant.adminPass) : false;
 
   if (!tenant || tenant.adminUser !== user || !passwordMatches) {
-    return { error: 'Usuário ou senha inválidos' };
+    return { error: 'Usuário ou senha inválidos.' };
   }
 
+  // Migração: se senha ainda não está em hash, atualiza automaticamente
   if (!isPasswordHash(tenant.adminPass)) {
     await prisma.tenant.update({
       where: { id: tenant.id },
@@ -62,11 +63,11 @@ export async function handleTenantPasswordRecovery(_: unknown, formData: FormDat
   }
 
   if (newPassword !== confirmPassword) {
-    return { error: 'A confirmacao da nova senha nao confere.' };
+    return { error: 'A confirmação da nova senha não confere.' };
   }
 
   try {
-    const tenant = await (prisma.tenant as any).findUnique({
+    const tenant = await prisma.tenant.findUnique({
       where: { slug },
       select: {
         id: true,
@@ -76,11 +77,11 @@ export async function handleTenantPasswordRecovery(_: unknown, formData: FormDat
     });
 
     if (!tenant || !tenant.active) {
-      return { error: 'Empresa nao encontrada ou inativa.' };
+      return { error: 'Empresa não encontrada ou inativa.' };
     }
 
     if (!tenant.recoveryEmail || tenant.recoveryEmail.toLowerCase() !== recoveryEmail) {
-      return { error: 'O email informado nao confere com o cadastro da empresa.' };
+      return { error: 'O e-mail informado não confere com o cadastro da empresa.' };
     }
 
     await prisma.tenant.update({
@@ -90,10 +91,13 @@ export async function handleTenantPasswordRecovery(_: unknown, formData: FormDat
 
     redirect(`/${slug}/login`);
   } catch (error) {
-    const message = typeof error === 'object' && error && 'message' in error ? String((error as { message?: string }).message) : '';
+    const message =
+      typeof error === 'object' && error && 'message' in error
+        ? String((error as { message?: string }).message)
+        : '';
 
     if (message.toLowerCase().includes('recoveryemail')) {
-      return { error: 'A recuperacao de senha ainda nao foi habilitada neste ambiente.' };
+      return { error: 'A recuperação de senha ainda não foi habilitada neste ambiente.' };
     }
 
     throw error;

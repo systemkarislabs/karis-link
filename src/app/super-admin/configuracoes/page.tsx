@@ -16,18 +16,18 @@ export default async function SettingsPage() {
 
       <main className="main-content">
         <header style={{ marginBottom: 40 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Configuracoes do Painel</h1>
-          <p style={{ color: 'var(--sidebar-text)', marginTop: 4 }}>Gerencie acesso e personalize sua experiencia de uso.</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Configurações do Painel</h1>
+          <p style={{ color: 'var(--sidebar-text)', marginTop: 4 }}>Gerencie acesso e personalize sua experiência de uso.</p>
         </header>
 
         <div style={{ display: 'grid', gap: 24, maxWidth: 720 }}>
           <div style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 32, border: '1px solid var(--border)' }}>
-            <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Seguranca do Super Admin</h3>
+            <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Segurança do Super Admin</h3>
 
             <form action={updateSuperAdminCredentials} style={{ display: 'grid', gap: 16 }}>
               <div>
                 <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
-                  Usuario
+                  Usuário
                 </label>
                 <input
                   name="username"

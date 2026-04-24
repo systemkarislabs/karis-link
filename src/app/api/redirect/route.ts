@@ -26,7 +26,8 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Redireciona para o WhatsApp
-    const waUrl = `https://wa.me/${seller.phone}?text=Olá ${seller.name}, vim pelo link da plataforma!`;
+    const message = encodeURIComponent(`Olá ${seller.name}, vim pelo link da plataforma!`);
+    const waUrl = `https://wa.me/${seller.phone}?text=${message}`;
     return NextResponse.redirect(waUrl);
   } catch (error) {
     console.error('Redirect error:', error);

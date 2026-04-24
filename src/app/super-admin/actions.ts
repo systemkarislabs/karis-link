@@ -20,7 +20,7 @@ export async function handleSuperLogin(_: unknown, formData: FormData) {
   if (storedAccount) {
     const passwordMatches = await verifyPassword(pass, storedAccount.passwordHash);
     if (user !== storedAccount.username || !passwordMatches) {
-      return { error: 'Credenciais invalidas' };
+      return { error: 'Credenciais inválidas.' };
     }
 
     await setSuperSession();
@@ -32,12 +32,12 @@ export async function handleSuperLogin(_: unknown, formData: FormData) {
   const configuredHash = process.env.SUPER_ADMIN_PASS_HASH;
 
   if (!configuredUser || (!configuredPassword && !configuredHash)) {
-    return { error: 'Super-admin nao configurado no ambiente.' };
+    return { error: 'Super-admin não configurado no ambiente.' };
   }
 
   const passwordMatches = await verifyPassword(pass, configuredHash || configuredPassword);
   if (user !== configuredUser || !passwordMatches) {
-    return { error: 'Credenciais invalidas' };
+    return { error: 'Credenciais inválidas.' };
   }
 
   await setSuperSession();
@@ -59,35 +59,18 @@ export async function createTenant(formData: FormData) {
   const recoveryEmail = String(formData.get('recoveryEmail') || '').trim().toLowerCase();
 
   if (!name || !slug || !adminUser || !adminPass || !recoveryEmail) {
-    throw new Error('Todos os campos do tenant sao obrigatorios.');
+    throw new Error('Todos os campos da empresa são obrigatórios.');
   }
 
-  try {
-    await (prisma.tenant as any).create({
-      data: {
-        name,
-        slug,
-        adminUser,
-        adminPass: await hashPassword(adminPass),
-        recoveryEmail,
-      },
-    });
-  } catch (error) {
-    const message = typeof error === 'object' && error && 'message' in error ? String((error as { message?: string }).message) : '';
-
-    if (message.toLowerCase().includes('recoveryemail')) {
-      await prisma.tenant.create({
-        data: {
-          name,
-          slug,
-          adminUser,
-          adminPass: await hashPassword(adminPass),
-        },
-      });
-    } else {
-      throw error;
-    }
-  }
+  await prisma.tenant.create({
+    data: {
+      name,
+      slug,
+      adminUser,
+      adminPass: await hashPassword(adminPass),
+      recoveryEmail,
+    },
+  });
 
   redirect('/super-admin');
 }
@@ -106,7 +89,7 @@ export async function updateSuperAdminCredentials(formData: FormData) {
   const confirmPassword = String(formData.get('confirmPassword') || '');
 
   if (!username || !password || !confirmPassword) {
-    throw new Error('Preencha usuario, nova senha e confirmacao.');
+    throw new Error('Preencha usuário, nova senha e confirmação.');
   }
 
   if (password.length < 6) {
@@ -114,7 +97,7 @@ export async function updateSuperAdminCredentials(formData: FormData) {
   }
 
   if (password !== confirmPassword) {
-    throw new Error('A confirmacao da senha nao confere.');
+    throw new Error('A confirmação da senha não confere.');
   }
 
   const passwordHash = await hashPassword(password);
@@ -144,7 +127,7 @@ export async function deleteTenant(formData: FormData) {
 
   const id = String(formData.get('id') || '').trim();
   if (!id) {
-    throw new Error('Empresa invalida para exclusao.');
+    throw new Error('Empresa inválida para exclusão.');
   }
 
   const tenant = await prisma.tenant.findUnique({
@@ -156,7 +139,7 @@ export async function deleteTenant(formData: FormData) {
   });
 
   if (!tenant) {
-    throw new Error('Empresa nao encontrada.');
+    throw new Error('Empresa não encontrada.');
   }
 
   const sellerIds = tenant.sellers.map((seller) => seller.id);

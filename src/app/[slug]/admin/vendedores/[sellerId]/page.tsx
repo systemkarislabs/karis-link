@@ -39,9 +39,9 @@ export default async function EditSellerPage(props: any) {
               maxWidth: 560,
             }}
           >
-            <h1 style={{ margin: '0 0 12px', fontSize: 24, color: 'var(--text-main)' }}>Vendedor nao encontrado</h1>
+            <h1 style={{ margin: '0 0 12px', fontSize: 24, color: 'var(--text-main)' }}>Vendedor não encontrado</h1>
             <p style={{ margin: '0 0 20px', color: 'var(--sidebar-text)' }}>
-              Esse cadastro nao existe mais ou nao pertence a esta empresa.
+              Esse cadastro não existe mais ou não pertence a esta empresa.
             </p>
             <Link
               href={`/${slug}/admin/vendedores`}
@@ -85,7 +85,7 @@ export default async function EditSellerPage(props: any) {
           </Link>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Editar vendedor</h1>
           <p style={{ margin: '8px 0 0', color: 'var(--sidebar-text)' }}>
-            Atualize o nome, o WhatsApp e a foto para manter a pagina publica sempre correta.
+            Atualize o nome, o WhatsApp e a foto para manter a página pública sempre correta.
           </p>
         </header>
 
@@ -152,7 +152,7 @@ export default async function EditSellerPage(props: any) {
                   </label>
                 </div>
               ) : (
-                <div style={{ fontSize: 14, color: 'var(--sidebar-text)' }}>Esse vendedor ainda nao possui foto cadastrada.</div>
+                <div style={{ fontSize: 14, color: 'var(--sidebar-text)' }}>Esse vendedor ainda não possui foto cadastrada.</div>
               )}
 
               <input type="file" name="image" accept="image/*" style={{ fontSize: 13, color: 'var(--sidebar-text)' }} />
@@ -171,7 +171,7 @@ export default async function EditSellerPage(props: any) {
                   cursor: 'pointer',
                 }}
               >
-                Salvar alteracoes
+                Salvar alterações
               </button>
               <Link
                 href={`/${slug}/admin/vendedores`}

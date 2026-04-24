@@ -30,7 +30,7 @@ export default async function SuperAdminPage() {
             <header style={{ marginBottom: 40 }}>
               <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: 176, marginBottom: 18, objectFit: 'contain' }} />
               <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>Dashboard Gerencial</h1>
-              <p style={{ color: 'var(--sidebar-text)', marginTop: 6 }}>Visao geral de todas as empresas integradas.</p>
+              <p style={{ color: 'var(--sidebar-text)', marginTop: 6 }}>Visão geral de todas as empresas integradas.</p>
             </header>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.35fr) minmax(360px, 0.95fr)', gap: 32 }}>
@@ -134,7 +134,7 @@ export default async function SuperAdminPage() {
                 <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: 164, marginBottom: 22, objectFit: 'contain' }} />
                 <h3 style={{ margin: '0 0 10px', fontSize: 20, fontWeight: 700, color: 'var(--text-main)' }}>Cadastrar empresa</h3>
                 <p style={{ margin: '0 0 24px', color: 'var(--sidebar-text)', fontSize: 14 }}>
-                  Cadastre uma nova operacao no Karis Link e defina as credenciais iniciais da empresa.
+                  Cadastre uma nova operação no Karis Link e defina as credenciais iniciais da empresa.
                 </p>
 
                 <form action={createTenant} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -170,7 +170,7 @@ export default async function SuperAdminPage() {
                   />
                   <input
                     name="adminUser"
-                    placeholder="Usuario administrador"
+                    placeholder="Usuário administrador"
                     required
                     style={{
                       width: '100%',
@@ -202,7 +202,7 @@ export default async function SuperAdminPage() {
                   <input
                     name="recoveryEmail"
                     type="email"
-                    placeholder="Email para recuperacao de senha"
+                    placeholder="E-mail para recuperação de senha"
                     required
                     style={{
                       width: '100%',
@@ -241,8 +241,8 @@ export default async function SuperAdminPage() {
 
     return (
       <div style={{ padding: 40, fontFamily: 'sans-serif' }}>
-        <h2 style={{ color: '#e11d48' }}>Erro Tecnico Detectado</h2>
-        <p>Por favor, envie este codigo para o suporte:</p>
+        <h2 style={{ color: '#e11d48' }}>Erro Técnico Detectado</h2>
+        <p>Por favor, envie este código para o suporte:</p>
         <pre style={{ background: '#f1f5f9', padding: 20, borderRadius: 8, overflow: 'auto' }}>
           {e.message || 'Erro desconhecido'}
         </pre>

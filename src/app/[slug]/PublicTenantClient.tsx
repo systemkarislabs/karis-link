@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import React, { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { handleTenantLogin } from './admin/auth-actions';
 import { Icon } from '@/components/Icon';
 
@@ -58,9 +58,18 @@ function SubmitButton() {
   );
 }
 
-export default function PublicTenantClient({ slug, tenantName, sellers, source, campaign, isAdminLogged, recoveryEnabled = true }: Props) {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [state, formAction] = useFormState<LoginState, FormData>(handleTenantLogin as never, null);
+export default function PublicTenantClient({
+  slug,
+  tenantName,
+  sellers,
+  source,
+  campaign,
+  isAdminLogged,
+  recoveryEnabled = true,
+}: Props) {
+  const [isLoginOpen, setIsLoginOpen] = React.useState(false);
+  const [state, formAction] = useActionState<LoginState, FormData>(handleTenantLogin, null);
+
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '12px 14px',
@@ -83,8 +92,9 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
         padding: '36px 20px 72px',
       }}
     >
-      <title>{`${tenantName} - Especialistas`}</title>
+      <title>{`${tenantName} — Especialistas`}</title>
 
+      {/* Botão de acesso admin */}
       <div
         style={{
           width: '100%',
@@ -167,6 +177,7 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
         )}
       </div>
 
+      {/* Conteúdo principal */}
       <div
         style={{
           width: '100%',
@@ -192,7 +203,11 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
             padding: 18,
           }}
         >
-          <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: '100%', maxWidth: 176, objectFit: 'contain' }} />
+          <img
+            src="/karis-link-logo.png"
+            alt="Karis Link"
+            style={{ width: '100%', maxWidth: 176, objectFit: 'contain' }}
+          />
         </div>
 
         <header style={{ textAlign: 'center', marginBottom: 30 }}>
@@ -216,10 +231,11 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
               lineHeight: 1.35,
             }}
           >
-            Conecte seus leads ao especialista certo com a experiencia Karis Link.
+            Conecte seus leads ao especialista certo com a experiência Karis Link.
           </p>
         </header>
 
+        {/* Lista de vendedores */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
           {sellers.map((seller) => (
             <a
@@ -243,8 +259,8 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
                 <div
                   style={{
-                    width: 36,
-                    height: 36,
+                    width: 44,
+                    height: 44,
                     borderRadius: '999px',
                     overflow: 'hidden',
                     flexShrink: 0,
@@ -254,7 +270,7 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                     justifyContent: 'center',
                     color: '#334155',
                     fontWeight: 700,
-                    fontSize: 12,
+                    fontSize: 13,
                   }}
                 >
                   {seller.image ? (
@@ -283,8 +299,8 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
 
               <div
                 style={{
-                  width: 30,
-                  height: 30,
+                  width: 34,
+                  height: 34,
                   borderRadius: '999px',
                   display: 'flex',
                   alignItems: 'center',
@@ -297,8 +313,25 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
               </div>
             </a>
           ))}
+
+          {sellers.length === 0 && (
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '32px 20px',
+                color: 'var(--text-soft)',
+                fontSize: 14,
+                background: 'var(--card-bg)',
+                borderRadius: 14,
+                border: '1px solid var(--border)',
+              }}
+            >
+              Nenhum especialista disponível no momento.
+            </div>
+          )}
         </div>
 
+        {/* Rodapé */}
         <div
           style={{
             marginTop: 26,
@@ -313,10 +346,15 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
           }}
         >
           <span>Powered by</span>
-          <img src="/karis-labs-logo.png" alt="Karis Labs" style={{ height: 24, objectFit: 'contain' }} />
+          <img
+            src="/karis-labs-logo.png"
+            alt="Karis Labs"
+            style={{ height: 24, objectFit: 'contain' }}
+          />
         </div>
       </div>
 
+      {/* Modal de login */}
       {isLoginOpen ? (
         <div
           style={{
@@ -344,13 +382,36 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
             }}
             onClick={(event) => event.stopPropagation()}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 18 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                gap: 12,
+                marginBottom: 18,
+              }}
+            >
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                  <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: 34, objectFit: 'contain' }} />
-                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-main)' }}>Entrar no painel</div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                  <img
+                    src="/karis-link-logo.png"
+                    alt="Karis Link"
+                    style={{ width: 34, objectFit: 'contain' }}
+                  />
+                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-main)' }}>
+                    Entrar no painel
+                  </div>
                 </div>
-                <div style={{ fontSize: 13, color: 'var(--text-soft)' }}>Acesse a administracao da empresa sem sair da pagina publica.</div>
+                <div style={{ fontSize: 13, color: 'var(--text-soft)' }}>
+                  Acesse a administração da empresa sem sair da página pública.
+                </div>
               </div>
               <button
                 type="button"
@@ -367,6 +428,7 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                   cursor: 'pointer',
                   flexShrink: 0,
                 }}
+                aria-label="Fechar"
               >
                 <Icon name="x" size={16} color="var(--text-soft)" />
               </button>
@@ -381,6 +443,7 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                   borderRadius: 10,
                   fontSize: 13,
                   marginBottom: 14,
+                  border: '1px solid #fecdd3',
                 }}
               >
                 {state.error}
@@ -389,8 +452,14 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
 
             <form action={formAction} style={{ display: 'grid', gap: 12 }}>
               <input type="hidden" name="slug" value={slug} />
-              <input name="username" placeholder="Usuario" required style={inputStyle} />
-              <input name="password" type="password" placeholder="Senha" required style={inputStyle} />
+              <input name="username" placeholder="Usuário" required style={inputStyle} />
+              <input
+                name="password"
+                type="password"
+                placeholder="Senha"
+                required
+                style={inputStyle}
+              />
               <SubmitButton />
             </form>
 
@@ -399,7 +468,7 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                 <a
                   href={`/${slug}/recuperar-senha`}
                   style={{
-                    color: 'var(--sidebar-active-text)',
+                    color: 'var(--brand-accent)',
                     fontSize: 13,
                     fontWeight: 700,
                     textDecoration: 'none',

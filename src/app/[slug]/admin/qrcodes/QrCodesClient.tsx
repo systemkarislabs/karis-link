@@ -56,7 +56,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
           color: 'var(--sidebar-text)',
         }}
       >
-        Nenhuma campanha criada ainda. Gere seu primeiro QR Code ou link da bio para comecar a rastrear acessos e escolhas de vendedores.
+        Nenhuma campanha criada ainda. Gere seu primeiro QR Code ou link da bio para começar a rastrear acessos e escolhas de vendedores.
       </div>
     );
   }
@@ -112,7 +112,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
                   fontWeight: 700,
                 }}
               >
-                {qr.conversion}% conversao
+                {qr.conversion}% conversão
               </div>
             </div>
           </div>
@@ -192,7 +192,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
 
           <div style={{ marginBottom: 18 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)', marginBottom: 10 }}>
-              Historico recente da campanha
+              Histórico recente da campanha
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {qr.recentChoices.length > 0 ? (
@@ -214,7 +214,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
                 ))
               ) : (
                 <div style={{ fontSize: 13, color: 'var(--sidebar-text)' }}>
-                  Ainda nao houve escolha de vendedor a partir desta campanha.
+                  Ainda não houve escolha de vendedor a partir desta campanha.
                 </div>
               )}
             </div>

@@ -59,7 +59,7 @@ export default async function TenantAdminPage(props: any) {
         <header style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Painel de Performance</h1>
-            <p style={{ color: 'var(--sidebar-text)' }}>Dados filtrados dos últimos <strong>{period} dias</strong>.</p>
+            <p style={{ color: 'var(--text-soft)' }}>Dados filtrados dos últimos <strong>{period} dias</strong>.</p>
           </div>
           
           <form style={{ display: 'flex', gap: 8 }}>
