@@ -88,10 +88,11 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
       <div
         style={{
           width: '100%',
-          maxWidth: '460px',
+          maxWidth: '980px',
           margin: '0 auto 10px',
           display: 'flex',
           justifyContent: 'flex-end',
+          alignItems: 'flex-start',
         }}
       >
         {isAdminLogged ? (
@@ -101,22 +102,22 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              padding: '7px 11px',
+              padding: '10px 15px',
               borderRadius: '999px',
               textDecoration: 'none',
               background: 'rgba(2, 5, 21, 0.08)',
               color: 'var(--brand-dark)',
               border: '1px solid rgba(203, 213, 225, 0.95)',
               boxShadow: 'var(--shadow-soft)',
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: 700,
               letterSpacing: '0.01em',
             }}
           >
             <span
               style={{
-                width: 18,
-                height: 18,
+                width: 22,
+                height: 22,
                 borderRadius: '999px',
                 background: 'rgba(2, 5, 21, 0.08)',
                 display: 'flex',
@@ -124,7 +125,7 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                 justifyContent: 'center',
               }}
             >
-              <Icon name="lock" size={13} color="var(--brand-dark)" />
+              <Icon name="lock" size={14} color="var(--brand-dark)" />
             </span>
             Ir para o painel
           </a>
@@ -136,13 +137,13 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              padding: '7px 11px',
+              padding: '10px 15px',
               borderRadius: '999px',
               background: 'rgba(255,255,255,0.55)',
               color: 'var(--text-soft)',
               border: '1px solid rgba(219, 227, 238, 0.9)',
               boxShadow: 'var(--shadow-soft)',
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: 600,
               letterSpacing: '0.01em',
               cursor: 'pointer',
@@ -150,8 +151,8 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
           >
             <span
               style={{
-                width: 18,
-                height: 18,
+                width: 22,
+                height: 22,
                 borderRadius: '999px',
                 background: 'rgba(226, 232, 240, 0.9)',
                 display: 'flex',
@@ -159,7 +160,7 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
                 justifyContent: 'center',
               }}
             >
-              <Icon name="lock" size={13} color="var(--text-soft)" />
+              <Icon name="lock" size={14} color="var(--text-soft)" />
             </span>
             Acesso da empresa
           </button>
@@ -178,20 +179,20 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
       >
         <div
           style={{
-            width: 160,
-            minHeight: 160,
-            borderRadius: 26,
+            width: 220,
+            minHeight: 220,
+            borderRadius: 30,
             background: '#fff',
             border: '1px solid var(--border)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: 'var(--shadow-soft)',
-            marginBottom: 22,
-            padding: 10,
+            marginBottom: 24,
+            padding: 18,
           }}
         >
-          <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: '100%', maxWidth: 122, objectFit: 'contain' }} />
+          <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: '100%', maxWidth: 176, objectFit: 'contain' }} />
         </div>
 
         <header style={{ textAlign: 'center', marginBottom: 30 }}>
