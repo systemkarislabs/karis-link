@@ -50,6 +50,7 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
       source={source}
       campaign={campaign}
       isAdminLogged={session?.slug === slug}
+      recoveryEnabled={true}
     />
   );
 }

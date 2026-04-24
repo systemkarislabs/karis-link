@@ -18,6 +18,7 @@ type Props = {
   source: string;
   campaign: string;
   isAdminLogged: boolean;
+  recoveryEnabled?: boolean;
 };
 
 type LoginState = { error?: string } | null;
@@ -57,7 +58,7 @@ function SubmitButton() {
   );
 }
 
-export default function PublicTenantClient({ slug, tenantName, sellers, source, campaign, isAdminLogged }: Props) {
+export default function PublicTenantClient({ slug, tenantName, sellers, source, campaign, isAdminLogged, recoveryEnabled = true }: Props) {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [state, formAction] = useFormState<LoginState, FormData>(handleTenantLogin as never, null);
   const inputStyle: React.CSSProperties = {
@@ -177,9 +178,9 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
       >
         <div
           style={{
-            width: 124,
-            minHeight: 124,
-            borderRadius: 28,
+            width: 160,
+            minHeight: 160,
+            borderRadius: 26,
             background: '#fff',
             border: '1px solid var(--border)',
             display: 'flex',
@@ -187,10 +188,10 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
             justifyContent: 'center',
             boxShadow: 'var(--shadow-soft)',
             marginBottom: 22,
-            padding: 18,
+            padding: 10,
           }}
         >
-          <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: '100%', maxWidth: 84, objectFit: 'contain' }} />
+          <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: '100%', maxWidth: 122, objectFit: 'contain' }} />
         </div>
 
         <header style={{ textAlign: 'center', marginBottom: 30 }}>
@@ -311,7 +312,7 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
           }}
         >
           <span>Powered by</span>
-          <img src="/karis-labs-logo.png" alt="Karis Labs" style={{ height: 16, objectFit: 'contain' }} />
+          <img src="/karis-labs-logo.png" alt="Karis Labs" style={{ height: 24, objectFit: 'contain' }} />
         </div>
       </div>
 
@@ -391,6 +392,22 @@ export default function PublicTenantClient({ slug, tenantName, sellers, source, 
               <input name="password" type="password" placeholder="Senha" required style={inputStyle} />
               <SubmitButton />
             </form>
+
+            {recoveryEnabled ? (
+              <div style={{ marginTop: 14, textAlign: 'right' }}>
+                <a
+                  href={`/${slug}/recuperar-senha`}
+                  style={{
+                    color: 'var(--sidebar-active-text)',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                  }}
+                >
+                  Esqueci minha senha
+                </a>
+              </div>
+            ) : null}
           </div>
         </div>
       ) : null}

@@ -26,7 +26,7 @@ export default function LogoutButton() {
         fontSize: 14, 
         fontWeight: 500,
         transition: 'all 0.2s',
-        marginTop: 'auto'
+        width: '100%'
       }}
       onMouseOver={(e) => e.currentTarget.style.background = 'var(--sidebar-active-bg)'}
       onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}

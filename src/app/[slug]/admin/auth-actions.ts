@@ -37,3 +37,56 @@ export async function handleTenantLogout(slug: string) {
   await clearTenantSession();
   redirect(`/${slug}`);
 }
+
+export async function handleTenantPasswordRecovery(_: unknown, formData: FormData) {
+  const slug = String(formData.get('slug') || '').trim().toLowerCase();
+  const recoveryEmail = String(formData.get('recoveryEmail') || '').trim().toLowerCase();
+  const newPassword = String(formData.get('newPassword') || '');
+  const confirmPassword = String(formData.get('confirmPassword') || '');
+
+  if (!slug || !recoveryEmail || !newPassword || !confirmPassword) {
+    return { error: 'Preencha todos os campos para recuperar a senha.' };
+  }
+
+  if (newPassword.length < 6) {
+    return { error: 'A nova senha precisa ter pelo menos 6 caracteres.' };
+  }
+
+  if (newPassword !== confirmPassword) {
+    return { error: 'A confirmacao da nova senha nao confere.' };
+  }
+
+  try {
+    const tenant = await (prisma.tenant as any).findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        active: true,
+        recoveryEmail: true,
+      },
+    });
+
+    if (!tenant || !tenant.active) {
+      return { error: 'Empresa nao encontrada ou inativa.' };
+    }
+
+    if (!tenant.recoveryEmail || tenant.recoveryEmail.toLowerCase() !== recoveryEmail) {
+      return { error: 'O email informado nao confere com o cadastro da empresa.' };
+    }
+
+    await prisma.tenant.update({
+      where: { id: tenant.id },
+      data: { adminPass: await hashPassword(newPassword) },
+    });
+
+    redirect(`/${slug}/login`);
+  } catch (error) {
+    const message = typeof error === 'object' && error && 'message' in error ? String((error as { message?: string }).message) : '';
+
+    if (message.toLowerCase().includes('recoveryemail')) {
+      return { error: 'A recuperacao de senha ainda nao foi habilitada neste ambiente.' };
+    }
+
+    throw error;
+  }
+}

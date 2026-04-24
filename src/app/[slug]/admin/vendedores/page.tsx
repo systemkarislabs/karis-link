@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
 import { createSeller, deleteSeller } from './actions';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -232,23 +233,37 @@ export default async function VendedoresPage(props: any) {
                   </div>
                 </div>
 
-                <form action={deleteSeller}>
-                  <input type="hidden" name="id" value={seller.id} />
-                  <input type="hidden" name="slug" value={slug} />
-                  <button
-                    type="submit"
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <Link
+                    href={`/${slug}/admin/vendedores/${seller.id}`}
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#ef4444',
-                      cursor: 'pointer',
+                      color: 'var(--sidebar-active-text)',
+                      textDecoration: 'none',
                       fontSize: 13,
                       fontWeight: 700,
                     }}
                   >
-                    Excluir
-                  </button>
-                </form>
+                    Editar
+                  </Link>
+
+                  <form action={deleteSeller}>
+                    <input type="hidden" name="id" value={seller.id} />
+                    <input type="hidden" name="slug" value={slug} />
+                    <button
+                      type="submit"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#ef4444',
+                        cursor: 'pointer',
+                        fontSize: 13,
+                        fontWeight: 700,
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </form>
+                </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(100px, 1fr))', gap: 12, marginBottom: 16 }}>

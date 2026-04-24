@@ -56,19 +56,38 @@ export async function createTenant(formData: FormData) {
   const slug = String(formData.get('slug') || '').trim().toLowerCase().replace(/\s+/g, '-');
   const adminUser = String(formData.get('adminUser') || '').trim();
   const adminPass = String(formData.get('adminPass') || '');
+  const recoveryEmail = String(formData.get('recoveryEmail') || '').trim().toLowerCase();
 
-  if (!name || !slug || !adminUser || !adminPass) {
+  if (!name || !slug || !adminUser || !adminPass || !recoveryEmail) {
     throw new Error('Todos os campos do tenant sao obrigatorios.');
   }
 
-  await prisma.tenant.create({
-    data: {
-      name,
-      slug,
-      adminUser,
-      adminPass: await hashPassword(adminPass),
-    },
-  });
+  try {
+    await (prisma.tenant as any).create({
+      data: {
+        name,
+        slug,
+        adminUser,
+        adminPass: await hashPassword(adminPass),
+        recoveryEmail,
+      },
+    });
+  } catch (error) {
+    const message = typeof error === 'object' && error && 'message' in error ? String((error as { message?: string }).message) : '';
+
+    if (message.toLowerCase().includes('recoveryemail')) {
+      await prisma.tenant.create({
+        data: {
+          name,
+          slug,
+          adminUser,
+          adminPass: await hashPassword(adminPass),
+        },
+      });
+    } else {
+      throw error;
+    }
+  }
 
   redirect('/super-admin');
 }

@@ -14,6 +14,7 @@ model Tenant {
   slug      String   @unique
   adminUser String
   adminPass String
+  recoveryEmail String?
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   sellers   Seller[]

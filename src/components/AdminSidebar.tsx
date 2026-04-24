@@ -54,18 +54,19 @@ export default function AdminSidebar({
         width: 280, 
         background: 'var(--sidebar-bg)', 
         borderRight: '1px solid var(--border)', 
-        padding: '32px 20px', 
+        padding: '32px 20px 20px', 
         display: 'flex', 
         flexDirection: 'column', 
         position: 'fixed', 
         height: '100vh',
         boxSizing: 'border-box',
         zIndex: 101,
-        transition: 'transform 0.3s ease'
+        transition: 'transform 0.3s ease',
+        overflowY: 'auto'
       } as any} className={`sidebar-container ${isOpen ? 'open' : ''}`}>
         
         <div style={{ marginBottom: 32, padding: '0 16px' }}>
-          <img src={isSuper ? "/karis-labs-logo.png" : "/karis-link-logo.png"} alt={isSuper ? "Karis Labs" : "Karis Link"} style={{ width: isSuper ? '122px' : '114px' }} />
+          <img src={isSuper ? "/karis-labs-logo.png" : "/karis-link-logo.png"} alt={isSuper ? "Karis Labs" : "Karis Link"} style={{ width: isSuper ? '128px' : '148px' }} />
           <div style={{ fontSize: 10, color: 'var(--text-soft)', fontWeight: 700, marginTop: 8, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
             {isSuper ? 'Ecossistema KarisLabs' : tenantName}
           </div>
@@ -94,9 +95,11 @@ export default function AdminSidebar({
                 {item.label}
              </Link>
            ))}
-
-           <LogoutButton />
         </nav>
+
+        <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)', background: 'var(--sidebar-bg)' }}>
+          <LogoutButton />
+        </div>
       </aside>
 
       <style jsx global>{`
@@ -104,6 +107,10 @@ export default function AdminSidebar({
           .mobile-header { display: flex !important; }
           .sidebar-container { transform: translateX(-100%); }
           .sidebar-container.open { transform: translateX(0); }
+          .sidebar-container {
+            padding-top: 84px !important;
+            padding-bottom: 16px !important;
+          }
         }
         @media (min-width: 1025px) {
           .sidebar-container { transform: translateX(0) !important; }
