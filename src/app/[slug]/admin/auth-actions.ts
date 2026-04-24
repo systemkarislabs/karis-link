@@ -51,23 +51,16 @@ export async function handleTenantLogout(slug: string) {
 export async function handleTenantPasswordRecovery(_: unknown, formData: FormData) {
   const slug = String(formData.get('slug') || '').trim().toLowerCase();
   const recoveryEmail = String(formData.get('recoveryEmail') || '').trim().toLowerCase();
-  const newPassword = String(formData.get('newPassword') || '');
-  const confirmPassword = String(formData.get('confirmPassword') || '');
 
-  if (!slug || !recoveryEmail || !newPassword || !confirmPassword) {
-    return { error: 'Preencha todos os campos para recuperar a senha.' };
+  if (!slug || !recoveryEmail) {
+    return { error: 'Informe o e-mail de recuperação cadastrado.' };
   }
 
-  if (newPassword.length < 6) {
-    return { error: 'A nova senha precisa ter pelo menos 6 caracteres.' };
-  }
-
-  if (newPassword !== confirmPassword) {
-    return { error: 'A confirmação da nova senha não confere.' };
-  }
+  const genericMessage =
+    'Se o e-mail estiver cadastrado, o suporte da Karis Labs poderá validar a solicitação e orientar a redefinição.';
 
   try {
-    const tenant = await prisma.tenant.findUnique({
+    const tenant = await (prisma.tenant as any).findUnique({
       where: { slug },
       select: {
         id: true,
@@ -76,20 +69,14 @@ export async function handleTenantPasswordRecovery(_: unknown, formData: FormDat
       },
     });
 
-    if (!tenant || !tenant.active) {
-      return { error: 'Empresa não encontrada ou inativa.' };
+    if (tenant?.active && tenant.recoveryEmail?.toLowerCase() === recoveryEmail) {
+      console.info('Tenant password recovery requested', {
+        tenantId: tenant.id,
+        slug,
+      });
     }
 
-    if (!tenant.recoveryEmail || tenant.recoveryEmail.toLowerCase() !== recoveryEmail) {
-      return { error: 'O e-mail informado não confere com o cadastro da empresa.' };
-    }
-
-    await prisma.tenant.update({
-      where: { id: tenant.id },
-      data: { adminPass: await hashPassword(newPassword) },
-    });
-
-    redirect(`/${slug}/login`);
+    return { success: genericMessage };
   } catch (error) {
     const message =
       typeof error === 'object' && error && 'message' in error
@@ -97,7 +84,7 @@ export async function handleTenantPasswordRecovery(_: unknown, formData: FormDat
         : '';
 
     if (message.toLowerCase().includes('recoveryemail')) {
-      return { error: 'A recuperação de senha ainda não foi habilitada neste ambiente.' };
+      return { success: genericMessage };
     }
 
     throw error;

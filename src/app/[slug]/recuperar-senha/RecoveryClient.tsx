@@ -4,7 +4,7 @@ import React, { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { handleTenantPasswordRecovery } from '../admin/auth-actions';
 
-type State = { error?: string } | null;
+type State = { error?: string; success?: string } | null;
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -25,7 +25,7 @@ function SubmitButton() {
         opacity: pending ? 0.72 : 1,
       }}
     >
-      {pending ? 'Atualizando...' : 'Atualizar senha'}
+      {pending ? 'Enviando...' : 'Solicitar recuperação'}
     </button>
   );
 }
@@ -56,20 +56,20 @@ export default function RecoveryClient({ slug }: { slug: string }) {
         required
         style={inputStyle}
       />
-      <input
-        name="newPassword"
-        type="password"
-        placeholder="Nova senha"
-        required
-        style={inputStyle}
-      />
-      <input
-        name="confirmPassword"
-        type="password"
-        placeholder="Confirmar nova senha"
-        required
-        style={inputStyle}
-      />
+      {state?.success ? (
+        <div
+          style={{
+            background: '#ecfdf5',
+            color: '#047857',
+            padding: '10px 12px',
+            borderRadius: 10,
+            fontSize: 13,
+            border: '1px solid #bbf7d0',
+          }}
+        >
+          {state.success}
+        </div>
+      ) : null}
       {state?.error ? (
         <div
           style={{

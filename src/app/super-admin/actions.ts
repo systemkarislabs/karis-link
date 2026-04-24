@@ -62,15 +62,35 @@ export async function createTenant(formData: FormData) {
     throw new Error('Todos os campos da empresa são obrigatórios.');
   }
 
-  await prisma.tenant.create({
-    data: {
-      name,
-      slug,
-      adminUser,
-      adminPass: await hashPassword(adminPass),
-      recoveryEmail,
-    },
-  });
+  try {
+    await (prisma.tenant as any).create({
+      data: {
+        name,
+        slug,
+        adminUser,
+        adminPass: await hashPassword(adminPass),
+        recoveryEmail,
+      },
+    });
+  } catch (error) {
+    const message =
+      typeof error === 'object' && error && 'message' in error
+        ? String((error as { message?: string }).message)
+        : '';
+
+    if (message.toLowerCase().includes('recoveryemail')) {
+      await prisma.tenant.create({
+        data: {
+          name,
+          slug,
+          adminUser,
+          adminPass: await hashPassword(adminPass),
+        },
+      });
+    } else {
+      throw error;
+    }
+  }
 
   redirect('/super-admin');
 }

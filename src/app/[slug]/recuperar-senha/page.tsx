@@ -11,7 +11,7 @@ export default async function TenantRecoveryPage(props: any) {
         <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: 142, objectFit: 'contain', marginBottom: 18 }} />
         <h1 style={{ margin: '0 0 8px', fontSize: 22, fontWeight: 700, color: '#0f172a' }}>Recuperar senha</h1>
         <p style={{ margin: '0 0 20px', fontSize: 14, color: '#64748b', lineHeight: 1.5 }}>
-          Informe o e-mail de recuperação cadastrado para sua empresa e defina uma nova senha.
+          Informe o e-mail de recuperação cadastrado para sua empresa. A solicitação será validada antes de qualquer alteração de senha.
         </p>
 
         <RecoveryClient slug={slug} />

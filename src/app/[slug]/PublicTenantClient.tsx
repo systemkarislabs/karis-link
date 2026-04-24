@@ -92,8 +92,6 @@ export default function PublicTenantClient({
         padding: '36px 20px 72px',
       }}
     >
-      <title>{`${tenantName} — Especialistas`}</title>
-
       {/* Botão de acesso admin */}
       <div
         style={{
