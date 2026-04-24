@@ -28,7 +28,13 @@ export default async function QrCodesPage(props: any) {
   const { slug } = params;
   const { tenantId } = await requireTenantAuth(slug);
 
-  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
 
   const [qrcodes, pageVisits, sellerChoices] = await Promise.all([
     prisma.qrCode.findMany({

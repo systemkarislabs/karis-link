@@ -12,7 +12,13 @@ export default async function EditSellerPage(props: any) {
   const { tenantId } = await requireTenantAuth(slug);
 
   const [tenant, seller] = await Promise.all([
-    prisma.tenant.findUnique({ where: { id: tenantId } }),
+    prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: {
+        id: true,
+        name: true,
+      },
+    }),
     prisma.seller.findFirst({
       where: { id: sellerId, tenantId },
     }),

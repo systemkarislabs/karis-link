@@ -15,7 +15,16 @@ export async function handleTenantLogin(_: unknown, formData: FormData) {
   const user = String(formData.get('username') || '').trim();
   const pass = String(formData.get('password') || '');
 
-  const tenant = await prisma.tenant.findUnique({ where: { slug, active: true } });
+  const tenant = await prisma.tenant.findFirst({
+    where: { slug, active: true },
+    select: {
+      id: true,
+      slug: true,
+      adminUser: true,
+      adminPass: true,
+      active: true,
+    },
+  });
   const passwordMatches = tenant ? await verifyPassword(pass, tenant.adminPass) : false;
 
   if (!tenant || tenant.adminUser !== user || !passwordMatches) {

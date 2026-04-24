@@ -11,7 +11,13 @@ export default async function ReportsPage(props: any) {
   const tenantId = searchParams?.tenantId || 'all';
   const period   = searchParams?.period   || '30';
 
-  const tenants = await prisma.tenant.findMany({ orderBy: { name: 'asc' } });
+  const tenants = await prisma.tenant.findMany({
+    orderBy: { name: 'asc' },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - parseInt(period));
   const whereTenant = tenantId === 'all' ? {} : { tenantId };

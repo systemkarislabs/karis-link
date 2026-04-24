@@ -33,7 +33,13 @@ export default async function VendedoresPage(props: any) {
   const { slug } = params;
   const { tenantId } = await requireTenantAuth(slug);
 
-  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
 
   const [sellers, sellerEvents] = await Promise.all([
     prisma.seller.findMany({

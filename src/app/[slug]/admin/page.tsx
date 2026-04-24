@@ -17,7 +17,13 @@ export default async function TenantAdminPage(props: any) {
 
   // Buscamos os dados separadamente para evitar erros de tipagem do Prisma
   const [tenant, allSellers, totalVisits, recentClicks, clickCounts] = await Promise.all([
-    prisma.tenant.findUnique({ where: { id: tenantId } }),
+    prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: {
+        id: true,
+        name: true,
+      },
+    }),
     prisma.seller.findMany({ where: { tenantId } }),
     prisma.pageClickEvent.count({ where: { tenantId, createdAt: { gte: startDate } } }),
     prisma.sellerClickEvent.findMany({ 

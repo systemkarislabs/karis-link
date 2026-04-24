@@ -149,7 +149,10 @@ export async function deleteTenant(formData: FormData) {
 
   const tenant = await prisma.tenant.findUnique({
     where: { id },
-    include: { sellers: { select: { id: true } } },
+    select: {
+      id: true,
+      sellers: { select: { id: true } },
+    },
   });
 
   if (!tenant) {
