@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import { requireSuperAuth } from '@/lib/auth';
 import { Icon } from '@/components/Icon';
 import AdminSidebar from '@/components/AdminSidebar';
+import { getRecifePeriodStartDate } from '@/lib/recife-time';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,8 +19,7 @@ export default async function ReportsPage(props: any) {
       name: true,
     },
   });
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - parseInt(period));
+  const startDate = getRecifePeriodStartDate(period);
   const whereTenant = tenantId === 'all' ? {} : { tenantId };
 
   const [totalVisits, totalClicks] = await Promise.all([

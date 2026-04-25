@@ -1,8 +1,8 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import { format } from "date-fns";
 import { Icon } from "@/components/Icon";
 import { Badge } from "@/components/Badge";
+import { formatRecifeDateKey, formatRecifeWeekday } from "@/lib/recife-time";
 
 /* ─── CARD ───────────────────────────────────── */
 const Card = ({ children, style: s = {}, noPad }: any) => (
@@ -169,15 +169,15 @@ export default function DashboardView({ data }: { data: any }) {
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
-      const dateStr = format(d, "dd/MM");
-      dates[dateStr] = { day: format(d, "EEE"), visitas: 0, cliques: 0 };
+      const dateStr = formatRecifeDateKey(d);
+      dates[dateStr] = { day: formatRecifeWeekday(d), visitas: 0, cliques: 0 };
     }
     data.rawPageEvents.forEach((ev: any) => {
-      const dateStr = format(new Date(ev.createdAt), "dd/MM");
+      const dateStr = formatRecifeDateKey(ev.createdAt);
       if (dates[dateStr]) dates[dateStr].visitas++;
     });
     data.rawSellerEvents.forEach((ev: any) => {
-      const dateStr = format(new Date(ev.createdAt), "dd/MM");
+      const dateStr = formatRecifeDateKey(ev.createdAt);
       if (dates[dateStr]) dates[dateStr].cliques++;
     });
     return Object.values(dates);

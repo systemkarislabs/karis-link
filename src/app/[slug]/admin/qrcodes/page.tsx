@@ -3,6 +3,7 @@ import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
 import { createQrCode, deleteQrCode } from './actions';
 import QrCodesClient from './QrCodesClient';
+import { formatRecifeDateTime } from '@/lib/recife-time';
 
 export const dynamic = 'force-dynamic';
 
@@ -81,12 +82,7 @@ export default async function QrCodesPage(props: any) {
       recentChoices: choices.slice(0, 5).map((event) => ({
         id: event.id,
         sellerName: event.seller.name,
-        createdAtLabel: new Date(event.createdAt).toLocaleString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
+        createdAtLabel: formatRecifeDateTime(event.createdAt),
       })),
     };
   });

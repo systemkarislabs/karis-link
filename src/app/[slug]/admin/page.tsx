@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
 import { Icon } from '@/components/Icon';
+import { formatRecifeDateTime, getRecifePeriodStartDate } from '@/lib/recife-time';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,8 +13,7 @@ export default async function TenantAdminPage(props: any) {
   const period = searchParams?.period || '7';
   const { tenantId } = await requireTenantAuth(slug);
 
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - parseInt(period));
+  const startDate = getRecifePeriodStartDate(period);
 
   // Buscamos os dados separadamente para evitar erros de tipagem do Prisma
   const [tenant, allSellers, totalVisits, recentClicks, clickCounts] = await Promise.all([
@@ -123,7 +123,7 @@ export default async function TenantAdminPage(props: any) {
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600 }}>{log.seller.name}</div>
                     <div style={{ fontSize: 11, color: 'var(--sidebar-text)' }}>
-                      {new Date(log.createdAt).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                      {formatRecifeDateTime(log.createdAt)}
                     </div>
                   </div>
                 </div>
