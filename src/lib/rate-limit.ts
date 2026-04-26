@@ -1,5 +1,19 @@
 import { headers } from 'next/headers';
 
+/**
+ * Rate-limit em memória.
+ *
+ * ⚠️ LIMITAÇÃO: este bucket é local ao processo Node.
+ * Em ambientes serverless (Vercel, Netlify Functions) cada cold start cria
+ * um Map novo e o limite é efetivamente burlado. Em deploys de longa duração
+ * (Railway, Fly, VPS) ele funciona normalmente, mas perde o estado em
+ * deploys/restarts.
+ *
+ * Para produção robusta migrar para um store compartilhado (Redis/Upstash,
+ * Postgres com tabela `rate_limit_buckets`, ou Cloudflare KV) — usando a
+ * mesma assinatura de `assertRateLimit`.
+ */
+
 type RateLimitEntry = {
   count: number;
   resetAt: number;

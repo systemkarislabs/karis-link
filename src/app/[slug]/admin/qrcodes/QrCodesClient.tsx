@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import CopyLinkButton from '@/components/CopyLinkButton';
+import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
 
 type RecentChoice = {
   id: string;
@@ -51,12 +53,35 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
         style={{
           background: 'var(--card-bg)',
           borderRadius: 20,
-          padding: 32,
-          border: '1px solid var(--border)',
+          padding: '40px 32px',
+          border: '1px dashed var(--border)',
           color: 'var(--sidebar-text)',
+          textAlign: 'center',
+          display: 'grid',
+          placeItems: 'center',
+          gap: 12,
         }}
       >
-        Nenhuma campanha criada ainda. Gere seu primeiro QR Code ou link da bio para começar a rastrear acessos e escolhas de vendedores.
+        <div
+          aria-hidden="true"
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: '50%',
+            background: 'rgba(23, 219, 78, 0.10)',
+            display: 'grid',
+            placeItems: 'center',
+            fontSize: 26,
+          }}
+        >
+          📡
+        </div>
+        <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>
+          Você ainda não criou campanhas
+        </div>
+        <div style={{ fontSize: 13, maxWidth: 420 }}>
+          Gere seu primeiro QR Code ou link da bio acima para começar a rastrear acessos e escolhas de vendedores.
+        </div>
       </div>
     );
   }
@@ -237,16 +262,22 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: 'pointer',
+                  minHeight: 40,
                 }}
               >
                 Baixar QR
               </button>
             ) : null}
 
+            <CopyLinkButton value={qr.url} label="Copiar link" copiedLabel="Link copiado!" />
+
             <a
               href={`/${slug}/${qr.channel === 'bio' ? 'bio' : 'go'}/${qr.slug}`}
               target="_blank"
+              rel="noopener noreferrer"
               style={{
+                display: 'inline-flex',
+                alignItems: 'center',
                 padding: '10px 14px',
                 borderRadius: 10,
                 border: '1px solid var(--border)',
@@ -255,6 +286,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
                 fontSize: 13,
                 fontWeight: 700,
                 textDecoration: 'none',
+                minHeight: 40,
               }}
             >
               {qr.channel === 'bio' ? 'Abrir link da bio' : 'Testar link'}
@@ -263,8 +295,9 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
             <form action={deleteAction}>
               <input type="hidden" name="id" value={qr.id} />
               <input type="hidden" name="slug" value={slug} />
-              <button
-                type="submit"
+              <ConfirmSubmitButton
+                message={`Excluir a campanha "${qr.name}"? Esta ação não pode ser desfeita.`}
+                ariaLabel={`Excluir campanha ${qr.name}`}
                 style={{
                   padding: '10px 14px',
                   borderRadius: 10,
@@ -274,10 +307,11 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: 'pointer',
+                  minHeight: 40,
                 }}
               >
                 Excluir
-              </button>
+              </ConfirmSubmitButton>
             </form>
           </div>
         </div>

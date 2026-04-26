@@ -2,6 +2,7 @@ import { requireSuperAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { createTenant, deleteTenant, toggleTenant } from './actions';
 import AdminSidebar from '@/components/AdminSidebar';
+import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -136,8 +137,9 @@ export default async function SuperAdminPage() {
 
                       <form action={deleteTenant}>
                         <input type="hidden" name="id" value={tenant.id} />
-                        <button
-                          type="submit"
+                        <ConfirmSubmitButton
+                          message={`Excluir definitivamente a empresa "${tenant.name}"? Todos os vendedores, campanhas e cliques serão removidos. Esta ação é IRREVERSÍVEL.`}
+                          ariaLabel={`Excluir empresa ${tenant.name}`}
                           style={{
                             fontSize: 12,
                             color: '#e11d48',
@@ -150,7 +152,7 @@ export default async function SuperAdminPage() {
                           }}
                         >
                           Excluir empresa
-                        </button>
+                        </ConfirmSubmitButton>
                       </form>
                     </div>
                   </div>

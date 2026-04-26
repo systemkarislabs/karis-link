@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
 import SellerImageField from '@/components/SellerImageField';
+import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
 import { createSeller, deleteSeller } from './actions';
 import Link from 'next/link';
 
@@ -42,6 +43,12 @@ export default async function VendedoresPage(props: any) {
     },
   });
 
+  // Limita a janela analítica aos últimos 90 dias para não escalar
+  // linearmente com o histórico do tenant.
+  const ANALYTICS_WINDOW_DAYS = 90;
+  const analyticsStart = new Date();
+  analyticsStart.setDate(analyticsStart.getDate() - ANALYTICS_WINDOW_DAYS);
+
   const [sellers, sellerEvents, campaigns] = await Promise.all([
     prisma.seller.findMany({
       where: { tenantId },
@@ -50,11 +57,13 @@ export default async function VendedoresPage(props: any) {
     prisma.sellerClickEvent.findMany({
       where: {
         seller: { tenantId },
+        createdAt: { gte: analyticsStart },
       },
       include: {
         seller: true,
       },
       orderBy: { createdAt: 'desc' },
+      take: 5000,
     }),
     prisma.qrCode.findMany({
       where: { tenantId },
@@ -223,6 +232,8 @@ export default async function VendedoresPage(props: any) {
                     <img
                       src={seller.image}
                       alt={seller.name}
+                      loading="lazy"
+                      decoding="async"
                       style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
                     />
                   ) : (
@@ -267,8 +278,9 @@ export default async function VendedoresPage(props: any) {
                   <form action={deleteSeller}>
                     <input type="hidden" name="id" value={seller.id} />
                     <input type="hidden" name="slug" value={slug} />
-                    <button
-                      type="submit"
+                    <ConfirmSubmitButton
+                      message={`Excluir o vendedor "${seller.name}"? Os cliques históricos também serão removidos.`}
+                      ariaLabel={`Excluir vendedor ${seller.name}`}
                       style={{
                         background: 'none',
                         border: 'none',
@@ -276,10 +288,11 @@ export default async function VendedoresPage(props: any) {
                         cursor: 'pointer',
                         fontSize: 13,
                         fontWeight: 700,
+                        padding: '6px 8px',
                       }}
                     >
                       Excluir
-                    </button>
+                    </ConfirmSubmitButton>
                   </form>
                 </div>
               </div>

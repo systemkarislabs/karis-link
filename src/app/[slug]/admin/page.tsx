@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma';
 import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
+import AutoSubmitSelect from '@/components/AutoSubmitSelect';
 import { Icon } from '@/components/Icon';
 import { formatRecifeDateTime, getRecifePeriodStartDate } from '@/lib/recife-time';
 
@@ -63,12 +64,19 @@ export default async function TenantAdminPage(props: any) {
           </div>
           
           <form style={{ display: 'flex', gap: 8 }}>
-             <select name="period" defaultValue={period} style={{ padding: '10px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text-main)', outline: 'none' }}>
-                <option value="1">Hoje</option>
-                <option value="7">Últimos 7 dias</option>
-                <option value="30">Últimos 30 dias</option>
-             </select>
-             <button type="submit" style={{ padding: '10px 20px', borderRadius: 10, background: 'var(--sidebar-active-text)', color: '#fff', border: 'none', fontWeight: 600 }}>Atualizar</button>
+             <AutoSubmitSelect
+                name="period"
+                defaultValue={period}
+                ariaLabel="Período do dashboard"
+                options={[
+                  { value: '1', label: 'Hoje' },
+                  { value: '7', label: 'Últimos 7 dias' },
+                  { value: '30', label: 'Últimos 30 dias' },
+                ]}
+             />
+             <noscript>
+               <button type="submit" style={{ padding: '10px 20px', borderRadius: 10, background: 'var(--sidebar-active-text)', color: '#fff', border: 'none', fontWeight: 600 }}>Atualizar</button>
+             </noscript>
           </form>
         </header>
 

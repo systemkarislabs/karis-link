@@ -21,7 +21,8 @@ function isValidRecoveryEmail(value: string) {
 }
 
 export async function handleSuperLogin(_: unknown, formData: FormData) {
-  const user = String(formData.get('username') || '').trim();
+  // Normaliza usuário para lowercase para evitar erros de case-sensitivity.
+  const user = String(formData.get('username') || '').trim().toLowerCase();
   const pass = String(formData.get('password') || '');
   const ip = await getRequestIp();
 
@@ -37,7 +38,7 @@ export async function handleSuperLogin(_: unknown, formData: FormData) {
 
   if (storedAccount) {
     const passwordMatches = await verifyPassword(pass, storedAccount.passwordHash);
-    if (user !== storedAccount.username || !passwordMatches) {
+    if (user !== storedAccount.username.toLowerCase() || !passwordMatches) {
       return { error: 'Credenciais invalidas.' };
     }
 
@@ -54,7 +55,7 @@ export async function handleSuperLogin(_: unknown, formData: FormData) {
   }
 
   const passwordMatches = await verifyPassword(pass, configuredHash || configuredPassword);
-  if (user !== configuredUser || !passwordMatches) {
+  if (user !== configuredUser.trim().toLowerCase() || !passwordMatches) {
     return { error: 'Credenciais invalidas.' };
   }
 

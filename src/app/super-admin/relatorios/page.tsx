@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma';
 import { requireSuperAuth } from '@/lib/auth';
-import { Icon } from '@/components/Icon';
 import AdminSidebar from '@/components/AdminSidebar';
+import AutoSubmitSelect from '@/components/AutoSubmitSelect';
 import { getRecifePeriodStartDate } from '@/lib/recife-time';
 
 export const dynamic = 'force-dynamic';
@@ -42,22 +42,36 @@ export default async function ReportsPage(props: any) {
           <form style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: 200 }}>
               <label style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 8, display: 'block' }}>Empresa</label>
-              <select name="tenantId" defaultValue={tenantId} style={{ width: '100%', padding: '12px', borderRadius: 12, border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)', outline: 'none' }}>
-                <option value="all">Todas</option>
-                {tenants.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-              </select>
+              <AutoSubmitSelect
+                name="tenantId"
+                defaultValue={tenantId}
+                ariaLabel="Filtrar por empresa"
+                style={{ width: '100%', padding: '12px', borderRadius: 12, background: 'var(--bg-main)' }}
+                options={[
+                  { value: 'all', label: 'Todas' },
+                  ...tenants.map((t) => ({ value: t.id, label: t.name })),
+                ]}
+              />
             </div>
             <div style={{ flex: 1, minWidth: 200 }}>
               <label style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 8, display: 'block' }}>Período</label>
-              <select name="period" defaultValue={period} style={{ width: '100%', padding: '12px', borderRadius: 12, border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)', outline: 'none' }}>
-                <option value="7">Últimos 7 dias</option>
-                <option value="30">Últimos 30 dias</option>
-                <option value="90">Últimos 3 meses</option>
-              </select>
+              <AutoSubmitSelect
+                name="period"
+                defaultValue={period}
+                ariaLabel="Filtrar por período"
+                style={{ width: '100%', padding: '12px', borderRadius: 12, background: 'var(--bg-main)' }}
+                options={[
+                  { value: '7', label: 'Últimos 7 dias' },
+                  { value: '30', label: 'Últimos 30 dias' },
+                  { value: '90', label: 'Últimos 3 meses' },
+                ]}
+              />
             </div>
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-              <button type="submit" style={{ padding: '12px 24px', borderRadius: 12, background: 'var(--sidebar-active-text)', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Filtrar</button>
-            </div>
+            <noscript>
+              <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                <button type="submit" style={{ padding: '12px 24px', borderRadius: 12, background: 'var(--sidebar-active-text)', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Filtrar</button>
+              </div>
+            </noscript>
           </form>
         </div>
 
