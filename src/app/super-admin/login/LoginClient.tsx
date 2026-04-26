@@ -38,7 +38,12 @@ export default function SuperLoginClient() {
     border: '1px solid #e2e8f0',
     fontSize: 14,
     outline: 'none',
-    background: '#f8fafc',
+    background: '#ffffff',
+    color: '#0f172a',
+    WebkitTextFillColor: '#0f172a',
+    caretColor: '#0f172a',
+    boxShadow: '0 0 0 1000px #ffffff inset',
+    appearance: 'none',
   };
 
   return (
