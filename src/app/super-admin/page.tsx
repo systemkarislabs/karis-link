@@ -26,18 +26,35 @@ export default async function SuperAdminPage() {
         <AdminSidebar isSuper={true} />
 
         <main className="main-content">
-          <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-            <header style={{ marginBottom: 40 }}>
-              <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: 176, marginBottom: 18, objectFit: 'contain' }} />
-              <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>Dashboard Gerencial</h1>
-              <p style={{ color: 'var(--sidebar-text)', marginTop: 6 }}>Visão geral de todas as empresas integradas.</p>
+          <div className="super-admin-shell" style={{ maxWidth: 1240, width: '100%', margin: '0 auto' }}>
+            <header className="super-admin-header" style={{ marginBottom: 40 }}>
+              <img
+                src="/karis-link-logo.png"
+                alt="Karis Link"
+                style={{ width: 176, maxWidth: '100%', marginBottom: 18, objectFit: 'contain' }}
+              />
+              <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
+                Dashboard Gerencial
+              </h1>
+              <p style={{ color: 'var(--sidebar-text)', marginTop: 6 }}>
+                Visao geral de todas as empresas integradas.
+              </p>
             </header>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.35fr) minmax(360px, 0.95fr)', gap: 32 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {tenants.map((t) => (
+            <div
+              className="super-admin-grid"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 1.35fr) minmax(360px, 0.95fr)',
+                gap: 32,
+                alignItems: 'start',
+              }}
+            >
+              <div className="super-admin-list" style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+                {tenants.map((tenant) => (
                   <div
-                    key={t.id}
+                    key={tenant.id}
+                    className="super-admin-tenant-card"
                     style={{
                       background: 'var(--card-bg)',
                       borderRadius: 18,
@@ -51,49 +68,58 @@ export default async function SuperAdminPage() {
                       boxShadow: 'var(--shadow-soft)',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
                       <div
                         style={{
                           width: 48,
                           height: 48,
                           borderRadius: 14,
-                          background: t.active ? '#f0fdf4' : '#f8fafc',
-                          color: t.active ? '#16a34a' : '#94a3b8',
+                          background: tenant.active ? '#f0fdf4' : '#f8fafc',
+                          color: tenant.active ? '#16a34a' : '#94a3b8',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           fontWeight: 700,
+                          flexShrink: 0,
                         }}
                       >
-                        {t.name.charAt(0).toUpperCase()}
+                        {tenant.name.charAt(0).toUpperCase()}
                       </div>
-                      <div>
-                        <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{t.name}</div>
-                        <div style={{ fontSize: 12, color: 'var(--sidebar-text)' }}>
-                          /{t.slug} · {t._count.sellers} vendedores
+
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontWeight: 700, color: 'var(--text-main)', wordBreak: 'break-word' }}>
+                          {tenant.name}
+                        </div>
+                        <div style={{ fontSize: 12, color: 'var(--sidebar-text)', wordBreak: 'break-word' }}>
+                          /{tenant.slug} · {tenant._count.sellers} vendedores
                         </div>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                      <form action={toggleTenant.bind(null, t.id, t.active)}>
+
+                    <div
+                      className="super-admin-tenant-actions"
+                      style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}
+                    >
+                      <form action={toggleTenant.bind(null, tenant.id, tenant.active)}>
                         <button
                           type="submit"
                           style={{
                             fontSize: 12,
-                            color: t.active ? '#b45309' : '#16a34a',
+                            color: tenant.active ? '#b45309' : '#16a34a',
                             padding: '7px 12px',
                             borderRadius: 10,
-                            background: t.active ? '#fef3c7' : '#dcfce7',
+                            background: tenant.active ? '#fef3c7' : '#dcfce7',
                             fontWeight: 700,
                             border: 'none',
                             cursor: 'pointer',
                           }}
                         >
-                          {t.active ? 'Desativar' : 'Ativar'}
+                          {tenant.active ? 'Desativar' : 'Ativar'}
                         </button>
                       </form>
+
                       <Link
-                        href={`/${t.slug}`}
+                        href={`/${tenant.slug}`}
                         target="_blank"
                         style={{
                           fontSize: 12,
@@ -107,8 +133,9 @@ export default async function SuperAdminPage() {
                       >
                         Site
                       </Link>
+
                       <form action={deleteTenant}>
-                        <input type="hidden" name="id" value={t.id} />
+                        <input type="hidden" name="id" value={tenant.id} />
                         <button
                           type="submit"
                           style={{
@@ -130,14 +157,30 @@ export default async function SuperAdminPage() {
                 ))}
               </div>
 
-              <div style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 32, border: '1px solid var(--border)', boxShadow: 'var(--shadow-soft)' }}>
-                <img src="/karis-link-logo.png" alt="Karis Link" style={{ width: 164, marginBottom: 22, objectFit: 'contain' }} />
-                <h3 style={{ margin: '0 0 10px', fontSize: 20, fontWeight: 700, color: 'var(--text-main)' }}>Cadastrar empresa</h3>
+              <div
+                className="super-admin-form-card"
+                style={{
+                  background: 'var(--card-bg)',
+                  borderRadius: 24,
+                  padding: 32,
+                  border: '1px solid var(--border)',
+                  boxShadow: 'var(--shadow-soft)',
+                  minWidth: 0,
+                }}
+              >
+                <img
+                  src="/karis-link-logo.png"
+                  alt="Karis Link"
+                  style={{ width: 164, maxWidth: '100%', marginBottom: 22, objectFit: 'contain' }}
+                />
+                <h3 style={{ margin: '0 0 10px', fontSize: 20, fontWeight: 700, color: 'var(--text-main)' }}>
+                  Cadastrar empresa
+                </h3>
                 <p style={{ margin: '0 0 24px', color: 'var(--sidebar-text)', fontSize: 14 }}>
-                  Cadastre uma nova operação no Karis Link e defina as credenciais iniciais da empresa.
+                  Cadastre uma nova operacao no Karis Link e defina as credenciais iniciais da empresa.
                 </p>
 
-                <form action={createTenant} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <form action={createTenant} style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
                   <input
                     name="name"
                     placeholder="Nome da empresa"
@@ -170,7 +213,7 @@ export default async function SuperAdminPage() {
                   />
                   <input
                     name="adminUser"
-                    placeholder="Usuário administrador"
+                    placeholder="Usuario administrador"
                     required
                     style={{
                       width: '100%',
@@ -202,7 +245,7 @@ export default async function SuperAdminPage() {
                   <input
                     name="recoveryEmail"
                     type="email"
-                    placeholder="E-mail para recuperação de senha"
+                    placeholder="E-mail para recuperacao de senha"
                     required
                     style={{
                       width: '100%',
@@ -233,6 +276,59 @@ export default async function SuperAdminPage() {
               </div>
             </div>
           </div>
+
+          <style jsx>{`
+            @media (max-width: 1024px) {
+              .super-admin-shell {
+                max-width: 100%;
+              }
+
+              .super-admin-header {
+                margin-bottom: 24px !important;
+              }
+
+              .super-admin-grid {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 20px !important;
+              }
+
+              .super-admin-form-card {
+                order: -1;
+                padding: 24px 18px !important;
+                border-radius: 20px !important;
+              }
+
+              .super-admin-tenant-card {
+                padding: 18px 16px !important;
+              }
+
+              .super-admin-tenant-actions {
+                width: 100%;
+              }
+            }
+
+            @media (max-width: 640px) {
+              .super-admin-form-card {
+                padding: 20px 16px !important;
+              }
+
+              .super-admin-tenant-card {
+                gap: 14px !important;
+              }
+
+              .super-admin-tenant-actions > * {
+                flex: 1 1 calc(50% - 8px);
+                min-width: 0;
+              }
+
+              .super-admin-tenant-actions button,
+              .super-admin-tenant-actions a {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+              }
+            }
+          `}</style>
         </main>
       </div>
     );
@@ -241,8 +337,8 @@ export default async function SuperAdminPage() {
 
     return (
       <div style={{ padding: 40, fontFamily: 'sans-serif' }}>
-        <h2 style={{ color: '#e11d48' }}>Erro Técnico Detectado</h2>
-        <p>Por favor, envie este código para o suporte:</p>
+        <h2 style={{ color: '#e11d48' }}>Erro Tecnico Detectado</h2>
+        <p>Por favor, envie este codigo para o suporte:</p>
         <pre style={{ background: '#f1f5f9', padding: 20, borderRadius: 8, overflow: 'auto' }}>
           {e.message || 'Erro desconhecido'}
         </pre>
