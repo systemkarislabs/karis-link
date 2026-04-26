@@ -1,5 +1,6 @@
 import { getTenantSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { getTrackingCookie, setTrackingCookie } from '@/lib/tracking';
 import { notFound } from 'next/navigation';
 import PublicTenantClient from './PublicTenantClient';
 import type { Metadata } from 'next';
@@ -9,7 +10,6 @@ export const revalidate = 0;
 
 type PublicTenantPageProps = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ source?: string; campaign?: string }>;
 };
 
 export async function generateMetadata({ params }: Pick<PublicTenantPageProps, 'params'>): Promise<Metadata> {
@@ -24,13 +24,9 @@ export async function generateMetadata({ params }: Pick<PublicTenantPageProps, '
   };
 }
 
-export default async function PublicTenantPage({ params, searchParams }: PublicTenantPageProps) {
+export default async function PublicTenantPage({ params }: PublicTenantPageProps) {
   const resolvedParams = await params;
-  const resolvedSearchParams = await searchParams;
-
   const slug = resolvedParams.slug;
-  const source = resolvedSearchParams.source || 'direct';
-  const campaign = resolvedSearchParams.campaign || 'none';
 
   const tenant = await prisma.tenant.findUnique({
     where: { slug },
@@ -42,13 +38,22 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
   });
   if (!tenant) notFound();
 
-  await prisma.pageClickEvent.create({
-    data: {
-      tenantId: tenant.id,
-      source,
-      campaign,
-    },
-  });
+  const activeTracking = await getTrackingCookie();
+
+  if (!activeTracking || activeTracking.tenantId !== tenant.id) {
+    const directVisit = await prisma.pageClickEvent.create({
+      data: {
+        tenantId: tenant.id,
+        source: 'direct',
+        campaign: null,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    await setTrackingCookie(directVisit.id, tenant.id);
+  }
 
   const [sellers, session] = await Promise.all([
     prisma.seller.findMany({
@@ -67,8 +72,6 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
         name: seller.name,
         image: seller.image,
       }))}
-      source={source}
-      campaign={campaign}
       isAdminLogged={session?.slug === slug}
       recoveryEnabled={true}
     />

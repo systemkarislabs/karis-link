@@ -88,6 +88,9 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
               <div style={{ marginTop: 6, fontSize: 12, color: 'var(--sidebar-text)' }}>
                 /{slug}/{qr.channel === 'bio' ? 'bio' : 'go'}/{qr.slug}
               </div>
+              <div style={{ marginTop: 6, fontSize: 11, color: 'var(--sidebar-text)' }}>
+                Codigo interno: {qr.slug}
+              </div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
               <div

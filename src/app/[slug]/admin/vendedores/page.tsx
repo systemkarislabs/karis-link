@@ -42,7 +42,7 @@ export default async function VendedoresPage(props: any) {
     },
   });
 
-  const [sellers, sellerEvents] = await Promise.all([
+  const [sellers, sellerEvents, campaigns] = await Promise.all([
     prisma.seller.findMany({
       where: { tenantId },
       orderBy: { name: 'asc' },
@@ -56,7 +56,19 @@ export default async function VendedoresPage(props: any) {
       },
       orderBy: { createdAt: 'desc' },
     }),
+    prisma.qrCode.findMany({
+      where: { tenantId },
+      select: {
+        slug: true,
+        name: true,
+      },
+    }),
   ]);
+
+  const campaignNameByCode = campaigns.reduce<Record<string, string>>((acc, campaign) => {
+    acc[campaign.slug] = campaign.name;
+    return acc;
+  }, {});
 
   const sellerMetrics: SellerMetric[] = sellers.map((seller) => {
     const events = sellerEvents.filter((event) => event.sellerId === seller.id);
@@ -71,6 +83,7 @@ export default async function VendedoresPage(props: any) {
     }, {});
 
     const topCampaignEntry = Object.entries(campaignCounts).sort((a, b) => b[1] - a[1])[0];
+    const topCampaignCode = topCampaignEntry?.[0] || null;
     const lastEvent = events[0];
     const recentSourceLabel =
       lastEvent?.source === 'qr'
@@ -90,7 +103,7 @@ export default async function VendedoresPage(props: any) {
       qrClicks,
       bioClicks,
       directClicks,
-      topCampaign: topCampaignEntry?.[0] || null,
+      topCampaign: topCampaignCode ? campaignNameByCode[topCampaignCode] || topCampaignCode : null,
       recentSourceLabel,
     };
   });
@@ -106,7 +119,7 @@ export default async function VendedoresPage(props: any) {
 
       <main className="main-content">
         <header style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Gestão de Vendedores</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Gestao de Vendedores</h1>
           <p style={{ color: 'var(--sidebar-text)' }}>
             Cadastre sua equipe e acompanhe quantos leads cada vendedor recebeu por QR Code, bio e acesso direto.
           </p>

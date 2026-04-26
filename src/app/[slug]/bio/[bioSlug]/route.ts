@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { attachTrackingCookie } from '@/lib/tracking';
 
 export async function GET(
   request: NextRequest,
@@ -13,17 +14,30 @@ export async function GET(
         slug: bioSlug,
         tenant: { slug },
       },
+      select: {
+        tenantId: true,
+      },
     });
 
     if (!bioCampaign) {
       return NextResponse.json({ error: 'Link da bio nao encontrado' }, { status: 404 });
     }
 
-    const targetUrl = new URL(`/${slug}`, request.url);
-    targetUrl.searchParams.set('source', 'bio');
-    targetUrl.searchParams.set('campaign', bioSlug);
+    const pageClickEvent = await prisma.pageClickEvent.create({
+      data: {
+        tenantId: bioCampaign.tenantId,
+        source: 'bio',
+        campaign: bioSlug,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-    return NextResponse.redirect(targetUrl);
+    const response = NextResponse.redirect(new URL(`/${slug}`, request.url));
+    await attachTrackingCookie(response, pageClickEvent.id, bioCampaign.tenantId);
+
+    return response;
   } catch (error) {
     console.error('Bio Redirect Error:', error);
     return NextResponse.json({ error: 'Erro ao redirecionar' }, { status: 500 });

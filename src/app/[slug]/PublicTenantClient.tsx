@@ -15,8 +15,6 @@ type Props = {
   slug: string;
   tenantName: string;
   sellers: SellerCard[];
-  source: string;
-  campaign: string;
   isAdminLogged: boolean;
   recoveryEnabled?: boolean;
 };
@@ -62,8 +60,6 @@ export default function PublicTenantClient({
   slug,
   tenantName,
   sellers,
-  source,
-  campaign,
   isAdminLogged,
   recoveryEnabled = true,
 }: Props) {
@@ -238,7 +234,7 @@ export default function PublicTenantClient({
           {sellers.map((seller) => (
             <a
               key={seller.id}
-              href={`/api/redirect?sellerId=${seller.id}&source=${source}&campaign=${campaign}`}
+              href={`/api/redirect/${seller.id}`}
               style={{
                 display: 'flex',
                 alignItems: 'center',
