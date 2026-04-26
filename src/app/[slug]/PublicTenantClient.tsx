@@ -16,7 +16,6 @@ type Props = {
   tenantName: string;
   sellers: SellerCard[];
   isAdminLogged: boolean;
-  recoveryEnabled?: boolean;
 };
 
 type LoginState = { error?: string } | null;
@@ -61,7 +60,6 @@ export default function PublicTenantClient({
   tenantName,
   sellers,
   isAdminLogged,
-  recoveryEnabled = true,
 }: Props) {
   const [isLoginOpen, setIsLoginOpen] = React.useState(false);
   const [state, formAction] = useActionState<LoginState, FormData>(handleTenantLogin, null);
@@ -459,21 +457,6 @@ export default function PublicTenantClient({
               <SubmitButton />
             </form>
 
-            {recoveryEnabled ? (
-              <div style={{ marginTop: 14, textAlign: 'right' }}>
-                <a
-                  href={`/${slug}/recuperar-senha`}
-                  style={{
-                    color: 'var(--brand-accent)',
-                    fontSize: 13,
-                    fontWeight: 700,
-                    textDecoration: 'none',
-                  }}
-                >
-                  Esqueci minha senha
-                </a>
-              </div>
-            ) : null}
           </div>
         </div>
       ) : null}

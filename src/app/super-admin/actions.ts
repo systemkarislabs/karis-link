@@ -17,10 +17,6 @@ function isValidSlug(value: string) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
 
-function isValidRecoveryEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
-
 export async function handleSuperLogin(_: unknown, formData: FormData) {
   // Normaliza usuário para lowercase para evitar erros de case-sensitivity.
   const user = String(formData.get('username') || '').trim().toLowerCase();
@@ -84,9 +80,8 @@ export async function createTenant(formData: FormData) {
     .replace(/\s+/g, '-');
   const adminUser = String(formData.get('adminUser') || '').trim();
   const adminPass = String(formData.get('adminPass') || '');
-  const recoveryEmail = String(formData.get('recoveryEmail') || '').trim().toLowerCase();
 
-  if (!name || !slug || !adminUser || !adminPass || !recoveryEmail) {
+  if (!name || !slug || !adminUser || !adminPass) {
     throw new Error('Todos os campos da empresa são obrigatórios.');
   }
 
@@ -106,48 +101,19 @@ export async function createTenant(formData: FormData) {
     throw new Error('A senha inicial deve ter pelo menos 8 caracteres.');
   }
 
-  if (!isValidRecoveryEmail(recoveryEmail)) {
-    throw new Error('Informe um e-mail de recuperação válido.');
-  }
-
-  let createdTenantId: string | null = null;
-  try {
-    const created = await prisma.tenant.create({
-      data: {
-        name,
-        slug,
-        adminUser,
-        adminPass: await hashPassword(adminPass),
-        recoveryEmail,
-      },
-      select: { id: true },
-    });
-    createdTenantId = created.id;
-  } catch (error) {
-    const message =
-      typeof error === 'object' && error && 'message' in error
-        ? String((error as { message?: string }).message)
-        : '';
-
-    if (message.toLowerCase().includes('recoveryemail')) {
-      const created = await prisma.tenant.create({
-        data: {
-          name,
-          slug,
-          adminUser,
-          adminPass: await hashPassword(adminPass),
-        },
-        select: { id: true },
-      });
-      createdTenantId = created.id;
-    } else {
-      throw error;
-    }
-  }
+  const created = await prisma.tenant.create({
+    data: {
+      name,
+      slug,
+      adminUser,
+      adminPass: await hashPassword(adminPass),
+    },
+    select: { id: true },
+  });
 
   await logAuditEvent({
     event: 'tenant_create',
-    tenantId: createdTenantId,
+    tenantId: created.id,
     metadata: { name, slug, adminUser },
   });
 
@@ -165,29 +131,29 @@ export async function toggleTenant(id: string, active: boolean) {
   redirect('/super-admin');
 }
 
-export async function updateTenantRecoveryEmail(formData: FormData) {
+export async function updateTenantAdminPassword(formData: FormData) {
   await requireSuperAuth();
 
   const id = String(formData.get('id') || '').trim();
-  const recoveryEmail = String(formData.get('recoveryEmail') || '').trim().toLowerCase();
+  const adminPass = String(formData.get('adminPass') || '');
 
   if (!id) {
-    throw new Error('Empresa invalida para atualizar e-mail de recuperacao.');
+    throw new Error('Empresa invalida para atualizar senha.');
   }
 
-  if (!isValidRecoveryEmail(recoveryEmail)) {
-    throw new Error('Informe um e-mail de recuperacao valido.');
+  if (adminPass.length < 8) {
+    throw new Error('A nova senha da empresa deve ter pelo menos 8 caracteres.');
   }
 
   await prisma.tenant.update({
     where: { id },
-    data: { recoveryEmail },
+    data: { adminPass: await hashPassword(adminPass) },
   });
 
   await logAuditEvent({
-    event: 'tenant_recovery_email_update',
+    event: 'tenant_password_update_by_super',
     tenantId: id,
-    metadata: { recoveryEmailUpdated: true },
+    metadata: { passwordUpdatedBySuper: true },
   });
 
   redirect('/super-admin');

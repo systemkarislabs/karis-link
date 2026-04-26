@@ -135,81 +135,11 @@ export async function handleTenantLogout(slug: string) {
   redirect(`/${slug}`);
 }
 
-export async function handleTenantPasswordRecovery(_: unknown, formData: FormData) {
-  const slug = String(formData.get('slug') || '').trim().toLowerCase();
-  const recoveryEmail = String(formData.get('recoveryEmail') || '').trim().toLowerCase();
-  const ip = await getRequestIp();
-
-  if (!slug || !recoveryEmail) {
-    return { error: 'Informe o e-mail de recuperação cadastrado.' };
-  }
-
-  await assertRateLimit({
-    scope: 'tenant-recovery',
-    key: `${slug}:${recoveryEmail}:${ip}`,
-    limit: 5,
-    windowMs: 30 * 60 * 1000,
-    message: 'Muitas solicitações de recuperação. Aguarde alguns minutos e tente novamente.',
-  });
-
-  const genericMessage =
-    'Se o e-mail estiver cadastrado, você receberá um link de redefinição em instantes.';
-
-  try {
-    const tenant = await prisma.tenant.findUnique({
-      where: { slug },
-      select: {
-        id: true,
-        name: true,
-        active: true,
-        recoveryEmail: true,
-      },
-    });
-
-    if (tenant?.active && tenant.recoveryEmail?.toLowerCase() === recoveryEmail) {
-      const token = randomBytes(32).toString('hex');
-      const tokenHash = hashResetToken(token);
-      const expiresAt = new Date(Date.now() + PASSWORD_RESET_MINUTES * 60 * 1000);
-      const resetUrl = `${getAppBaseUrl()}/${slug}/recuperar-senha/${token}`;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (prisma as any).passwordResetToken.create({
-        data: {
-          tokenHash,
-          tenantId: tenant.id,
-          expiresAt,
-        },
-      });
-
-      const emailResult = await sendPasswordResetEmail(recoveryEmail, tenant.name, resetUrl);
-
-      await logAuditEvent({
-        event: 'tenant_password_recovery_request',
-        tenantId: tenant.id,
-        metadata: { slug, emailSent: emailResult.ok },
-      });
-
-      if (!emailResult.ok) {
-        return {
-          error:
-            'Nao foi possivel enviar o e-mail agora. Verifique o remetente configurado no Resend e tente novamente.',
-        };
-      }
-    }
-
-    return { success: genericMessage };
-  } catch (error) {
-    const message =
-      typeof error === 'object' && error && 'message' in error
-        ? String((error as { message?: string }).message)
-        : '';
-
-    if (message.toLowerCase().includes('recoveryemail')) {
-      return { success: genericMessage };
-    }
-
-    throw error;
-  }
+export async function handleTenantPasswordRecovery() {
+  return {
+    error:
+      'Recuperacao por e-mail temporariamente desativada. Solicite uma nova senha ao super-admin.',
+  };
 }
 
 export async function handleTenantPasswordReset(_: unknown, formData: FormData) {

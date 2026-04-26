@@ -1,6 +1,6 @@
 import { requireSuperAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { createTenant, deleteTenant, toggleTenant, updateTenantRecoveryEmail } from './actions';
+import { createTenant, deleteTenant, toggleTenant, updateTenantAdminPassword } from './actions';
 import AdminSidebar from '@/components/AdminSidebar';
 import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
 import Link from 'next/link';
@@ -16,8 +16,8 @@ export default async function SuperAdminPage() {
         id: true,
         name: true,
         slug: true,
+        adminUser: true,
         active: true,
-        recoveryEmail: true,
         createdAt: true,
         _count: { select: { sellers: true } },
       },
@@ -95,10 +95,8 @@ export default async function SuperAdminPage() {
                         <div style={{ fontSize: 12, color: 'var(--sidebar-text)', wordBreak: 'break-word' }}>
                           /{tenant.slug} - {tenant._count.sellers} vendedores
                         </div>
-                        <div style={{ fontSize: 12, color: tenant.recoveryEmail ? 'var(--sidebar-text)' : '#b45309', marginTop: 4 }}>
-                          {tenant.recoveryEmail
-                            ? `Recuperacao: ${tenant.recoveryEmail}`
-                            : 'Sem e-mail de recuperacao cadastrado'}
+                        <div style={{ fontSize: 12, color: 'var(--sidebar-text)', marginTop: 4 }}>
+                          Usuario admin: {tenant.adminUser}
                         </div>
                       </div>
                     </div>
@@ -162,7 +160,7 @@ export default async function SuperAdminPage() {
                       </form>
 
                       <form
-                        action={updateTenantRecoveryEmail}
+                        action={updateTenantAdminPassword}
                         style={{
                           display: 'flex',
                           gap: 8,
@@ -174,11 +172,11 @@ export default async function SuperAdminPage() {
                       >
                         <input type="hidden" name="id" value={tenant.id} />
                         <input
-                          name="recoveryEmail"
-                          type="email"
-                          defaultValue={tenant.recoveryEmail || ''}
-                          placeholder="E-mail de recuperacao"
+                          name="adminPass"
+                          type="password"
+                          placeholder="Nova senha do cliente"
                           required
+                          minLength={8}
                           style={{
                             flex: '1 1 220px',
                             minWidth: 0,
@@ -204,7 +202,7 @@ export default async function SuperAdminPage() {
                             cursor: 'pointer',
                           }}
                         >
-                          Salvar e-mail
+                          Atualizar senha
                         </button>
                       </form>
                     </div>
@@ -285,22 +283,6 @@ export default async function SuperAdminPage() {
                     name="adminPass"
                     type="password"
                     placeholder="Senha inicial"
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      borderRadius: 12,
-                      border: '1px solid var(--border)',
-                      fontSize: 14,
-                      outline: 'none',
-                      background: 'var(--bg-main)',
-                      color: 'var(--text-main)',
-                    }}
-                  />
-                  <input
-                    name="recoveryEmail"
-                    type="email"
-                    placeholder="E-mail para recuperacao de senha"
                     required
                     style={{
                       width: '100%',

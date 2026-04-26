@@ -68,7 +68,6 @@ export default async function PublicTenantPage({ params }: PublicTenantPageProps
         image: seller.image,
       }))}
       isAdminLogged={session?.slug === slug}
-      recoveryEnabled={true}
     />
   );
 }
