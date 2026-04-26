@@ -81,11 +81,10 @@ export default function AdminSidebar({
           display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
-          height: '100vh',
+          height: '100dvh',
           boxSizing: 'border-box',
           zIndex: 101,
           transition: 'transform 0.3s ease',
-          overflowY: 'auto',
         } as React.CSSProperties}
         className={`sidebar-container ${isOpen ? 'open' : ''}`}
       >
@@ -114,7 +113,17 @@ export default function AdminSidebar({
           )}
         </div>
 
-        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, minHeight: 0 }}>
+        <nav
+          style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+            minHeight: 0,
+            overflowY: 'auto',
+            paddingBottom: 16,
+          }}
+        >
           <div
             style={{
               color: 'var(--text-soft)',
@@ -165,6 +174,9 @@ export default function AdminSidebar({
             paddingTop: 12,
             borderTop: '1px solid var(--border)',
             background: 'var(--sidebar-bg)',
+            position: 'sticky',
+            bottom: 0,
+            paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
           }}
         >
           <LogoutButton isSuper={isSuper} slug={slug} />
@@ -179,7 +191,7 @@ export default function AdminSidebar({
           .sidebar-container {
             transform: translateX(-100%);
             padding-top: 84px !important;
-            padding-bottom: 16px !important;
+            padding-bottom: 0 !important;
           }
           .sidebar-container.open {
             transform: translateX(0);
