@@ -16,6 +16,7 @@ export type AuditEvent =
   | 'tenant_create'
   | 'tenant_toggle'
   | 'tenant_delete'
+  | 'tenant_recovery_email_update'
   | 'tenant_login_success'
   | 'tenant_login_failure'
   | 'tenant_password_recovery_request'

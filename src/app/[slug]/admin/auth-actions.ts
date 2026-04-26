@@ -25,13 +25,22 @@ function getAppBaseUrl() {
   return 'http://localhost:3000';
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 async function sendPasswordResetEmail(to: string, tenantName: string, resetUrl: string) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM || 'Karis Link <onboarding@resend.dev>';
 
   if (!apiKey) {
     console.error('RESEND_API_KEY is not configured.');
-    return false;
+    return { ok: false, error: 'RESEND_API_KEY is not configured.' };
   }
 
   const response = await fetch('https://api.resend.com/emails', {
@@ -47,7 +56,7 @@ async function sendPasswordResetEmail(to: string, tenantName: string, resetUrl: 
       html: `
         <div style="font-family: Arial, sans-serif; color: #0f172a; line-height: 1.5;">
           <h2>Recuperacao de senha</h2>
-          <p>Recebemos uma solicitacao para redefinir a senha do painel da empresa <strong>${tenantName}</strong>.</p>
+          <p>Recebemos uma solicitacao para redefinir a senha do painel da empresa <strong>${escapeHtml(tenantName)}</strong>.</p>
           <p>Use o link abaixo para criar uma nova senha. Ele expira em ${PASSWORD_RESET_MINUTES} minutos.</p>
           <p><a href="${resetUrl}" style="display:inline-block;background:#17DB4E;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700;">Redefinir senha</a></p>
           <p>Se voce nao solicitou isso, ignore este e-mail.</p>
@@ -57,11 +66,15 @@ async function sendPasswordResetEmail(to: string, tenantName: string, resetUrl: 
   });
 
   if (!response.ok) {
-    console.error('Resend password reset email failed', await response.text());
-    return false;
+    const errorText = await response.text();
+    console.error('Resend password reset email failed', {
+      status: response.status,
+      body: errorText,
+    });
+    return { ok: false, error: errorText || `HTTP ${response.status}` };
   }
 
-  return true;
+  return { ok: true };
 }
 
 export async function handleTenantLogin(_: unknown, formData: FormData) {
@@ -168,13 +181,20 @@ export async function handleTenantPasswordRecovery(_: unknown, formData: FormDat
         },
       });
 
-      await sendPasswordResetEmail(recoveryEmail, tenant.name, resetUrl);
+      const emailResult = await sendPasswordResetEmail(recoveryEmail, tenant.name, resetUrl);
 
       await logAuditEvent({
         event: 'tenant_password_recovery_request',
         tenantId: tenant.id,
-        metadata: { slug },
+        metadata: { slug, emailSent: emailResult.ok },
       });
+
+      if (!emailResult.ok) {
+        return {
+          error:
+            'Nao foi possivel enviar o e-mail agora. Verifique o remetente configurado no Resend e tente novamente.',
+        };
+      }
     }
 
     return { success: genericMessage };

@@ -165,6 +165,34 @@ export async function toggleTenant(id: string, active: boolean) {
   redirect('/super-admin');
 }
 
+export async function updateTenantRecoveryEmail(formData: FormData) {
+  await requireSuperAuth();
+
+  const id = String(formData.get('id') || '').trim();
+  const recoveryEmail = String(formData.get('recoveryEmail') || '').trim().toLowerCase();
+
+  if (!id) {
+    throw new Error('Empresa invalida para atualizar e-mail de recuperacao.');
+  }
+
+  if (!isValidRecoveryEmail(recoveryEmail)) {
+    throw new Error('Informe um e-mail de recuperacao valido.');
+  }
+
+  await prisma.tenant.update({
+    where: { id },
+    data: { recoveryEmail },
+  });
+
+  await logAuditEvent({
+    event: 'tenant_recovery_email_update',
+    tenantId: id,
+    metadata: { recoveryEmailUpdated: true },
+  });
+
+  redirect('/super-admin');
+}
+
 export async function updateSuperAdminCredentials(formData: FormData) {
   await requireSuperAuth();
 

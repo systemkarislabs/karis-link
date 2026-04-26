@@ -1,6 +1,6 @@
 import { requireSuperAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { createTenant, deleteTenant, toggleTenant } from './actions';
+import { createTenant, deleteTenant, toggleTenant, updateTenantRecoveryEmail } from './actions';
 import AdminSidebar from '@/components/AdminSidebar';
 import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
 import Link from 'next/link';
@@ -17,6 +17,7 @@ export default async function SuperAdminPage() {
         name: true,
         slug: true,
         active: true,
+        recoveryEmail: true,
         createdAt: true,
         _count: { select: { sellers: true } },
       },
@@ -92,7 +93,12 @@ export default async function SuperAdminPage() {
                           {tenant.name}
                         </div>
                         <div style={{ fontSize: 12, color: 'var(--sidebar-text)', wordBreak: 'break-word' }}>
-                          /{tenant.slug} · {tenant._count.sellers} vendedores
+                          /{tenant.slug} - {tenant._count.sellers} vendedores
+                        </div>
+                        <div style={{ fontSize: 12, color: tenant.recoveryEmail ? 'var(--sidebar-text)' : '#b45309', marginTop: 4 }}>
+                          {tenant.recoveryEmail
+                            ? `Recuperacao: ${tenant.recoveryEmail}`
+                            : 'Sem e-mail de recuperacao cadastrado'}
                         </div>
                       </div>
                     </div>
@@ -153,6 +159,53 @@ export default async function SuperAdminPage() {
                         >
                           Excluir empresa
                         </ConfirmSubmitButton>
+                      </form>
+
+                      <form
+                        action={updateTenantRecoveryEmail}
+                        style={{
+                          display: 'flex',
+                          gap: 8,
+                          alignItems: 'center',
+                          flexWrap: 'wrap',
+                          width: '100%',
+                          marginTop: 4,
+                        }}
+                      >
+                        <input type="hidden" name="id" value={tenant.id} />
+                        <input
+                          name="recoveryEmail"
+                          type="email"
+                          defaultValue={tenant.recoveryEmail || ''}
+                          placeholder="E-mail de recuperacao"
+                          required
+                          style={{
+                            flex: '1 1 220px',
+                            minWidth: 0,
+                            padding: '9px 12px',
+                            borderRadius: 10,
+                            border: '1px solid var(--border)',
+                            fontSize: 12,
+                            outline: 'none',
+                            background: 'var(--bg-main)',
+                            color: 'var(--text-main)',
+                          }}
+                        />
+                        <button
+                          type="submit"
+                          style={{
+                            fontSize: 12,
+                            color: '#fff',
+                            padding: '9px 12px',
+                            borderRadius: 10,
+                            background: 'var(--sidebar-active-text)',
+                            fontWeight: 700,
+                            border: 'none',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Salvar e-mail
+                        </button>
                       </form>
                     </div>
                   </div>
