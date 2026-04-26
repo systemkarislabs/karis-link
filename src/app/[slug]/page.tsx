@@ -1,6 +1,6 @@
 import { getTenantSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { getTrackingCookie, setTrackingCookie } from '@/lib/tracking';
+import { getTrackingCookie } from '@/lib/tracking';
 import { notFound } from 'next/navigation';
 import PublicTenantClient from './PublicTenantClient';
 import type { Metadata } from 'next';
@@ -41,18 +41,13 @@ export default async function PublicTenantPage({ params }: PublicTenantPageProps
   const activeTracking = await getTrackingCookie();
 
   if (!activeTracking || activeTracking.tenantId !== tenant.id) {
-    const directVisit = await prisma.pageClickEvent.create({
+    await prisma.pageClickEvent.create({
       data: {
         tenantId: tenant.id,
         source: 'direct',
         campaign: null,
       },
-      select: {
-        id: true,
-      },
     });
-
-    await setTrackingCookie(directVisit.id, tenant.id);
   }
 
   const [sellers, session] = await Promise.all([
