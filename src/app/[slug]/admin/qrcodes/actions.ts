@@ -18,11 +18,19 @@ export async function createQrCode(formData: FormData) {
   const name = String(formData.get('name') || '').trim();
   const channel = String(formData.get('channel') || 'qr').trim().toLowerCase();
   const { tenantId } = await requireTenantAuth(slug);
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/$/, '');
   const channelPath = channel === 'bio' ? 'bio' : 'go';
 
   if (!name) {
     throw new Error('Nome da campanha e obrigatorio.');
+  }
+
+  if (name.length > 80) {
+    throw new Error('O nome da campanha deve ter no maximo 80 caracteres.');
+  }
+
+  if (!baseUrl) {
+    throw new Error('NEXT_PUBLIC_BASE_URL nao esta configurado para gerar os links publicos.');
   }
 
   let campaignCode = '';

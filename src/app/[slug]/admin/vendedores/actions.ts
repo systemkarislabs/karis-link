@@ -1,29 +1,51 @@
 'use server';
 
 import { requireTenantAuth } from '@/lib/auth';
+import { validateImageDataUrl, validateImageFile } from '@/lib/image-validation';
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+
+function validateSellerFields(name: string, phone: string) {
+  if (!name || !phone) {
+    throw new Error('Nome e telefone do vendedor sao obrigatorios.');
+  }
+
+  if (name.length > 80) {
+    throw new Error('O nome do vendedor deve ter no maximo 80 caracteres.');
+  }
+
+  const normalizedPhone = phone.replace(/[^\d+]/g, '');
+  if (normalizedPhone.length < 10 || normalizedPhone.length > 20) {
+    throw new Error('Informe um WhatsApp valido para o vendedor.');
+  }
+}
+
+async function resolveSellerImage(imageDataUrl: string, imageFile: File | null | undefined) {
+  if (imageDataUrl) {
+    validateImageDataUrl(imageDataUrl);
+    return imageDataUrl;
+  }
+
+  if (imageFile && imageFile.size > 0) {
+    validateImageFile(imageFile);
+    const buffer = Buffer.from(await imageFile.arrayBuffer());
+    return `data:${imageFile.type};base64,${buffer.toString('base64')}`;
+  }
+
+  return null;
+}
 
 export async function createSeller(formData: FormData) {
   const name = String(formData.get('name') || '').trim();
   const phone = String(formData.get('phone') || '').trim();
   const slug = String(formData.get('slug') || '').trim().toLowerCase();
-  const imageFile = formData.get('image') as File;
+  const imageFile = formData.get('image') as File | null;
   const imageDataUrl = String(formData.get('imageDataUrl') || '').trim();
   const { tenantId } = await requireTenantAuth(slug);
 
-  let imageBase64 = null;
-  if (imageDataUrl.startsWith('data:image/')) {
-    imageBase64 = imageDataUrl;
-  } else if (imageFile && imageFile.size > 0) {
-    const buffer = Buffer.from(await imageFile.arrayBuffer());
-    imageBase64 = `data:${imageFile.type};base64,${buffer.toString('base64')}`;
-  }
-
-  if (!name || !phone) {
-    throw new Error('Nome e telefone do vendedor são obrigatórios.');
-  }
+  validateSellerFields(name, phone);
+  const imageBase64 = await resolveSellerImage(imageDataUrl, imageFile);
 
   await prisma.seller.create({
     data: {
@@ -63,9 +85,11 @@ export async function updateSeller(formData: FormData) {
   const removeImage = String(formData.get('removeImage') || '') === 'on';
   const { tenantId } = await requireTenantAuth(slug);
 
-  if (!id || !name || !phone) {
-    throw new Error('Nome e telefone do vendedor são obrigatórios.');
+  if (!id) {
+    throw new Error('Vendedor invalido.');
   }
+
+  validateSellerFields(name, phone);
 
   const seller = await prisma.seller.findFirst({
     where: { id, tenantId },
@@ -73,7 +97,7 @@ export async function updateSeller(formData: FormData) {
   });
 
   if (!seller) {
-    throw new Error('Vendedor não encontrado.');
+    throw new Error('Vendedor nao encontrado.');
   }
 
   let imageValue = seller.image;
@@ -82,11 +106,9 @@ export async function updateSeller(formData: FormData) {
     imageValue = null;
   }
 
-  if (imageDataUrl.startsWith('data:image/')) {
-    imageValue = imageDataUrl;
-  } else if (imageFile && imageFile.size > 0) {
-    const buffer = Buffer.from(await imageFile.arrayBuffer());
-    imageValue = `data:${imageFile.type};base64,${buffer.toString('base64')}`;
+  const newImage = await resolveSellerImage(imageDataUrl, imageFile);
+  if (newImage) {
+    imageValue = newImage;
   }
 
   await prisma.seller.updateMany({

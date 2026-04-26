@@ -21,6 +21,7 @@ export default function SellerImageField({
   const [zoom, setZoom] = useState(1);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!source) {
@@ -62,9 +63,22 @@ export default function SellerImageField({
     const file = event.target.files?.[0];
     if (!file) return;
 
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setError('Use uma imagem JPG, PNG ou WEBP.');
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setError('A imagem deve ter no maximo 2 MB.');
+      event.target.value = '';
+      return;
+    }
+
     const fileReader = new FileReader();
     fileReader.onload = () => {
       const result = typeof fileReader.result === 'string' ? fileReader.result : '';
+      setError('');
       setSource(result);
       setZoom(1);
       setOffsetX(0);
@@ -74,6 +88,7 @@ export default function SellerImageField({
   }
 
   function clearImageSelection() {
+    setError('');
     setSource('');
     setPreview('');
     setZoom(1);
@@ -87,6 +102,7 @@ export default function SellerImageField({
 
       <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)' }}>{label}</div>
       <input type="file" accept="image/*" onChange={handleFileChange} style={{ fontSize: 13, color: 'var(--sidebar-text)' }} />
+      {error ? <div style={{ fontSize: 12, color: '#dc2626', fontWeight: 600 }}>{error}</div> : null}
 
       {source ? (
         <div

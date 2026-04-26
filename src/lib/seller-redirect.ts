@@ -22,6 +22,11 @@ export async function handleSellerRedirect(sellerId: string) {
       return NextResponse.json({ error: 'Seller not found' }, { status: 404 });
     }
 
+    const sanitizedPhone = seller.phone.replace(/[^\d]/g, '');
+    if (sanitizedPhone.length < 10 || sanitizedPhone.length > 20) {
+      return NextResponse.json({ error: 'Seller phone is invalid' }, { status: 400 });
+    }
+
     const tracking = await getTrackingCookie();
     let source = 'direct';
     let campaign: string | null = null;
@@ -59,7 +64,7 @@ export async function handleSellerRedirect(sellerId: string) {
     ]);
 
     const message = encodeURIComponent(`Olá ${seller.name}, vim pelo link da plataforma!`);
-    const waUrl = `https://wa.me/${seller.phone}?text=${message}`;
+    const waUrl = `https://wa.me/${sanitizedPhone}?text=${message}`;
     const response = NextResponse.redirect(waUrl);
 
     clearTrackingCookieFromResponse(response);

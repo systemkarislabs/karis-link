@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import prisma from './prisma';
 
 const SESSION_COOKIE = 'kl_session';
 const SUPER_COOKIE = 'kl_super';
@@ -93,6 +94,23 @@ export async function getTenantSession() {
 export async function requireTenantAuth(slug: string) {
   const session = await getTenantSession();
   if (!session || session.slug !== slug) redirect(`/${slug}/login`);
+
+  const tenant = await prisma.tenant.findFirst({
+    where: {
+      id: session.tenantId,
+      slug,
+      active: true,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!tenant) {
+    await clearTenantSession();
+    redirect(`/${slug}/login`);
+  }
+
   return session;
 }
 

@@ -8,6 +8,7 @@ import {
   verifyPassword,
 } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { assertRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { createHash, randomBytes } from 'crypto';
 import { redirect } from 'next/navigation';
 
@@ -41,14 +42,14 @@ async function sendPasswordResetEmail(to: string, tenantName: string, resetUrl: 
     body: JSON.stringify({
       from,
       to,
-      subject: `Recuperação de senha - ${tenantName}`,
+      subject: `Recuperacao de senha - ${tenantName}`,
       html: `
         <div style="font-family: Arial, sans-serif; color: #0f172a; line-height: 1.5;">
-          <h2>Recuperação de senha</h2>
-          <p>Recebemos uma solicitação para redefinir a senha do painel da empresa <strong>${tenantName}</strong>.</p>
+          <h2>Recuperacao de senha</h2>
+          <p>Recebemos uma solicitacao para redefinir a senha do painel da empresa <strong>${tenantName}</strong>.</p>
           <p>Use o link abaixo para criar uma nova senha. Ele expira em ${PASSWORD_RESET_MINUTES} minutos.</p>
           <p><a href="${resetUrl}" style="display:inline-block;background:#17DB4E;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700;">Redefinir senha</a></p>
-          <p>Se você não solicitou isso, ignore este e-mail.</p>
+          <p>Se voce nao solicitou isso, ignore este e-mail.</p>
         </div>
       `,
     }),
@@ -66,6 +67,15 @@ export async function handleTenantLogin(_: unknown, formData: FormData) {
   const slug = String(formData.get('slug') || '').trim().toLowerCase();
   const user = String(formData.get('username') || '').trim();
   const pass = String(formData.get('password') || '');
+  const ip = await getRequestIp();
+
+  await assertRateLimit({
+    scope: 'tenant-login',
+    key: `${slug}:${user}:${ip}`,
+    limit: 8,
+    windowMs: 10 * 60 * 1000,
+    message: 'Muitas tentativas de login. Aguarde alguns minutos e tente novamente.',
+  });
 
   const tenant = await prisma.tenant.findFirst({
     where: { slug, active: true },
@@ -80,10 +90,9 @@ export async function handleTenantLogin(_: unknown, formData: FormData) {
   const passwordMatches = tenant ? await verifyPassword(pass, tenant.adminPass) : false;
 
   if (!tenant || tenant.adminUser !== user || !passwordMatches) {
-    return { error: 'Usuário ou senha inválidos.' };
+    return { error: 'Usuario ou senha invalidos.' };
   }
 
-  // Migração: se senha ainda não está em hash, atualiza automaticamente
   if (!isPasswordHash(tenant.adminPass)) {
     await prisma.tenant.update({
       where: { id: tenant.id },
@@ -103,13 +112,22 @@ export async function handleTenantLogout(slug: string) {
 export async function handleTenantPasswordRecovery(_: unknown, formData: FormData) {
   const slug = String(formData.get('slug') || '').trim().toLowerCase();
   const recoveryEmail = String(formData.get('recoveryEmail') || '').trim().toLowerCase();
+  const ip = await getRequestIp();
 
   if (!slug || !recoveryEmail) {
-    return { error: 'Informe o e-mail de recuperação cadastrado.' };
+    return { error: 'Informe o email de recuperacao cadastrado.' };
   }
 
+  await assertRateLimit({
+    scope: 'tenant-recovery',
+    key: `${slug}:${recoveryEmail}:${ip}`,
+    limit: 5,
+    windowMs: 30 * 60 * 1000,
+    message: 'Muitas solicitacoes de recuperacao. Aguarde alguns minutos e tente novamente.',
+  });
+
   const genericMessage =
-    'Se o e-mail estiver cadastrado, o suporte da Karis Labs poderá validar a solicitação e orientar a redefinição.';
+    'Se o email estiver cadastrado, o suporte da Karis Labs podera validar a solicitacao e orientar a redefinicao.';
 
   try {
     const tenant = await (prisma.tenant as any).findUnique({
@@ -169,7 +187,7 @@ export async function handleTenantPasswordReset(_: unknown, formData: FormData) 
   }
 
   if (newPassword !== confirmPassword) {
-    return { error: 'A confirmação da nova senha não confere.' };
+    return { error: 'A confirmacao da nova senha nao confere.' };
   }
 
   const tokenHash = hashResetToken(token);
@@ -191,7 +209,7 @@ export async function handleTenantPasswordReset(_: unknown, formData: FormData) 
   });
 
   if (!resetToken) {
-    return { error: 'Link inválido ou expirado. Solicite uma nova recuperação de senha.' };
+    return { error: 'Link invalido ou expirado. Solicite uma nova recuperacao de senha.' };
   }
 
   await prisma.$transaction([
