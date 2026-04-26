@@ -113,7 +113,7 @@ export default async function QrCodesPage(props: any) {
             { label: 'Scans via QR', value: qrScans },
             { label: 'Acessos via bio', value: bioVisits },
             { label: 'Escolhas de vendedor', value: totalChoices },
-            { label: 'Conversão média', value: `${averageConversion}%` },
+            { label: 'Conversão média por link', value: `${averageConversion}%` },
           ].map((item) => (
             <div
               key={item.label}

@@ -33,8 +33,14 @@ function getCookieOptions() {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax' as const,
-    maxAge: SESSION_MAX_AGE,
     path: '/',
+  };
+}
+
+function getExpiredCookieOptions() {
+  return {
+    ...getCookieOptions(),
+    maxAge: 0,
   };
 }
 
@@ -99,7 +105,7 @@ export async function setTenantSession(slug: string, tenantId: string) {
 
 export async function clearTenantSession() {
   const store = await cookies();
-  store.set(SESSION_COOKIE, '', { ...getCookieOptions(), maxAge: 0 });
+  store.set(SESSION_COOKIE, '', getExpiredCookieOptions());
 }
 
 export async function getSuperSession() {
@@ -122,5 +128,5 @@ export async function setSuperSession() {
 
 export async function clearSuperSession() {
   const store = await cookies();
-  store.set(SUPER_COOKIE, '', { ...getCookieOptions(), maxAge: 0 });
+  store.set(SUPER_COOKIE, '', getExpiredCookieOptions());
 }

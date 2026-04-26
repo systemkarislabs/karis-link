@@ -112,7 +112,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
                   fontWeight: 700,
                 }}
               >
-                {qr.conversion}% conversão
+                {qr.conversion}% deste link
               </div>
             </div>
           </div>

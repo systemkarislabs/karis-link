@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma';
 import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
+import SellerImageField from '@/components/SellerImageField';
 import { createSeller, deleteSeller } from './actions';
 import Link from 'next/link';
 
@@ -173,10 +174,7 @@ export default async function VendedoresPage(props: any) {
                 color: 'var(--text-main)',
               }}
             />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={{ fontSize: 12, color: 'var(--sidebar-text)', marginLeft: 4 }}>Foto (Opcional)</label>
-              <input type="file" name="image" accept="image/*" style={{ fontSize: 12 }} />
-            </div>
+            <SellerImageField />
             <button
               type="submit"
               style={{
@@ -184,6 +182,7 @@ export default async function VendedoresPage(props: any) {
                 color: '#fff',
                 border: 'none',
                 borderRadius: 10,
+                minHeight: 48,
                 fontWeight: 600,
                 cursor: 'pointer',
               }}

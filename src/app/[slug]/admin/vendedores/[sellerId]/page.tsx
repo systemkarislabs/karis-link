@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma';
 import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
+import SellerImageField from '@/components/SellerImageField';
 import Link from 'next/link';
 import { updateSeller } from '../actions';
 
@@ -155,7 +156,10 @@ export default async function EditSellerPage(props: any) {
                 <div style={{ fontSize: 14, color: 'var(--sidebar-text)' }}>Esse vendedor ainda não possui foto cadastrada.</div>
               )}
 
-              <input type="file" name="image" accept="image/*" style={{ fontSize: 13, color: 'var(--sidebar-text)' }} />
+              <SellerImageField
+                label="Nova foto (opcional)"
+                helperText="Envie e ajuste uma nova imagem antes de salvar para substituir a foto atual."
+              />
             </div>
 
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
