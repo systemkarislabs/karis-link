@@ -7,7 +7,9 @@ import { updateSeller } from '../actions';
 
 export const dynamic = 'force-dynamic';
 
-export default async function EditSellerPage(props: any) {
+type PageProps = { params: Promise<{ slug: string; sellerId: string }> };
+
+export default async function EditSellerPage(props: PageProps) {
   const params = await props.params;
   const { slug, sellerId } = params;
   const { tenantId } = await requireTenantAuth(slug);

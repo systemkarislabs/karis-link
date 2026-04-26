@@ -24,7 +24,9 @@ type QrCodeMetric = {
   }>;
 };
 
-export default async function QrCodesPage(props: any) {
+type PageProps = { params: Promise<{ slug: string }> };
+
+export default async function QrCodesPage(props: PageProps) {
   const params = await props.params;
   const { slug } = params;
   const { tenantId } = await requireTenantAuth(slug);
@@ -101,9 +103,9 @@ export default async function QrCodesPage(props: any) {
 
       <main className="main-content">
         <header style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Campanhas Rastreaveis</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Campanhas Rastreáveis</h1>
           <p style={{ color: 'var(--sidebar-text)' }}>
-            Gere QR Codes e links de bio com codigos unicos criados no servidor para medir acessos e escolhas de vendedor por origem.
+            Gere QR Codes e links de bio com códigos únicos criados no servidor para medir acessos e escolhas de vendedor por origem.
           </p>
         </header>
 
@@ -144,13 +146,13 @@ export default async function QrCodesPage(props: any) {
         >
           <h2 style={{ margin: '0 0 8px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Nova campanha</h2>
           <p style={{ margin: '0 0 24px', color: 'var(--sidebar-text)' }}>
-            Crie campanhas para materiais fisicos e tambem um link exclusivo para a bio do Instagram. O codigo do link e gerado automaticamente.
+            Crie campanhas para materiais físicos e também um link exclusivo para a bio do Instagram. O código do link é gerado automaticamente.
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18 }}>
             {[
               {
-                title: 'QR Code rastreavel',
+                title: 'QR Code rastreável',
                 description: 'Ideal para mesas, panfletos, vitrine, fachada e eventos.',
                 channel: 'qr',
                 namePlaceholder: 'Nome da campanha (ex: Mesa 01)',
@@ -160,7 +162,7 @@ export default async function QrCodesPage(props: any) {
               },
               {
                 title: 'Link da bio do Instagram',
-                description: 'Cria um link rastreavel para medir os acessos vindos da bio.',
+                description: 'Cria um link rastreável para medir os acessos vindos da bio.',
                 channel: 'bio',
                 namePlaceholder: 'Nome da campanha (ex: Bio Instagram)',
                 buttonLabel: 'Gerar link da bio',
@@ -192,7 +194,7 @@ export default async function QrCodesPage(props: any) {
                     {campaign.description}
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--sidebar-text)', lineHeight: 1.5, marginTop: 6 }}>
-                    O link publico sera unico e criado automaticamente pelo sistema.
+                    O link público será único e criado automaticamente pelo sistema.
                   </div>
                 </div>
 

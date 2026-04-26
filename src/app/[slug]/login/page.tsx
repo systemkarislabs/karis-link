@@ -2,7 +2,9 @@ import { getTenantSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import LoginClient from './LoginClient';
 
-export default async function TenantLoginPage(props: any) {
+type PageProps = { params: Promise<{ slug: string }> };
+
+export default async function TenantLoginPage(props: PageProps) {
   const params = await props.params;
   const { slug } = params;
   const session = await getTenantSession();

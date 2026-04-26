@@ -70,11 +70,11 @@ export default function PublicTenantClient({
     width: '100%',
     padding: '12px 14px',
     borderRadius: 10,
-    border: '1px solid #dbe3ee',
+    border: '1px solid var(--border)',
     fontSize: 14,
     outline: 'none',
-    background: '#f8fafc',
-    color: '#172033',
+    background: 'var(--bg-main)',
+    color: 'var(--text-main)',
   };
 
   return (

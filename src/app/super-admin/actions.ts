@@ -7,6 +7,7 @@ import {
   setSuperSession,
   verifyPassword,
 } from '@/lib/auth';
+import { logAuditEvent } from '@/lib/audit';
 import prisma from '@/lib/prisma';
 import { assertRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { ensureSuperAdminTableAvailable, findStoredSuperAdminAccount } from '@/lib/super-admin';
@@ -39,10 +40,12 @@ export async function handleSuperLogin(_: unknown, formData: FormData) {
   if (storedAccount) {
     const passwordMatches = await verifyPassword(pass, storedAccount.passwordHash);
     if (user !== storedAccount.username.toLowerCase() || !passwordMatches) {
-      return { error: 'Credenciais invalidas.' };
+      await logAuditEvent({ event: 'super_login_failure', actor: user });
+      return { error: 'Credenciais inválidas.' };
     }
 
     await setSuperSession();
+    await logAuditEvent({ event: 'super_login_success', actor: user });
     redirect('/super-admin');
   }
 
@@ -51,20 +54,23 @@ export async function handleSuperLogin(_: unknown, formData: FormData) {
   const configuredHash = process.env.SUPER_ADMIN_PASS_HASH;
 
   if (!configuredUser || (!configuredPassword && !configuredHash)) {
-    return { error: 'Super-admin nao configurado no ambiente.' };
+    return { error: 'Super-admin não configurado no ambiente.' };
   }
 
   const passwordMatches = await verifyPassword(pass, configuredHash || configuredPassword);
   if (user !== configuredUser.trim().toLowerCase() || !passwordMatches) {
+    await logAuditEvent({ event: 'super_login_failure', actor: user });
     return { error: 'Credenciais invalidas.' };
   }
 
   await setSuperSession();
+  await logAuditEvent({ event: 'super_login_success', actor: user });
   redirect('/super-admin');
 }
 
 export async function execLogout() {
   await clearSuperSession();
+  await logAuditEvent({ event: 'super_logout' });
   redirect('/super-admin/login');
 }
 
@@ -81,19 +87,19 @@ export async function createTenant(formData: FormData) {
   const recoveryEmail = String(formData.get('recoveryEmail') || '').trim().toLowerCase();
 
   if (!name || !slug || !adminUser || !adminPass || !recoveryEmail) {
-    throw new Error('Todos os campos da empresa sao obrigatorios.');
+    throw new Error('Todos os campos da empresa são obrigatórios.');
   }
 
   if (name.length > 80) {
-    throw new Error('O nome da empresa deve ter no maximo 80 caracteres.');
+    throw new Error('O nome da empresa deve ter no máximo 80 caracteres.');
   }
 
   if (!isValidSlug(slug) || slug.length < 3 || slug.length > 50) {
-    throw new Error('O slug deve usar apenas letras minusculas, numeros e hifens.');
+    throw new Error('O slug deve usar apenas letras minúsculas, números e hifens.');
   }
 
   if (adminUser.length < 3 || adminUser.length > 50) {
-    throw new Error('O usuario administrador deve ter entre 3 e 50 caracteres.');
+    throw new Error('O usuário administrador deve ter entre 3 e 50 caracteres.');
   }
 
   if (adminPass.length < 8) {
@@ -101,11 +107,12 @@ export async function createTenant(formData: FormData) {
   }
 
   if (!isValidRecoveryEmail(recoveryEmail)) {
-    throw new Error('Informe um email de recuperacao valido.');
+    throw new Error('Informe um e-mail de recuperação válido.');
   }
 
+  let createdTenantId: string | null = null;
   try {
-    await (prisma.tenant as any).create({
+    const created = await prisma.tenant.create({
       data: {
         name,
         slug,
@@ -113,7 +120,9 @@ export async function createTenant(formData: FormData) {
         adminPass: await hashPassword(adminPass),
         recoveryEmail,
       },
+      select: { id: true },
     });
+    createdTenantId = created.id;
   } catch (error) {
     const message =
       typeof error === 'object' && error && 'message' in error
@@ -121,18 +130,26 @@ export async function createTenant(formData: FormData) {
         : '';
 
     if (message.toLowerCase().includes('recoveryemail')) {
-      await prisma.tenant.create({
+      const created = await prisma.tenant.create({
         data: {
           name,
           slug,
           adminUser,
           adminPass: await hashPassword(adminPass),
         },
+        select: { id: true },
       });
+      createdTenantId = created.id;
     } else {
       throw error;
     }
   }
+
+  await logAuditEvent({
+    event: 'tenant_create',
+    tenantId: createdTenantId,
+    metadata: { name, slug, adminUser },
+  });
 
   redirect('/super-admin');
 }
@@ -140,6 +157,11 @@ export async function createTenant(formData: FormData) {
 export async function toggleTenant(id: string, active: boolean) {
   await requireSuperAuth();
   await prisma.tenant.update({ where: { id }, data: { active: !active } });
+  await logAuditEvent({
+    event: 'tenant_toggle',
+    tenantId: id,
+    metadata: { newActive: !active },
+  });
   redirect('/super-admin');
 }
 
@@ -151,11 +173,11 @@ export async function updateSuperAdminCredentials(formData: FormData) {
   const confirmPassword = String(formData.get('confirmPassword') || '');
 
   if (!username || !password || !confirmPassword) {
-    throw new Error('Preencha usuario, nova senha e confirmacao.');
+    throw new Error('Preencha usuário, nova senha e confirmação.');
   }
 
   if (username.length < 3 || username.length > 50) {
-    throw new Error('O usuario deve ter entre 3 e 50 caracteres.');
+    throw new Error('O usuário deve ter entre 3 e 50 caracteres.');
   }
 
   if (password.length < 8) {
@@ -163,7 +185,7 @@ export async function updateSuperAdminCredentials(formData: FormData) {
   }
 
   if (password !== confirmPassword) {
-    throw new Error('A confirmacao da senha nao confere.');
+    throw new Error('A confirmação da senha não confere.');
   }
 
   const passwordHash = await hashPassword(password);
@@ -185,6 +207,7 @@ export async function updateSuperAdminCredentials(formData: FormData) {
     ensureSuperAdminTableAvailable(error);
   }
 
+  await logAuditEvent({ event: 'super_credentials_update', actor: username });
   redirect('/super-admin/configuracoes');
 }
 
@@ -193,7 +216,7 @@ export async function deleteTenant(formData: FormData) {
 
   const id = String(formData.get('id') || '').trim();
   if (!id) {
-    throw new Error('Empresa invalida para exclusao.');
+    throw new Error('Empresa inválida para exclusão.');
   }
 
   const tenant = await prisma.tenant.findUnique({
@@ -205,7 +228,7 @@ export async function deleteTenant(formData: FormData) {
   });
 
   if (!tenant) {
-    throw new Error('Empresa nao encontrada.');
+    throw new Error('Empresa não encontrada.');
   }
 
   const sellerIds = tenant.sellers.map((seller) => seller.id);
@@ -232,6 +255,12 @@ export async function deleteTenant(formData: FormData) {
     await tx.tenant.delete({
       where: { id: tenant.id },
     });
+  });
+
+  await logAuditEvent({
+    event: 'tenant_delete',
+    tenantId: tenant.id,
+    metadata: { sellersRemoved: sellerIds.length },
   });
 
   redirect('/super-admin');

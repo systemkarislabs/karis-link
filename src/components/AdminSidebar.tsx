@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Icon } from './Icon';
 import LogoutButton from './LogoutButton';
@@ -51,10 +52,13 @@ export default function AdminSidebar({
         } as React.CSSProperties}
         className="mobile-header"
       >
-        <img
+        <Image
           src={isSuper ? '/karis-labs-logo.png' : '/karis-link-logo.png'}
-          alt="Logo"
-          style={{ width: 98 }}
+          alt={isSuper ? 'Karis Labs' : 'Karis Link'}
+          width={98}
+          height={28}
+          priority
+          style={{ width: 98, height: 'auto', objectFit: 'contain' }}
         />
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -89,10 +93,13 @@ export default function AdminSidebar({
         className={`sidebar-container ${isOpen ? 'open' : ''}`}
       >
         <div style={{ marginBottom: 32, padding: '0 16px' }}>
-          <img
+          <Image
             src={isSuper ? '/karis-labs-logo.png' : '/karis-link-logo.png'}
             alt={isSuper ? 'Karis Labs' : 'Karis Link'}
-            style={{ width: isSuper ? '128px' : '148px' }}
+            width={isSuper ? 128 : 148}
+            height={isSuper ? 36 : 42}
+            priority
+            style={{ width: isSuper ? 128 : 148, height: 'auto', objectFit: 'contain' }}
           />
           <div
             style={{

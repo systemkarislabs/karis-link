@@ -1,17 +1,15 @@
 import { headers } from 'next/headers';
+import prisma from './prisma';
 
 /**
- * Rate-limit em memória.
+ * Rate-limit com store no Postgres + fallback em-memória.
  *
- * ⚠️ LIMITAÇÃO: este bucket é local ao processo Node.
- * Em ambientes serverless (Vercel, Netlify Functions) cada cold start cria
- * um Map novo e o limite é efetivamente burlado. Em deploys de longa duração
- * (Railway, Fly, VPS) ele funciona normalmente, mas perde o estado em
- * deploys/restarts.
- *
- * Para produção robusta migrar para um store compartilhado (Redis/Upstash,
- * Postgres com tabela `rate_limit_buckets`, ou Cloudflare KV) — usando a
- * mesma assinatura de `assertRateLimit`.
+ * - Em produção (multi-instância serverless), usa a tabela RateLimitBucket
+ *   para compartilhar contadores entre cold-starts e instâncias.
+ * - Se a tabela ainda não existir (migração não aplicada), cai automaticamente
+ *   para o bucket em-memória — ainda útil em dev e em deploys single-instance.
+ * - Limpeza periódica probabilística (5% das chamadas) para evitar crescimento
+ *   ilimitado da tabela.
  */
 
 type RateLimitEntry = {
@@ -19,12 +17,13 @@ type RateLimitEntry = {
   resetAt: number;
 };
 
-const bucket = new Map<string, RateLimitEntry>();
+const memoryBucket = new Map<string, RateLimitEntry>();
+let dbAvailable: boolean | null = null;
 
-function cleanupExpiredEntries(now: number) {
-  for (const [key, entry] of bucket.entries()) {
+function cleanupMemoryBucket(now: number) {
+  for (const [key, entry] of memoryBucket.entries()) {
     if (entry.resetAt <= now) {
-      bucket.delete(key);
+      memoryBucket.delete(key);
     }
   }
 }
@@ -37,6 +36,72 @@ function normalizeIp(value: string | null) {
 export async function getRequestIp() {
   const headerStore = await headers();
   return normalizeIp(headerStore.get('x-forwarded-for') || headerStore.get('x-real-ip'));
+}
+
+async function checkInDatabase(compositeKey: string, limit: number, windowMs: number) {
+  const now = new Date();
+  const newReset = new Date(now.getTime() + windowMs);
+
+  // 5% das chamadas, faz GC oportunista de buckets vencidos.
+  if (Math.random() < 0.05) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (prisma as any).rateLimitBucket.deleteMany({
+        where: { resetAt: { lt: now } },
+      });
+    } catch {
+      // Ignorar erro de GC — não deve quebrar a request.
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const existing = await (prisma as any).rateLimitBucket.findUnique({
+    where: { key: compositeKey },
+  });
+
+  if (!existing || existing.resetAt <= now) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (prisma as any).rateLimitBucket.upsert({
+      where: { key: compositeKey },
+      create: { key: compositeKey, count: 1, resetAt: newReset },
+      update: { count: 1, resetAt: newReset },
+    });
+    return { allowed: true };
+  }
+
+  if (existing.count >= limit) {
+    return { allowed: false };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (prisma as any).rateLimitBucket.update({
+    where: { key: compositeKey },
+    data: { count: { increment: 1 } },
+  });
+  return { allowed: true };
+}
+
+function checkInMemory(compositeKey: string, limit: number, windowMs: number) {
+  const now = Date.now();
+  cleanupMemoryBucket(now);
+
+  const existing = memoryBucket.get(compositeKey);
+
+  if (!existing || existing.resetAt <= now) {
+    memoryBucket.set(compositeKey, {
+      count: 1,
+      resetAt: now + windowMs,
+    });
+    return { allowed: true };
+  }
+
+  if (existing.count >= limit) {
+    return { allowed: false };
+  }
+
+  existing.count += 1;
+  memoryBucket.set(compositeKey, existing);
+  return { allowed: true };
 }
 
 export async function assertRateLimit({
@@ -52,24 +117,38 @@ export async function assertRateLimit({
   windowMs: number;
   message: string;
 }) {
-  const now = Date.now();
-  cleanupExpiredEntries(now);
-
   const compositeKey = `${scope}:${key}`;
-  const existing = bucket.get(compositeKey);
 
-  if (!existing || existing.resetAt <= now) {
-    bucket.set(compositeKey, {
-      count: 1,
-      resetAt: now + windowMs,
-    });
-    return;
+  // Tenta DB primeiro. Se a tabela não existir, marca dbAvailable=false e cai para memória.
+  if (dbAvailable !== false) {
+    try {
+      const result = await checkInDatabase(compositeKey, limit, windowMs);
+      dbAvailable = true;
+      if (!result.allowed) throw new Error(message);
+      return;
+    } catch (error) {
+      const errorMessage =
+        typeof error === 'object' && error && 'message' in error
+          ? String((error as { message?: string }).message)
+          : '';
+
+      // Se foi nossa exceção de limite, repassa.
+      if (errorMessage === message) throw error;
+
+      // Senão, marca DB como indisponível e cai pra memória.
+      const tableMissing =
+        errorMessage.includes('rate_limit') ||
+        errorMessage.includes('RateLimitBucket') ||
+        errorMessage.includes('does not exist') ||
+        errorMessage.includes('relation');
+
+      if (tableMissing && dbAvailable === null) {
+        console.warn('[rate-limit] tabela RateLimitBucket indisponível — usando bucket em-memória.');
+      }
+      dbAvailable = false;
+    }
   }
 
-  if (existing.count >= limit) {
-    throw new Error(message);
-  }
-
-  existing.count += 1;
-  bucket.set(compositeKey, existing);
+  const result = checkInMemory(compositeKey, limit, windowMs);
+  if (!result.allowed) throw new Error(message);
 }

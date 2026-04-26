@@ -80,3 +80,29 @@ model SellerClickEvent {
   campaign  String?
   createdAt DateTime @default(now())
 }
+
+// Rate-limiting compartilhado entre instâncias.
+// Substitui o bucket em-memória que não funciona em serverless multi-instância.
+model RateLimitBucket {
+  key       String   @id
+  count     Int      @default(0)
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
+}
+
+// Trilha de auditoria para eventos sensíveis (logins, exclusões, troca de credenciais).
+model AuditLog {
+  id        String   @id @default(cuid())
+  event     String   // ex: 'super_login_success', 'tenant_delete', 'super_credentials_update'
+  actor     String?  // username/identificador de quem executou
+  ip        String?
+  tenantId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([event])
+  @@index([tenantId])
+  @@index([createdAt])
+}

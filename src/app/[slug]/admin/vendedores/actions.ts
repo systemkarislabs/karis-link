@@ -8,16 +8,16 @@ import { redirect } from 'next/navigation';
 
 function validateSellerFields(name: string, phone: string) {
   if (!name || !phone) {
-    throw new Error('Nome e telefone do vendedor sao obrigatorios.');
+    throw new Error('Nome e telefone do vendedor são obrigatórios.');
   }
 
   if (name.length > 80) {
-    throw new Error('O nome do vendedor deve ter no maximo 80 caracteres.');
+    throw new Error('O nome do vendedor deve ter no máximo 80 caracteres.');
   }
 
   const normalizedPhone = phone.replace(/[^\d+]/g, '');
   if (normalizedPhone.length < 10 || normalizedPhone.length > 20) {
-    throw new Error('Informe um WhatsApp valido para o vendedor.');
+    throw new Error('Informe um WhatsApp válido para o vendedor.');
   }
 }
 
@@ -86,7 +86,7 @@ export async function updateSeller(formData: FormData) {
   const { tenantId } = await requireTenantAuth(slug);
 
   if (!id) {
-    throw new Error('Vendedor invalido.');
+    throw new Error('Vendedor inválido.');
   }
 
   validateSellerFields(name, phone);
@@ -97,7 +97,7 @@ export async function updateSeller(formData: FormData) {
   });
 
   if (!seller) {
-    throw new Error('Vendedor nao encontrado.');
+    throw new Error('Vendedor não encontrado.');
   }
 
   let imageValue = seller.image;

@@ -34,10 +34,11 @@ export default function LoginClient({ slug }: { slug: string }) {
   const inp: React.CSSProperties = {
     padding: '11px 14px',
     borderRadius: 8,
-    border: '1px solid #e5e7eb',
+    border: '1px solid var(--border)',
     fontSize: 14,
     outline: 'none',
-    background: '#fafbfc',
+    background: 'var(--bg-main)',
+    color: 'var(--text-main)',
   };
 
   return (
@@ -47,18 +48,21 @@ export default function LoginClient({ slug }: { slug: string }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#f4f6f8',
+        background: 'var(--bg-main)',
+        color: 'var(--text-main)',
         fontFamily: 'var(--font-body)',
+        padding: 20,
       }}
     >
       <div
         style={{
-          background: '#fff',
+          background: 'var(--card-bg)',
           borderRadius: 16,
           padding: 40,
           width: '100%',
           maxWidth: 380,
-          boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+          boxShadow: 'var(--shadow-soft)',
+          border: '1px solid var(--border)',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
@@ -79,8 +83,8 @@ export default function LoginClient({ slug }: { slug: string }) {
           >
             K
           </div>
-          <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Painel Admin</h1>
-          <p style={{ color: '#6b7280', fontSize: 13, marginTop: 4 }}>/{slug}</p>
+          <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>Painel Admin</h1>
+          <p style={{ color: 'var(--text-soft)', fontSize: 13, marginTop: 4 }}>/{slug}</p>
         </div>
 
         {state?.error ? (
@@ -92,6 +96,7 @@ export default function LoginClient({ slug }: { slug: string }) {
               borderRadius: 8,
               marginBottom: 16,
               fontSize: 13,
+              border: '1px solid #fecaca',
             }}
           >
             {state.error}
@@ -116,7 +121,7 @@ export default function LoginClient({ slug }: { slug: string }) {
         <div style={{ textAlign: 'center', marginTop: 16 }}>
           <a
             href={`/${slug}`}
-            style={{ color: '#9ca3af', fontSize: 12, textDecoration: 'none' }}
+            style={{ color: 'var(--text-soft)', fontSize: 12, textDecoration: 'none' }}
           >
             Voltar para a página pública
           </a>

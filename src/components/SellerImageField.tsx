@@ -70,7 +70,7 @@ export default function SellerImageField({
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      setError('A imagem deve ter no maximo 2 MB.');
+      setError('A imagem deve ter no máximo 2 MB.');
       event.target.value = '';
       return;
     }
@@ -168,7 +168,7 @@ export default function SellerImageField({
                 cursor: 'pointer',
               }}
             >
-              Remover selecao
+              Remover seleção
             </button>
           </div>
         </div>

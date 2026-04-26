@@ -14,7 +14,7 @@ export function validateImageFile(file: File) {
   }
 
   if (file.size > MAX_IMAGE_BYTES) {
-    throw new Error('A imagem deve ter no maximo 2 MB.');
+    throw new Error('A imagem deve ter no máximo 2 MB.');
   }
 }
 
@@ -23,7 +23,7 @@ export function validateImageDataUrl(dataUrl: string) {
 
   const match = /^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/.exec(dataUrl);
   if (!match) {
-    throw new Error('Formato de imagem invalido.');
+    throw new Error('Formato de imagem inválido.');
   }
 
   const mimeType = match[1];
@@ -34,6 +34,6 @@ export function validateImageDataUrl(dataUrl: string) {
   }
 
   if (estimateBase64Bytes(payload) > MAX_IMAGE_BYTES) {
-    throw new Error('A imagem deve ter no maximo 2 MB.');
+    throw new Error('A imagem deve ter no máximo 2 MB.');
   }
 }

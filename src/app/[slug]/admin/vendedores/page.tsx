@@ -3,6 +3,7 @@ import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
 import SellerImageField from '@/components/SellerImageField';
 import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
+import PendingButton from '@/components/PendingButton';
 import { createSeller, deleteSeller } from './actions';
 import Link from 'next/link';
 
@@ -30,7 +31,9 @@ function getInitials(name: string) {
     .join('');
 }
 
-export default async function VendedoresPage(props: any) {
+type PageProps = { params: Promise<{ slug: string }> };
+
+export default async function VendedoresPage(props: PageProps) {
   const params = await props.params;
   const { slug } = params;
   const { tenantId } = await requireTenantAuth(slug);
@@ -96,11 +99,11 @@ export default async function VendedoresPage(props: any) {
     const lastEvent = events[0];
     const recentSourceLabel =
       lastEvent?.source === 'qr'
-        ? 'Ultimo lead via QR'
+        ? 'Último lead via QR'
         : lastEvent?.source === 'bio'
-          ? 'Ultimo lead via Bio'
+          ? 'Último lead via Bio'
           : events.length > 0
-            ? 'Ultimo lead direto'
+            ? 'Último lead direto'
             : 'Sem leads ainda';
 
     return {
@@ -128,7 +131,7 @@ export default async function VendedoresPage(props: any) {
 
       <main className="main-content">
         <header style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Gestao de Vendedores</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Gestão de Vendedores</h1>
           <p style={{ color: 'var(--sidebar-text)' }}>
             Cadastre sua equipe e acompanhe quantos leads cada vendedor recebeu por QR Code, bio e acesso direto.
           </p>
@@ -197,8 +200,8 @@ export default async function VendedoresPage(props: any) {
               }}
             />
             <SellerImageField />
-            <button
-              type="submit"
+            <PendingButton
+              pendingLabel="Salvando..."
               style={{
                 background: 'var(--sidebar-active-text)',
                 color: '#fff',
@@ -206,11 +209,10 @@ export default async function VendedoresPage(props: any) {
                 borderRadius: 10,
                 minHeight: 48,
                 fontWeight: 600,
-                cursor: 'pointer',
               }}
             >
               Salvar vendedor
-            </button>
+            </PendingButton>
           </form>
         </section>
 

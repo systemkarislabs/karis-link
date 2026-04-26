@@ -6,7 +6,11 @@ import { getRecifePeriodStartDate } from '@/lib/recife-time';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ReportsPage(props: any) {
+type PageProps = {
+  searchParams: Promise<{ tenantId?: string; period?: string }>;
+};
+
+export default async function ReportsPage(props: PageProps) {
   await requireSuperAuth();
   const searchParams = await props.searchParams;
   const tenantId = searchParams?.tenantId || 'all';

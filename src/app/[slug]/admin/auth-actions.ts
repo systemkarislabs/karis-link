@@ -7,6 +7,7 @@ import {
   setTenantSession,
   verifyPassword,
 } from '@/lib/auth';
+import { logAuditEvent } from '@/lib/audit';
 import prisma from '@/lib/prisma';
 import { assertRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { createHash, randomBytes } from 'crypto';
@@ -90,7 +91,13 @@ export async function handleTenantLogin(_: unknown, formData: FormData) {
   const passwordMatches = tenant ? await verifyPassword(pass, tenant.adminPass) : false;
 
   if (!tenant || tenant.adminUser !== user || !passwordMatches) {
-    return { error: 'Usuario ou senha invalidos.' };
+    await logAuditEvent({
+      event: 'tenant_login_failure',
+      actor: user,
+      tenantId: tenant?.id,
+      metadata: { slug },
+    });
+    return { error: 'Usuário ou senha inválidos.' };
   }
 
   if (!isPasswordHash(tenant.adminPass)) {
@@ -101,6 +108,12 @@ export async function handleTenantLogin(_: unknown, formData: FormData) {
   }
 
   await setTenantSession(slug, tenant.id);
+  await logAuditEvent({
+    event: 'tenant_login_success',
+    actor: user,
+    tenantId: tenant.id,
+    metadata: { slug },
+  });
   redirect(`/${slug}/admin`);
 }
 
@@ -115,7 +128,7 @@ export async function handleTenantPasswordRecovery(_: unknown, formData: FormDat
   const ip = await getRequestIp();
 
   if (!slug || !recoveryEmail) {
-    return { error: 'Informe o email de recuperacao cadastrado.' };
+    return { error: 'Informe o e-mail de recuperação cadastrado.' };
   }
 
   await assertRateLimit({
@@ -123,14 +136,14 @@ export async function handleTenantPasswordRecovery(_: unknown, formData: FormDat
     key: `${slug}:${recoveryEmail}:${ip}`,
     limit: 5,
     windowMs: 30 * 60 * 1000,
-    message: 'Muitas solicitacoes de recuperacao. Aguarde alguns minutos e tente novamente.',
+    message: 'Muitas solicitações de recuperação. Aguarde alguns minutos e tente novamente.',
   });
 
   const genericMessage =
-    'Se o email estiver cadastrado, o suporte da Karis Labs podera validar a solicitacao e orientar a redefinicao.';
+    'Se o e-mail estiver cadastrado, você receberá um link de redefinição em instantes.';
 
   try {
-    const tenant = await (prisma.tenant as any).findUnique({
+    const tenant = await prisma.tenant.findUnique({
       where: { slug },
       select: {
         id: true,
@@ -146,6 +159,7 @@ export async function handleTenantPasswordRecovery(_: unknown, formData: FormDat
       const expiresAt = new Date(Date.now() + PASSWORD_RESET_MINUTES * 60 * 1000);
       const resetUrl = `${getAppBaseUrl()}/${slug}/recuperar-senha/${token}`;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (prisma as any).passwordResetToken.create({
         data: {
           tokenHash,
@@ -155,6 +169,12 @@ export async function handleTenantPasswordRecovery(_: unknown, formData: FormDat
       });
 
       await sendPasswordResetEmail(recoveryEmail, tenant.name, resetUrl);
+
+      await logAuditEvent({
+        event: 'tenant_password_recovery_request',
+        tenantId: tenant.id,
+        metadata: { slug },
+      });
     }
 
     return { success: genericMessage };
@@ -187,7 +207,7 @@ export async function handleTenantPasswordReset(_: unknown, formData: FormData) 
   }
 
   if (newPassword !== confirmPassword) {
-    return { error: 'A confirmacao da nova senha nao confere.' };
+    return { error: 'A confirmação da nova senha não confere.' };
   }
 
   const tokenHash = hashResetToken(token);
@@ -209,7 +229,7 @@ export async function handleTenantPasswordReset(_: unknown, formData: FormData) 
   });
 
   if (!resetToken) {
-    return { error: 'Link invalido ou expirado. Solicite uma nova recuperacao de senha.' };
+    return { error: 'Link inválido ou expirado. Solicite uma nova recuperação de senha.' };
   }
 
   await prisma.$transaction([
@@ -217,10 +237,12 @@ export async function handleTenantPasswordReset(_: unknown, formData: FormData) 
       where: { id: resetToken.tenantId },
       data: { adminPass: await hashPassword(newPassword) },
     }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (prisma as any).passwordResetToken.update({
       where: { id: resetToken.id },
       data: { usedAt: new Date() },
     }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (prisma as any).passwordResetToken.updateMany({
       where: {
         tenantId: resetToken.tenantId,
@@ -230,6 +252,12 @@ export async function handleTenantPasswordReset(_: unknown, formData: FormData) 
       data: { usedAt: new Date() },
     }),
   ]);
+
+  await logAuditEvent({
+    event: 'tenant_password_reset_success',
+    tenantId: resetToken.tenantId,
+    metadata: { slug },
+  });
 
   redirect(`/${slug}/login`);
 }

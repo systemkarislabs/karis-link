@@ -1,9 +1,13 @@
 import { requireTenantAuth } from '@/lib/auth';
 import React from 'react';
 
-export default async function TenantAdminLayout(props: any) {
-  const params = await props.params;
-  const { slug } = params;
+type Props = {
+  params: Promise<{ slug: string }>;
+  children: React.ReactNode;
+};
+
+export default async function TenantAdminLayout(props: Props) {
+  const { slug } = await props.params;
   await requireTenantAuth(slug);
   return <>{props.children}</>;
 }

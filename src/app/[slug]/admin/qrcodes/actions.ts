@@ -22,15 +22,15 @@ export async function createQrCode(formData: FormData) {
   const channelPath = channel === 'bio' ? 'bio' : 'go';
 
   if (!name) {
-    throw new Error('Nome da campanha e obrigatorio.');
+    throw new Error('Nome da campanha é obrigatório.');
   }
 
   if (name.length > 80) {
-    throw new Error('O nome da campanha deve ter no maximo 80 caracteres.');
+    throw new Error('O nome da campanha deve ter no máximo 80 caracteres.');
   }
 
   if (!baseUrl) {
-    throw new Error('NEXT_PUBLIC_BASE_URL nao esta configurado para gerar os links publicos.');
+    throw new Error('NEXT_PUBLIC_BASE_URL não está configurado para gerar os links públicos.');
   }
 
   let campaignCode = '';
@@ -52,7 +52,7 @@ export async function createQrCode(formData: FormData) {
   }
 
   if (!campaignCode) {
-    throw new Error('Nao foi possivel gerar um link unico para esta campanha. Tente novamente.');
+    throw new Error('Não foi possível gerar um link único para esta campanha. Tente novamente.');
   }
 
   const finalUrl = `${baseUrl}/${slug}/${channelPath}/${campaignCode}`;

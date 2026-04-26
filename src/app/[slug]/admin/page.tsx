@@ -7,7 +7,12 @@ import { formatRecifeDateTime, getRecifePeriodStartDate } from '@/lib/recife-tim
 
 export const dynamic = 'force-dynamic';
 
-export default async function TenantAdminPage(props: any) {
+type PageProps = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ period?: string }>;
+};
+
+export default async function TenantAdminPage(props: PageProps) {
   const params = await props.params;
   const searchParams = await props.searchParams;
   const { slug } = params;
