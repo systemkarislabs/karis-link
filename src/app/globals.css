@@ -76,4 +76,53 @@ a {
     margin-left: 0 !important;
     padding: 80px 20px 40px !important;
   }
+
+  .super-admin-shell {
+    max-width: 100%;
+  }
+
+  .super-admin-header {
+    margin-bottom: 24px !important;
+  }
+
+  .super-admin-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  .super-admin-form-card {
+    order: -1;
+    padding: 24px 18px !important;
+    border-radius: 20px !important;
+  }
+
+  .super-admin-tenant-card {
+    padding: 18px 16px !important;
+  }
+
+  .super-admin-tenant-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .super-admin-form-card {
+    padding: 20px 16px !important;
+  }
+
+  .super-admin-tenant-card {
+    gap: 14px !important;
+  }
+
+  .super-admin-tenant-actions > * {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 0;
+  }
+
+  .super-admin-tenant-actions button,
+  .super-admin-tenant-actions a {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
 }
