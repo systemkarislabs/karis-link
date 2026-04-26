@@ -16,7 +16,19 @@ const Btn = () => {
 
 export default function LoginClient({ slug }: { slug: string }) {
   const [state, formAction] = useFormState<LoginState, FormData>(handleTenantLogin as any, null);
-  const inp: React.CSSProperties = { padding: '11px 14px', borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 14, outline: 'none', background: '#fafbfc' };
+  const inp: React.CSSProperties = {
+    padding: '11px 14px',
+    borderRadius: 8,
+    border: '1px solid #e5e7eb',
+    fontSize: 14,
+    outline: 'none',
+    background: '#ffffff',
+    color: '#0f172a',
+    WebkitTextFillColor: '#0f172a',
+    caretColor: '#0f172a',
+    boxShadow: '0 0 0 1000px #ffffff inset',
+    appearance: 'none',
+  };
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f4f6f8', fontFamily: 'Poppins, sans-serif' }}>

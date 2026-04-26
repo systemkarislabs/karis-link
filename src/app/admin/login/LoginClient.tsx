@@ -36,15 +36,20 @@ export const LoginClient = () => {
   const [state, formAction] = useFormState<LoginState, FormData>(handleLogin as any, null);
 
   const inpStyle = (field: string): React.CSSProperties => ({
-    width: '100%', background: '#FAFBFC',
+    width: '100%', background: '#FFFFFF',
     border: `1px solid ${focused === field ? '#17DB4E' : '#E5E7EB'}`,
     borderRadius: 8, padding: '12px 14px 12px 40px',
     color: '#2B2B2B', fontSize: 14,
+    WebkitTextFillColor: '#2B2B2B',
+    caretColor: '#2B2B2B',
     fontFamily: "'Open Sans', sans-serif",
     outline: 'none',
-    boxShadow: focused === field ? '0 0 0 3px rgba(23,219,78,0.10)' : 'none',
+    boxShadow: focused === field
+      ? '0 0 0 3px rgba(23,219,78,0.10), 0 0 0 1000px #FFFFFF inset'
+      : '0 0 0 1000px #FFFFFF inset',
     transition: 'all 0.2s',
     boxSizing: 'border-box',
+    appearance: 'none',
   });
 
   return (
