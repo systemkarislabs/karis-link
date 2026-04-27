@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon } from './Icon';
@@ -24,14 +23,14 @@ export default function AdminSidebar({
 
   const menuItems = isSuper
     ? [
-        { label: 'Empresas', href: '/super-admin', icon: 'home' },
-        { label: 'Relatorios', href: '/super-admin/relatorios', icon: 'chart' },
-        { label: 'Configuracoes', href: '/super-admin/configuracoes', icon: 'settings' },
+        { label: 'Dashboard', href: '/super-admin', icon: 'home' },
+        { label: 'Relatórios', href: '/super-admin/relatorios', icon: 'chart' },
+        { label: 'Segurança', href: '/super-admin/configuracoes', icon: 'shield' },
       ]
     : [
         { label: 'Dashboard', href: `/${slug}/admin`, icon: 'home' },
         { label: 'Vendedores', href: `/${slug}/admin/vendedores`, icon: 'users' },
-        { label: 'Campanhas', href: `/${slug}/admin/qrcodes`, icon: 'link' },
+        { label: 'Campanhas', href: `/${slug}/admin/qrcodes`, icon: 'megaphone' },
       ];
 
   return (
@@ -44,8 +43,8 @@ export default function AdminSidebar({
           top: 0,
           left: 0,
           right: 0,
-          height: 64,
-          background: 'var(--sidebar-bg)',
+          height: 70,
+          background: '#ffffff',
           borderBottom: '1px solid var(--border)',
           zIndex: 99,
           alignItems: 'center',
@@ -53,14 +52,10 @@ export default function AdminSidebar({
           justifyContent: 'space-between',
         } as CSSProperties}
       >
-        <Image
-          src={isSuper ? '/karis-labs-logo.png' : '/karis-link-logo.png'}
-          alt={isSuper ? 'Karis Labs' : 'Karis Link'}
-          width={112}
-          height={32}
-          priority
-          style={{ width: 112, height: 'auto', objectFit: 'contain' }}
-        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span className="kl-brand-mark" style={{ width: 36, height: 36, fontSize: 18 }}>K</span>
+          <span className="kl-brand-name">Karis<span>Link</span></span>
+        </div>
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
@@ -69,7 +64,7 @@ export default function AdminSidebar({
             width: 44,
             height: 44,
             padding: 10,
-            borderRadius: 12,
+            borderRadius: 14,
             border: '1px solid var(--border)',
             background: '#ffffff',
             cursor: 'pointer',
@@ -87,8 +82,8 @@ export default function AdminSidebar({
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(9, 9, 11, 0.5)',
-            backdropFilter: 'blur(4px)',
+            background: 'rgba(9, 9, 11, 0.48)',
+            backdropFilter: 'blur(5px)',
             zIndex: 100,
           }}
         />
@@ -101,46 +96,53 @@ export default function AdminSidebar({
           top: 0,
           left: 272,
           right: 0,
-          height: 64,
-          background: '#ffffff',
+          height: 72,
+          background: 'rgba(255,255,255,.92)',
+          backdropFilter: 'blur(12px)',
           borderBottom: '1px solid var(--border)',
           zIndex: 80,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 40px',
+          padding: '0 36px',
         }}
       >
-        <div
-          style={{
-            height: 34,
-            width: 240,
-            borderRadius: 8,
-            background: '#f4f4f5',
-            border: '1px solid #eeeeef',
-          }}
-          aria-hidden="true"
-        />
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            color: 'var(--text-soft)',
-            fontSize: 12,
-            fontWeight: 700,
-          }}
-        >
-          <span
+        <label className="kl-topbar-search" aria-label="Pesquisar">
+          <Icon name="search" size={15} />
+          <input placeholder="Pesquisar..." />
+        </label>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+          <div className="kl-topbar-meta">
+            <span
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: '50%',
+                background: 'var(--brand-accent)',
+                boxShadow: '0 0 0 4px rgba(16,185,129,.12)',
+              }}
+            />
+            <Icon name="clock" size={14} color="#a1a1aa" />
+            Última atualização: 1m atrás
+          </div>
+          <button
+            type="button"
+            aria-label="Notificações"
+            className="kl-press"
             style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: 'var(--brand-accent)',
-              boxShadow: '0 0 0 4px rgba(16,185,129,.12)',
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              border: '1px solid var(--border)',
+              background: '#fafafa',
+              display: 'grid',
+              placeItems: 'center',
+              cursor: 'pointer',
             }}
-          />
-          Karis Link ativo
+          >
+            <Icon name="bell" size={16} color="#71717a" />
+          </button>
         </div>
       </div>
 
@@ -148,9 +150,9 @@ export default function AdminSidebar({
         className={`sidebar-container ${isOpen ? 'open' : ''}`}
         style={{
           width: 272,
-          background: 'var(--sidebar-bg)',
+          background: '#ffffff',
           borderRight: '1px solid var(--border)',
-          padding: '24px 20px',
+          padding: '26px 20px 22px',
           display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
@@ -160,58 +162,29 @@ export default function AdminSidebar({
           transition: 'transform 0.24s ease',
         } as CSSProperties}
       >
-        <div style={{ marginBottom: 32, paddingBottom: 20, borderBottom: '1px solid #f4f4f5' }}>
-          <Image
-            src={isSuper ? '/karis-labs-logo.png' : '/karis-link-logo.png'}
-            alt={isSuper ? 'Karis Labs' : 'Karis Link'}
-            width={isSuper ? 148 : 156}
-            height={isSuper ? 42 : 44}
-            priority
-            style={{ width: isSuper ? 148 : 156, height: 'auto', objectFit: 'contain' }}
-          />
+        <div style={{ marginBottom: 32, paddingBottom: 22, borderBottom: '1px solid #f4f4f5' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="kl-brand-mark">K</span>
+            <span className="kl-brand-name">Karis<span>Link</span></span>
+          </div>
           <div
             style={{
-              fontSize: 10,
-              color: 'var(--text-soft)',
-              fontWeight: 800,
               marginTop: 12,
+              marginLeft: 48,
+              color: '#71717a',
+              fontSize: 9,
+              fontWeight: 900,
+              letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              letterSpacing: '0.16em',
+              lineHeight: 1.25,
             }}
           >
-            {isSuper ? 'Ecossistema KarisLabs' : tenantName}
+            Powered by<br />
+            <span style={{ color: '#09090b', letterSpacing: 0, fontSize: 11 }}>Karis <span style={{ color: '#10b981' }}>Labs</span></span>
           </div>
-          {!isSuper ? (
-            <div style={{ fontSize: 11, color: 'var(--text-soft)', marginTop: 6 }}>
-              Operacao da empresa no Karis Link
-            </div>
-          ) : null}
         </div>
 
-        <nav
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 6,
-            minHeight: 0,
-            overflowY: 'auto',
-            paddingBottom: 16,
-          }}
-        >
-          <div
-            style={{
-              color: 'var(--text-soft)',
-              fontSize: 10,
-              fontWeight: 800,
-              padding: '0 8px 10px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.14em',
-            }}
-          >
-            Menu Principal
-          </div>
-
+        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 9, minHeight: 0 }}>
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
 
@@ -222,41 +195,50 @@ export default function AdminSidebar({
                 onClick={() => setIsOpen(false)}
                 className={`sidebar-link kl-press ${isActive ? 'is-active' : ''}`}
                 style={{
+                  minHeight: 44,
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
-                  padding: '12px 14px',
-                  borderRadius: 12,
+                  padding: '11px 16px',
+                  borderRadius: 13,
                   textDecoration: 'none',
                   fontSize: 14,
-                  fontWeight: isActive ? 800 : 600,
-                  letterSpacing: '-0.01em',
-                  color: isActive ? 'var(--sidebar-active-text)' : 'var(--sidebar-text)',
-                  background: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
+                  fontWeight: isActive ? 900 : 700,
+                  letterSpacing: '-0.02em',
+                  color: isActive ? 'var(--brand-accent)' : '#52525b',
+                  background: isActive ? 'rgba(16, 185, 129, 0.09)' : 'transparent',
+                  border: isActive ? '1px solid rgba(16,185,129,.24)' : '1px solid transparent',
                 }}
               >
-                <Icon
-                  name={item.icon}
-                  size={18}
-                  color={isActive ? 'var(--sidebar-active-text)' : 'var(--sidebar-text)'}
-                />
+                <Icon name={item.icon} size={18} color="currentColor" />
                 {item.label}
               </Link>
             );
           })}
         </nav>
 
-        <div
-          style={{
-            marginTop: 16,
-            paddingTop: 12,
-            borderTop: '1px solid var(--border)',
-            background: 'var(--sidebar-bg)',
-            position: 'sticky',
-            bottom: 0,
-            paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
-          }}
-        >
+        <div style={{ paddingTop: 16, borderTop: '1px solid #f4f4f5' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+            <span
+              style={{
+                width: 34,
+                height: 34,
+                display: 'grid',
+                placeItems: 'center',
+                borderRadius: '50%',
+                border: '1px solid var(--border)',
+                color: '#71717a',
+              }}
+            >
+              <Icon name="user" size={16} />
+            </span>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 12, fontWeight: 900, color: '#18181b' }}>
+                {isSuper ? 'Super Admin' : tenantName}
+              </div>
+              <div style={{ fontSize: 11, color: '#71717a' }}>karislabs.com.br</div>
+            </div>
+          </div>
           <LogoutButton isSuper={isSuper} slug={slug} />
         </div>
       </aside>
@@ -273,9 +255,8 @@ export default function AdminSidebar({
 
           .sidebar-container {
             transform: translateX(-100%);
-            padding-top: 84px !important;
-            padding-bottom: 0 !important;
-            box-shadow: 26px 0 68px rgba(9, 9, 11, 0.16) !important;
+            padding-top: 92px !important;
+            box-shadow: 26px 0 68px rgba(9, 9, 11, 0.18) !important;
           }
 
           .sidebar-container.open {

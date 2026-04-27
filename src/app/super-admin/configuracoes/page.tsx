@@ -3,6 +3,7 @@ import AdminSidebar from '@/components/AdminSidebar';
 import { findStoredSuperAdminAccount } from '@/lib/super-admin';
 import { updateSuperAdminCredentials } from '../actions';
 import ThemeToggle from '@/components/ThemeToggle';
+import { Icon } from '@/components/Icon';
 
 export default async function SettingsPage() {
   await requireSuperAuth();
@@ -12,121 +13,76 @@ export default async function SettingsPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
-      <AdminSidebar isSuper={true} />
+      <AdminSidebar isSuper />
 
-      <main className="main-content">
-        <header style={{ marginBottom: 40 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Configurações do Painel</h1>
-          <p style={{ color: 'var(--sidebar-text)', marginTop: 4 }}>Gerencie acesso e personalize sua experiência de uso.</p>
-        </header>
+      <main className="main-content kl-page-enter">
+        <div className="kl-admin-page">
+          <header style={{ marginBottom: 34 }}>
+            <h1 className="kl-panel-title">Segurança</h1>
+            <p className="kl-panel-subtitle">Gerencie credenciais e preferências do painel gerencial.</p>
+          </header>
 
-        <div style={{ display: 'grid', gap: 24, maxWidth: 720 }}>
-          <div style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 32, border: '1px solid var(--border)' }}>
-            <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Segurança do Super Admin</h3>
-
-            <form action={updateSuperAdminCredentials} style={{ display: 'grid', gap: 16 }}>
+          <section className="kl-card" style={{ padding: 32 }}>
+            <div className="kl-card-header">
+              <span className="kl-card-icon"><Icon name="shield" size={20} /></span>
               <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
-                  Usuário
-                </label>
-                <input
-                  name="username"
-                  defaultValue={defaultUser}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    borderRadius: 10,
-                    border: '1px solid var(--border)',
-                    fontSize: 14,
-                    outline: 'none',
-                    background: 'var(--bg-main)',
-                    color: 'var(--text-main)',
-                  }}
-                />
+                <h2 style={{ margin: 0, fontSize: 16, fontWeight: 900, letterSpacing: '-0.04em' }}>
+                  Credenciais do Super Admin
+                </h2>
+                <p style={{ margin: '2px 0 0', color: '#71717a', fontSize: 12 }}>
+                  Atualize o usuário e a senha principal.
+                </p>
               </div>
+            </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
-                  Nova senha
-                </label>
-                <input
-                  name="password"
-                  type="password"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    borderRadius: 10,
-                    border: '1px solid var(--border)',
-                    fontSize: 14,
-                    outline: 'none',
-                    background: 'var(--bg-main)',
-                    color: 'var(--text-main)',
-                  }}
-                />
-              </div>
+            <form action={updateSuperAdminCredentials} style={{ display: 'grid', gap: 16, maxWidth: 500 }}>
+              <label style={{ display: 'grid', gap: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 800, color: '#18181b' }}>Usuário</span>
+                <input name="username" defaultValue={defaultUser} required className="kl-soft-field" />
+              </label>
 
-              <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
-                  Confirmar nova senha
-                </label>
-                <input
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    borderRadius: 10,
-                    border: '1px solid var(--border)',
-                    fontSize: 14,
-                    outline: 'none',
-                    background: 'var(--bg-main)',
-                    color: 'var(--text-main)',
-                  }}
-                />
-              </div>
+              <label style={{ display: 'grid', gap: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 800, color: '#18181b' }}>Nova senha</span>
+                <input name="password" type="password" required className="kl-soft-field" />
+              </label>
 
-              <button
-                type="submit"
-                style={{
-                  width: 'fit-content',
-                  padding: '12px 18px',
-                  borderRadius: 10,
-                  background: 'var(--sidebar-active-text)',
-                  color: '#fff',
-                  border: 'none',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-              >
+              <label style={{ display: 'grid', gap: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 800, color: '#18181b' }}>Confirmar nova senha</span>
+                <input name="confirmPassword" type="password" required className="kl-soft-field" />
+              </label>
+
+              <button type="submit" className="kl-green-button kl-press" style={{ width: 'fit-content' }}>
                 Atualizar credenciais
               </button>
             </form>
-          </div>
 
-          <div style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 32, border: '1px solid var(--border)' }}>
-            <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Aparencia</h3>
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '20px',
-                borderRadius: 16,
-                background: 'var(--bg-main)',
-                border: '1px solid var(--border)',
-              }}
-            >
-              <div>
-                <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>Tema Dark (Escuro)</div>
-                <div style={{ fontSize: 13, color: 'var(--sidebar-text)' }}>Ativa o modo noturno em todo o painel.</div>
+            <div style={{ marginTop: 32, paddingTop: 28, borderTop: '1px solid #f1f1f2' }}>
+              <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 900 }}>Aparência</h3>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 18,
+                  padding: 18,
+                  borderRadius: 16,
+                  background: '#fafafa',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span className="kl-card-icon" style={{ width: 40, height: 40 }}>
+                    <Icon name="settings" size={18} />
+                  </span>
+                  <div>
+                    <div style={{ fontWeight: 900, color: '#18181b' }}>Tema Dark (Escuro)</div>
+                    <div style={{ fontSize: 12, color: '#71717a' }}>Ativa o modo noturno em todo o painel.</div>
+                  </div>
+                </div>
+                <ThemeToggle />
               </div>
-              <ThemeToggle />
             </div>
-          </div>
+          </section>
         </div>
       </main>
     </div>

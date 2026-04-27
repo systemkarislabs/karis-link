@@ -6,6 +6,7 @@ import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
 import PendingButton from '@/components/PendingButton';
 import { createSeller, deleteSeller } from './actions';
 import Link from 'next/link';
+import { Icon } from '@/components/Icon';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,9 +18,6 @@ type SellerMetric = {
   totalClicks: number;
   qrClicks: number;
   bioClicks: number;
-  directClicks: number;
-  topCampaign: string | null;
-  recentSourceLabel: string;
 };
 
 function getInitials(name: string) {
@@ -40,302 +38,207 @@ export default async function VendedoresPage(props: PageProps) {
 
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
-    select: {
-      id: true,
-      name: true,
-    },
+    select: { id: true, name: true },
   });
 
-  // Limita a janela analítica aos últimos 90 dias para não escalar
-  // linearmente com o histórico do tenant.
-  const ANALYTICS_WINDOW_DAYS = 90;
   const analyticsStart = new Date();
-  analyticsStart.setDate(analyticsStart.getDate() - ANALYTICS_WINDOW_DAYS);
+  analyticsStart.setDate(analyticsStart.getDate() - 90);
 
-  const [sellers, sellerEvents, campaigns] = await Promise.all([
-    prisma.seller.findMany({
-      where: { tenantId },
-      orderBy: { name: 'asc' },
-    }),
+  const [sellers, sellerEvents] = await Promise.all([
+    prisma.seller.findMany({ where: { tenantId }, orderBy: { name: 'asc' } }),
     prisma.sellerClickEvent.findMany({
-      where: {
-        seller: { tenantId },
-        createdAt: { gte: analyticsStart },
-      },
-      include: {
-        seller: true,
-      },
+      where: { seller: { tenantId }, createdAt: { gte: analyticsStart } },
       orderBy: { createdAt: 'desc' },
       take: 5000,
     }),
-    prisma.qrCode.findMany({
-      where: { tenantId },
-      select: {
-        slug: true,
-        name: true,
-      },
-    }),
   ]);
-
-  const campaignNameByCode = campaigns.reduce<Record<string, string>>((acc, campaign) => {
-    acc[campaign.slug] = campaign.name;
-    return acc;
-  }, {});
 
   const sellerMetrics: SellerMetric[] = sellers.map((seller) => {
     const events = sellerEvents.filter((event) => event.sellerId === seller.id);
-    const qrClicks = events.filter((event) => event.source === 'qr').length;
-    const bioClicks = events.filter((event) => event.source === 'bio').length;
-    const directClicks = events.filter((event) => !event.source || event.source === 'direct').length;
-
-    const campaignCounts = events.reduce<Record<string, number>>((acc, event) => {
-      if (!event.campaign || event.campaign === 'none') return acc;
-      acc[event.campaign] = (acc[event.campaign] || 0) + 1;
-      return acc;
-    }, {});
-
-    const topCampaignEntry = Object.entries(campaignCounts).sort((a, b) => b[1] - a[1])[0];
-    const topCampaignCode = topCampaignEntry?.[0] || null;
-    const lastEvent = events[0];
-    const recentSourceLabel =
-      lastEvent?.source === 'qr'
-        ? 'Último lead via QR'
-        : lastEvent?.source === 'bio'
-          ? 'Último lead via Bio'
-          : events.length > 0
-            ? 'Último lead direto'
-            : 'Sem leads ainda';
-
     return {
       id: seller.id,
       name: seller.name,
       phone: seller.phone,
       image: seller.image,
       totalClicks: events.length,
-      qrClicks,
-      bioClicks,
-      directClicks,
-      topCampaign: topCampaignCode ? campaignNameByCode[topCampaignCode] || topCampaignCode : null,
-      recentSourceLabel,
+      qrClicks: events.filter((event) => event.source === 'qr').length,
+      bioClicks: events.filter((event) => event.source === 'bio').length,
     };
   });
 
   const totalClicks = sellerMetrics.reduce((sum, seller) => sum + seller.totalClicks, 0);
   const totalQrClicks = sellerMetrics.reduce((sum, seller) => sum + seller.qrClicks, 0);
   const totalBioClicks = sellerMetrics.reduce((sum, seller) => sum + seller.bioClicks, 0);
-  const totalDirectClicks = sellerMetrics.reduce((sum, seller) => sum + seller.directClicks, 0);
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
       <AdminSidebar slug={slug} tenantName={tenant?.name} isSuper={false} />
 
       <main className="main-content kl-page-enter">
-        <header style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Gestão de Vendedores</h1>
-          <p style={{ color: 'var(--sidebar-text)' }}>
-            Cadastre sua equipe e acompanhe quantos leads cada vendedor recebeu por QR Code, bio e acesso direto.
-          </p>
-        </header>
+        <div className="kl-admin-wide">
+          <header style={{ marginBottom: 32 }}>
+            <h1 className="kl-panel-title">Vendedores</h1>
+            <p className="kl-panel-subtitle">
+              Cadastre sua equipe e acompanhe quantos leads cada vendedor recebeu por QR Code e bio.
+            </p>
+          </header>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20, marginBottom: 28 }}>
-          {[
-            { label: 'Vendedores ativos', value: sellerMetrics.length },
-            { label: 'Leads via QR', value: totalQrClicks },
-            { label: 'Leads via bio', value: totalBioClicks },
-            { label: 'Leads diretos', value: totalDirectClicks },
-            { label: 'Total de escolhas', value: totalClicks },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="kl-card kl-card-hover"
-              style={{
-                background: 'var(--card-bg)',
-                borderRadius: 18,
-                padding: 22,
-              }}
-            >
-              <div style={{ color: 'var(--sidebar-text)', fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
-                {item.label}
-              </div>
-              <div style={{ color: 'var(--text-main)', fontSize: 30, fontWeight: 800 }}>{item.value}</div>
-            </div>
-          ))}
-        </div>
-
-        <section
-          className="kl-surface"
-          style={{
-            background: 'var(--card-bg)',
-            borderRadius: 20,
-            padding: 32,
-            marginBottom: 40,
-          }}
-        >
-          <h3 style={{ margin: '0 0 20px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Novo Vendedor</h3>
-          <form action={createSeller} className="seller-create-form">
-            <input type="hidden" name="slug" value={slug} />
-            <input
-              name="name"
-              placeholder="Nome do vendedor"
-              required
-              style={{
-                padding: '12px 16px',
-                borderRadius: 10,
-                border: '1px solid var(--border)',
-                background: 'var(--bg-main)',
-                color: 'var(--text-main)',
-              }}
-            />
-            <input
-              name="phone"
-              placeholder="WhatsApp (ex: 55119 9999-9999)"
-              required
-              style={{
-                padding: '12px 16px',
-                borderRadius: 10,
-                border: '1px solid var(--border)',
-                background: 'var(--bg-main)',
-                color: 'var(--text-main)',
-              }}
-            />
-            <SellerImageField />
-            <PendingButton
-              pendingLabel="Salvando..."
-              className="seller-create-submit kl-action kl-action-primary kl-press"
-              style={{
-                border: 'none',
-                minHeight: 48,
-                width: '100%',
-              }}
-            >
-              Salvar vendedor
-            </PendingButton>
-          </form>
-        </section>
-
-        <div className="kl-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
-          {sellerMetrics.map((seller) => (
-            <div
-              key={seller.id}
-              className="kl-card kl-card-hover"
-              style={{
-                background: 'var(--card-bg)',
-                borderRadius: 20,
-                padding: 24,
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, marginBottom: 18 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
-                  {seller.image ? (
-                    <img
-                      src={seller.image}
-                      alt={seller.name}
-                      loading="lazy"
-                      decoding="async"
-                      style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        width: 52,
-                        height: 52,
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 14,
-                        fontWeight: 700,
-                        color: '#334155',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {getInitials(seller.name)}
-                    </div>
-                  )}
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: 18 }}>{seller.name}</div>
-                    <div style={{ fontSize: 13, color: 'var(--sidebar-text)' }}>{seller.phone}</div>
-                    <div style={{ marginTop: 6, fontSize: 12, color: '#2563eb', fontWeight: 600 }}>{seller.recentSourceLabel}</div>
-                  </div>
+          <div className="skin-stat-grid" style={{ marginBottom: 28 }}>
+            {[
+              { label: 'Vendedores ativos', value: sellerMetrics.length, color: '#a855f7', bg: '#faf5ff', icon: 'users' },
+              { label: 'Leads via QR', value: totalQrClicks, color: '#10b981', bg: '#ecfdf5', icon: 'target' },
+              { label: 'Leads via Bio', value: totalBioClicks, color: '#3b82f6', bg: '#eff6ff', icon: 'megaphone' },
+              { label: 'Total de escolhas', value: totalClicks, color: '#050505', bg: '#f4f4f5', icon: 'mouse' },
+            ].map((item) => (
+              <article key={item.label} className="kl-card kl-card-hover skin-stat-card">
+                <div className="skin-stat-top">
+                  <span className="skin-stat-title">{item.label}</span>
+                  <span className="skin-stat-icon" style={{ color: item.color, background: item.bg }}>
+                    <Icon name={item.icon} size={15} color="currentColor" />
+                  </span>
                 </div>
+                <p className="skin-stat-value" style={{ color: item.color }}>{item.value}</p>
+                <div className="skin-stat-foot">Últimos 90 dias</div>
+              </article>
+            ))}
+          </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                  <Link
-                    href={`/${slug}/admin/vendedores/${seller.id}`}
-                    style={{
-                      color: 'var(--sidebar-active-text)',
-                      textDecoration: 'none',
-                      fontSize: 13,
-                      fontWeight: 700,
-                    }}
-                  >
-                    Editar
-                  </Link>
-
-                  <form action={deleteSeller}>
-                    <input type="hidden" name="id" value={seller.id} />
-                    <input type="hidden" name="slug" value={slug} />
-                    <ConfirmSubmitButton
-                      message={`Excluir o vendedor "${seller.name}"? Os cliques históricos também serão removidos.`}
-                      ariaLabel={`Excluir vendedor ${seller.name}`}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#ef4444',
-                        cursor: 'pointer',
-                        fontSize: 13,
-                        fontWeight: 700,
-                        padding: '6px 8px',
-                      }}
-                    >
-                      Excluir
-                    </ConfirmSubmitButton>
-                  </form>
-                </div>
+          <div className="seller-admin-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.25fr) 340px', gap: 20, alignItems: 'start' }}>
+            <section className="kl-card" style={{ padding: 32 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, paddingBottom: 18, marginBottom: 20, borderBottom: '1px solid #f1f1f2' }}>
+                <h2 style={{ margin: 0, fontSize: 16, fontWeight: 900, letterSpacing: '-0.035em' }}>Vendedores Cadastrados</h2>
+                <span style={{ color: '#71717a', fontSize: 12 }}>Tempo real</span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(100px, 1fr))', gap: 12, marginBottom: 16 }}>
-                {[
-                  { label: 'Total', value: seller.totalClicks, accent: '#0f172a' },
-                  { label: 'QR Code', value: seller.qrClicks, accent: '#16a34a' },
-                  { label: 'Bio', value: seller.bioClicks, accent: '#2563eb' },
-                  { label: 'Direto', value: seller.directClicks, accent: '#7c3aed' },
-                ].map((item) => (
-                  <div
-                    key={item.label}
+              <div className="kl-stagger" style={{ display: 'grid', gap: 12 }}>
+                {sellerMetrics.map((seller) => (
+                  <article
+                    key={seller.id}
+                    className="kl-card-hover"
                     style={{
-                      background: 'var(--bg-main)',
-                      borderRadius: 14,
-                      padding: '12px 14px',
-                      border: '1px solid var(--border)',
+                      background: '#fafafa',
+                      border: '1px solid #f1f1f2',
+                      borderRadius: 16,
+                      padding: 18,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 16,
                     }}
                   >
-                    <div style={{ fontSize: 11, color: 'var(--sidebar-text)', textTransform: 'uppercase', marginBottom: 6 }}>
-                      {item.label}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
+                      {seller.image ? (
+                        <img
+                          src={seller.image}
+                          alt={seller.name}
+                          loading="lazy"
+                          decoding="async"
+                          style={{ width: 50, height: 50, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: 50,
+                            height: 50,
+                            borderRadius: '50%',
+                            background: '#dff8ee',
+                            border: '1px solid #b7efd8',
+                            display: 'grid',
+                            placeItems: 'center',
+                            fontSize: 14,
+                            fontWeight: 900,
+                            color: '#10b981',
+                            flexShrink: 0,
+                          }}
+                        >
+                          {getInitials(seller.name)}
+                        </div>
+                      )}
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontWeight: 900, color: '#09090b', fontSize: 15 }}>{seller.name}</div>
+                        <div style={{ fontSize: 13, color: '#71717a' }}>{seller.phone}</div>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
+                          <span className="skin-badge">{seller.qrClicks} leads QR</span>
+                          <span className="skin-badge" style={{ background: '#eff6ff', color: '#3b82f6' }}>
+                            {seller.bioClicks} leads Bio
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ fontSize: 24, fontWeight: 800, color: item.accent }}>{item.value}</div>
-                  </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                      <Link
+                        href={`/${slug}/admin/vendedores/${seller.id}`}
+                        aria-label={`Editar vendedor ${seller.name}`}
+                        className="kl-press"
+                        style={{
+                          width: 36,
+                          height: 36,
+                          display: 'grid',
+                          placeItems: 'center',
+                          color: '#71717a',
+                          border: '1px solid var(--border)',
+                          borderRadius: 10,
+                          background: '#ffffff',
+                        }}
+                      >
+                        <Icon name="edit" size={16} />
+                      </Link>
+
+                      <form action={deleteSeller}>
+                        <input type="hidden" name="id" value={seller.id} />
+                        <input type="hidden" name="slug" value={slug} />
+                        <ConfirmSubmitButton
+                          message={`Excluir o vendedor "${seller.name}"? Os cliques históricos também serão removidos.`}
+                          ariaLabel={`Excluir vendedor ${seller.name}`}
+                          style={{
+                            width: 36,
+                            height: 36,
+                            display: 'grid',
+                            placeItems: 'center',
+                            background: '#ffffff',
+                            border: '1px solid var(--border)',
+                            borderRadius: 10,
+                            color: '#71717a',
+                            cursor: 'pointer',
+                            padding: 0,
+                          }}
+                        >
+                          <Icon name="trash" size={16} />
+                        </ConfirmSubmitButton>
+                      </form>
+                    </div>
+                  </article>
                 ))}
               </div>
+            </section>
 
-              <div
-                style={{
-                  borderRadius: 14,
-                  padding: '14px 16px',
-                  background: 'rgba(15, 23, 42, 0.04)',
-                  border: '1px solid var(--border)',
-                }}
-              >
-                <div style={{ fontSize: 11, color: 'var(--sidebar-text)', textTransform: 'uppercase', marginBottom: 6 }}>
-                  Campanha com mais resultado
+            <section className="kl-card" style={{ padding: 32 }}>
+              <h2 style={{ margin: '0 0 18px', fontSize: 16, fontWeight: 900, letterSpacing: '-0.035em' }}>Novo Vendedor</h2>
+              <form action={createSeller} style={{ display: 'grid', gap: 16 }}>
+                <input type="hidden" name="slug" value={slug} />
+                <label style={{ display: 'grid', gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 800 }}>Nome do vendedor *</span>
+                  <input name="name" placeholder="Ex: Carlos Silva" required className="kl-soft-field" />
+                </label>
+                <label style={{ display: 'grid', gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 800 }}>WhatsApp *</span>
+                  <input name="phone" placeholder="55 (11) 99999-9999" required className="kl-soft-field" />
+                </label>
+                <label style={{ display: 'grid', gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 800 }}>Foto (Opcional)</span>
+                  <SellerImageField />
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <button type="reset" className="kl-ghost-button kl-press" style={{ minHeight: 54 }}>Cancelar</button>
+                  <PendingButton pendingLabel="Salvando..." className="kl-green-button kl-press" style={{ minHeight: 54, border: 'none' }}>
+                    <Icon name="plus" size={16} />
+                    Salvar
+                  </PendingButton>
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-main)' }}>
-                  {seller.topCampaign || 'Ainda sem campanha dominante'}
-                </div>
-              </div>
-            </div>
-          ))}
+              </form>
+            </section>
+          </div>
         </div>
       </main>
     </div>

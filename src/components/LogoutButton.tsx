@@ -31,21 +31,21 @@ export default function LogoutButton({ isSuper = true, slug = '' }: Props) {
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 12,
-        padding: '12px 16px',
-        borderRadius: 14,
-        color: 'var(--sidebar-text)',
+        gap: 8,
+        padding: '8px 4px',
+        borderRadius: 10,
+        color: '#ef4444',
         cursor: 'pointer',
-        fontSize: 14,
-        fontWeight: 600,
-        width: '100%',
+        fontSize: 12,
+        fontWeight: 900,
+        width: 'fit-content',
         border: 'none',
         background: 'transparent',
         textAlign: 'left',
       }}
     >
-      <Icon name="logout" size={20} color="var(--sidebar-text)" />
-      <span>Sair do Painel</span>
+      <Icon name="logout" size={16} color="currentColor" />
+      <span>Sair</span>
     </button>
   );
 }

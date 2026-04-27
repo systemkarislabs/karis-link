@@ -1,10 +1,10 @@
+import Link from 'next/link';
 import { requireSuperAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { createTenant, deleteTenant, toggleTenant, updateTenantAdminPassword } from './actions';
 import AdminSidebar from '@/components/AdminSidebar';
 import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
-import Link from 'next/link';
-import Image from 'next/image';
+import { Icon } from '@/components/Icon';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,180 +23,83 @@ export default async function SuperAdminPage() {
   });
 
   return (
-      <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
-        <AdminSidebar isSuper={true} />
+    <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
+      <AdminSidebar isSuper />
 
-        <main className="main-content kl-page-enter">
-          <div className="super-admin-shell" style={{ maxWidth: 1240, width: '100%', margin: '0 auto' }}>
-            <header className="super-admin-header" style={{ marginBottom: 40 }}>
-              <Image
-                src="/karis-link-logo.png"
-                alt="Karis Link"
-                width={176}
-                height={50}
-                priority
-                style={{ width: 176, maxWidth: '100%', height: 'auto', marginBottom: 18, objectFit: 'contain' }}
-              />
-              <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-                Dashboard Gerencial
-              </h1>
-              <p style={{ color: 'var(--sidebar-text)', marginTop: 6 }}>
-                Visao geral de todas as empresas integradas.
-              </p>
-            </header>
+      <main className="main-content kl-page-enter">
+        <div className="kl-admin-wide">
+          <header style={{ marginBottom: 36 }}>
+            <h1 className="kl-panel-title">Dashboard Gerencial</h1>
+            <p className="kl-panel-subtitle">Visão geral de todas as empresas integradas ao ecossistema.</p>
+          </header>
 
-            <div
-              className="super-admin-grid"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '320px minmax(0, 1fr)',
-                gap: 24,
-                alignItems: 'start',
-              }}
-            >
-              <div
-                className="super-admin-list"
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                  gap: 16,
-                  minWidth: 0,
-                  order: 2,
-                }}
-              >
-                <h3
-                  style={{
-                    gridColumn: '1 / -1',
-                    fontSize: 14,
-                    fontWeight: 800,
-                    color: 'var(--text-main)',
-                    margin: '0 0 2px 2px',
-                    letterSpacing: '-0.02em',
-                  }}
-                >
-                  Empresas Ativas
-                </h3>
+          <div className="kl-dashboard-grid">
+            <section className="kl-card super-admin-form-card" style={{ padding: 32 }}>
+              <div className="kl-card-header">
+                <span className="kl-card-icon">
+                  <Icon name="home" size={20} />
+                </span>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: 16, fontWeight: 900, letterSpacing: '-0.04em' }}>
+                    Cadastrar Empresa
+                  </h2>
+                  <p style={{ margin: '2px 0 0', color: '#71717a', fontSize: 12 }}>
+                    Nova operação no Karis Link
+                  </p>
+                </div>
+              </div>
+
+              <form action={createTenant} style={{ display: 'grid', gap: 13 }}>
+                <input name="name" placeholder="Nome da empresa" required className="kl-soft-field" />
+                <input name="slug" placeholder="Slug (ex: texpar-vendas)" required className="kl-soft-field" />
+                <input name="adminUser" placeholder="Usuário administrador" required className="kl-soft-field" />
+                <input name="adminPass" type="password" placeholder="Senha inicial" required className="kl-soft-field" />
+                <button type="submit" className="kl-green-button kl-press" style={{ marginTop: 4 }}>
+                  Cadastrar empresa
+                </button>
+              </form>
+            </section>
+
+            <section>
+              <h2 style={{ margin: '0 0 16px 2px', fontSize: 15, fontWeight: 900, letterSpacing: '-0.035em' }}>
+                Empresas Ativas
+              </h2>
+
+              <div className="kl-tenant-list">
                 {tenants.map((tenant) => (
-                  <div
-                    key={tenant.id}
-                    className="super-admin-tenant-card kl-card kl-card-hover"
-                    style={{
-                      background: 'var(--card-bg)',
-                      borderRadius: 16,
-                      padding: 24,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'stretch',
-                      gap: 18,
-                    }}
-                  >
+                  <article key={tenant.id} className="kl-card kl-card-hover kl-tenant-card super-admin-tenant-card">
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-                      <div
-                        style={{
-                          width: 50,
-                          height: 50,
-                          borderRadius: 14,
-                          background: tenant.active ? '#ecfdf5' : '#f4f4f5',
-                          color: tenant.active ? 'var(--brand-accent)' : '#a1a1aa',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontWeight: 900,
-                          fontSize: 20,
-                          border: tenant.active ? '1.5px solid #d1fae5' : '1.5px solid #e4e4e7',
-                          flexShrink: 0,
-                        }}
-                      >
+                      <div className="kl-mini-avatar" style={!tenant.active ? { background: '#f4f4f5', borderColor: '#e4e4e7', color: '#a1a1aa' } : undefined}>
                         {tenant.name.charAt(0).toUpperCase()}
                       </div>
 
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 800, color: 'var(--text-main)', wordBreak: 'break-word', letterSpacing: '-0.03em' }}>
+                        <h3 style={{ margin: 0, color: '#09090b', fontSize: 18, fontWeight: 900, letterSpacing: '-0.05em' }}>
                           {tenant.name}
-                        </div>
-                        <div style={{ fontSize: 11, color: 'var(--text-soft)', wordBreak: 'break-word', marginTop: 2 }}>
-                          /{tenant.slug} - {tenant._count.sellers} vendedores
-                        </div>
-                        <div style={{ fontSize: 11, color: 'var(--text-soft)', marginTop: 2 }}>
-                          Usuario admin: {tenant.adminUser}
-                        </div>
+                        </h3>
+                        <p style={{ margin: '2px 0 0', color: '#71717a', fontSize: 12 }}>
+                          /{tenant.slug} · {tenant._count.sellers} vendedores
+                        </p>
+                        <p style={{ margin: '2px 0 0', color: '#71717a', fontSize: 12 }}>
+                          Admin: {tenant.adminUser}
+                        </p>
                       </div>
                     </div>
 
-                    <div
-                      className="super-admin-tenant-actions"
-                      style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, alignItems: 'center' }}
-                    >
+                    <div className="kl-tenant-actions super-admin-tenant-actions">
                       <form action={toggleTenant.bind(null, tenant.id, tenant.active)}>
-                        <button
-                          type="submit"
-                          style={{
-                            fontSize: 12,
-                            color: tenant.active ? '#f59e0b' : '#10b981',
-                            padding: 10,
-                            width: '100%',
-                            borderRadius: 10,
-                            background: tenant.active ? '#fffbeb' : '#ecfdf5',
-                            fontWeight: 700,
-                            border: tenant.active ? '1px solid rgba(245,158,11,.3)' : '1px solid #d1fae5',
-                            cursor: 'pointer',
-                          }}
-                        >
+                        <button type="submit" className={`kl-ghost-button kl-press ${tenant.active ? 'kl-warning-button' : ''}`} style={{ width: '100%' }}>
+                          <Icon name="power" size={14} />
                           {tenant.active ? 'Desativar' : 'Ativar'}
                         </button>
                       </form>
 
-                      <Link
-                        href={`/${tenant.slug}`}
-                        target="_blank"
-                        style={{
-                          fontSize: 12,
-                          color: 'var(--sidebar-text)',
-                          textDecoration: 'none',
-                          padding: 10,
-                          borderRadius: 10,
-                          background: '#f4f4f5',
-                          fontWeight: 700,
-                          border: '1px solid var(--border)',
-                          textAlign: 'center',
-                        }}
-                      >
-                        Site
+                      <Link href={`/${tenant.slug}`} target="_blank" className="kl-ghost-button kl-press">
+                        <Icon name="arrowRight" size={14} />
+                        Acessar
                       </Link>
 
-                      <form action={deleteTenant}>
-                        <input type="hidden" name="id" value={tenant.id} />
-                        <ConfirmSubmitButton
-                          message={`Excluir definitivamente a empresa "${tenant.name}"? Todos os vendedores, campanhas e cliques serão removidos. Esta ação é IRREVERSÍVEL.`}
-                          ariaLabel={`Excluir empresa ${tenant.name}`}
-                        style={{
-                            fontSize: 12,
-                            color: '#e11d48',
-                            padding: 10,
-                            width: '100%',
-                            borderRadius: 10,
-                            background: '#fff1f2',
-                            fontWeight: 700,
-                            border: '1px solid #fecdd3',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          Excluir empresa
-                        </ConfirmSubmitButton>
-                      </form>
-
-                      <form
-                        action={updateTenantAdminPassword}
-                        style={{
-                          display: 'flex',
-                          gap: 8,
-                          alignItems: 'center',
-                          flexWrap: 'wrap',
-                          width: '100%',
-                          marginTop: 4,
-                          gridColumn: '1 / -1',
-                        }}
-                      >
+                      <form action={updateTenantAdminPassword} style={{ gridColumn: '1 / -1', position: 'relative' }}>
                         <input type="hidden" name="id" value={tenant.id} />
                         <input
                           name="adminPass"
@@ -204,142 +107,52 @@ export default async function SuperAdminPage() {
                           placeholder="Nova senha do cliente"
                           required
                           minLength={8}
-                          style={{
-                            flex: '1 1 220px',
-                            minWidth: 0,
-                            padding: '9px 12px',
-                            borderRadius: 10,
-                            border: '1px solid var(--border)',
-                            fontSize: 12,
-                            outline: 'none',
-                            background: 'var(--bg-main)',
-                            color: 'var(--text-main)',
-                          }}
+                          className="kl-soft-field"
+                          style={{ paddingRight: 42 }}
                         />
                         <button
                           type="submit"
+                          aria-label={`Atualizar senha de ${tenant.name}`}
+                          className="kl-press"
                           style={{
-                            fontSize: 12,
-                            color: '#fff',
-                            padding: '9px 12px',
-                            borderRadius: 10,
-                            background: 'var(--sidebar-active-text)',
-                            fontWeight: 700,
-                            border: 'none',
+                            position: 'absolute',
+                            right: 8,
+                            top: 7,
+                            width: 30,
+                            height: 30,
+                            display: 'grid',
+                            placeItems: 'center',
+                            border: 0,
+                            borderRadius: 9,
+                            background: 'transparent',
+                            color: '#10b981',
                             cursor: 'pointer',
                           }}
                         >
-                          Atualizar senha
+                          <Icon name="key" size={16} />
                         </button>
                       </form>
+
+                      <form action={deleteTenant} style={{ gridColumn: '1 / -1' }}>
+                        <input type="hidden" name="id" value={tenant.id} />
+                        <ConfirmSubmitButton
+                          message={`Excluir definitivamente a empresa "${tenant.name}"? Todos os vendedores, campanhas e cliques serão removidos. Esta ação é irreversível.`}
+                          ariaLabel={`Excluir empresa ${tenant.name}`}
+                          className="kl-ghost-button kl-danger-button kl-press"
+                          style={{ width: '100%' }}
+                        >
+                          <Icon name="trash" size={14} />
+                          Excluir empresa
+                        </ConfirmSubmitButton>
+                      </form>
                     </div>
-                  </div>
+                  </article>
                 ))}
               </div>
-
-              <div
-                className="super-admin-form-card kl-surface"
-                style={{
-                  background: 'var(--card-bg)',
-                  borderRadius: 16,
-                  padding: 24,
-                  minWidth: 0,
-                  order: 1,
-                }}
-              >
-                <Image
-                  src="/karis-link-logo.png"
-                  alt="Karis Link"
-                  width={164}
-                  height={46}
-                  style={{ width: 164, maxWidth: '100%', height: 'auto', marginBottom: 22, objectFit: 'contain' }}
-                />
-                <h3 style={{ margin: '0 0 10px', fontSize: 20, fontWeight: 700, color: 'var(--text-main)' }}>
-                  Cadastrar empresa
-                </h3>
-                <p style={{ margin: '0 0 24px', color: 'var(--sidebar-text)', fontSize: 14 }}>
-                  Cadastre uma nova operacao no Karis Link e defina as credenciais iniciais da empresa.
-                </p>
-
-                <form action={createTenant} style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
-                  <input
-                    name="name"
-                    placeholder="Nome da empresa"
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      borderRadius: 14,
-                      border: '1px solid var(--border)',
-                      fontSize: 14,
-                      outline: 'none',
-                      background: 'var(--bg-main)',
-                      color: 'var(--text-main)',
-                    }}
-                  />
-                  <input
-                    name="slug"
-                    placeholder="Slug da empresa"
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      borderRadius: 14,
-                      border: '1px solid var(--border)',
-                      fontSize: 14,
-                      outline: 'none',
-                      background: 'var(--bg-main)',
-                      color: 'var(--text-main)',
-                    }}
-                  />
-                  <input
-                    name="adminUser"
-                    placeholder="Usuario administrador"
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      borderRadius: 14,
-                      border: '1px solid var(--border)',
-                      fontSize: 14,
-                      outline: 'none',
-                      background: 'var(--bg-main)',
-                      color: 'var(--text-main)',
-                    }}
-                  />
-                  <input
-                    name="adminPass"
-                    type="password"
-                    placeholder="Senha inicial"
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      borderRadius: 14,
-                      border: '1px solid var(--border)',
-                      fontSize: 14,
-                      outline: 'none',
-                      background: 'var(--bg-main)',
-                      color: 'var(--text-main)',
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    className="kl-action kl-action-primary kl-press"
-                    style={{
-                      padding: '14px',
-                      border: 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Cadastrar empresa
-                  </button>
-                </form>
-              </div>
-            </div>
+            </section>
           </div>
-
-        </main>
-      </div>
+        </div>
+      </main>
+    </div>
   );
 }
