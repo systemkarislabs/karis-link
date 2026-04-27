@@ -99,7 +99,7 @@ export default function AdminSidebar({
         style={{
           position: 'fixed',
           top: 0,
-          left: 220,
+          left: 272,
           right: 0,
           height: 64,
           background: '#ffffff',
@@ -147,10 +147,10 @@ export default function AdminSidebar({
       <aside
         className={`sidebar-container ${isOpen ? 'open' : ''}`}
         style={{
-          width: 220,
+          width: 272,
           background: 'var(--sidebar-bg)',
           borderRight: '1px solid var(--border)',
-          padding: '28px 16px 18px',
+          padding: '24px 20px',
           display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
@@ -160,21 +160,21 @@ export default function AdminSidebar({
           transition: 'transform 0.24s ease',
         } as CSSProperties}
       >
-        <div style={{ marginBottom: 30, padding: '0 12px' }}>
+        <div style={{ marginBottom: 32, paddingBottom: 20, borderBottom: '1px solid #f4f4f5' }}>
           <Image
             src={isSuper ? '/karis-labs-logo.png' : '/karis-link-logo.png'}
             alt={isSuper ? 'Karis Labs' : 'Karis Link'}
-            width={isSuper ? 136 : 146}
-            height={isSuper ? 38 : 42}
+            width={isSuper ? 148 : 156}
+            height={isSuper ? 42 : 44}
             priority
-            style={{ width: isSuper ? 136 : 146, height: 'auto', objectFit: 'contain' }}
+            style={{ width: isSuper ? 148 : 156, height: 'auto', objectFit: 'contain' }}
           />
           <div
             style={{
               fontSize: 10,
               color: 'var(--text-soft)',
               fontWeight: 800,
-              marginTop: 16,
+              marginTop: 12,
               textTransform: 'uppercase',
               letterSpacing: '0.16em',
             }}
@@ -204,7 +204,7 @@ export default function AdminSidebar({
               color: 'var(--text-soft)',
               fontSize: 10,
               fontWeight: 800,
-              padding: '0 12px 10px',
+              padding: '0 8px 10px',
               textTransform: 'uppercase',
               letterSpacing: '0.14em',
             }}
@@ -225,8 +225,8 @@ export default function AdminSidebar({
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
-                  padding: '11px 12px',
-                  borderRadius: 10,
+                  padding: '12px 14px',
+                  borderRadius: 12,
                   textDecoration: 'none',
                   fontSize: 14,
                   fontWeight: isActive ? 800 : 600,

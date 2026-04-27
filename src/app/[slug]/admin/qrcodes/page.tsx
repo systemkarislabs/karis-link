@@ -4,6 +4,7 @@ import AdminSidebar from '@/components/AdminSidebar';
 import { createQrCode, deleteQrCode } from './actions';
 import QrCodesClient from './QrCodesClient';
 import { formatRecifeDateTime } from '@/lib/recife-time';
+import { Icon } from '@/components/Icon';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,10 +34,7 @@ export default async function QrCodesPage(props: PageProps) {
 
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
-    select: {
-      id: true,
-      name: true,
-    },
+    select: { id: true, name: true },
   });
 
   const [qrcodes, pageVisits, sellerChoices] = await Promise.all([
@@ -97,77 +95,63 @@ export default async function QrCodesPage(props: PageProps) {
   const qrScans = qrCampaigns.reduce((sum, item) => sum + item.visits, 0);
   const bioVisits = bioCampaigns.reduce((sum, item) => sum + item.visits, 0);
 
+  const stats = [
+    { label: 'Campanhas ativas', value: qrMetrics.length, icon: 'qrcode', color: '#10b981', bg: '#ecfdf5' },
+    { label: 'Scans via QR', value: qrScans, icon: 'target', color: '#ef4444', bg: '#fef2f2' },
+    { label: 'Acessos via bio', value: bioVisits, icon: 'link', color: '#06b6d4', bg: '#ecfeff' },
+    { label: 'Escolhas de vendedor', value: totalChoices, icon: 'users', color: '#3b82f6', bg: '#eff6ff' },
+    { label: 'Conversao media por link', value: `${averageConversion}%`, icon: 'trending', color: '#f59e0b', bg: '#fffbeb' },
+  ];
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
       <AdminSidebar slug={slug} tenantName={tenant?.name} isSuper={false} />
 
-      <main className="main-content">
-        <header style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Campanhas Rastreáveis</h1>
-          <p style={{ color: 'var(--sidebar-text)' }}>
-            Gere QR Codes e links de bio com códigos únicos criados no servidor para medir acessos e escolhas de vendedor por origem.
-          </p>
+      <main className="main-content kl-page-enter skin-page">
+        <header className="skin-header">
+          <div>
+            <h1>Campanhas</h1>
+            <p>Gere QR Codes e links de bio com codigos unicos criados no servidor.</p>
+          </div>
         </header>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20, marginBottom: 28 }}>
-          {[
-            { label: 'Campanhas ativas', value: qrMetrics.length },
-            { label: 'Scans via QR', value: qrScans },
-            { label: 'Acessos via bio', value: bioVisits },
-            { label: 'Escolhas de vendedor', value: totalChoices },
-            { label: 'Conversao media por link', value: `${averageConversion}%` },
-          ].map((item) => (
-            <div
-              key={item.label}
-              style={{
-                background: 'var(--card-bg)',
-                borderRadius: 18,
-                padding: 22,
-                border: '1px solid var(--border)',
-                boxShadow: '0 10px 24px rgba(148, 163, 184, 0.12)',
-              }}
-            >
-              <div style={{ color: 'var(--sidebar-text)', fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
-                {item.label}
+        <div className="skin-stat-grid">
+          {stats.map((item) => (
+            <div key={item.label} className="kl-card kl-card-hover skin-stat-card">
+              <div className="skin-stat-top">
+                <span className="skin-stat-title">{item.label}</span>
+                <div className="skin-stat-icon" style={{ background: item.bg, color: item.color }}>
+                  <Icon name={item.icon} size={15} color="currentColor" />
+                </div>
               </div>
-              <div style={{ color: 'var(--text-main)', fontSize: 30, fontWeight: 800 }}>{item.value}</div>
+              <p className="skin-stat-value" style={{ color: item.color }}>{item.value}</p>
+              <div className="skin-stat-foot">Metrica por link rastreavel</div>
             </div>
           ))}
         </div>
 
-        <section
-          style={{
-            background: 'var(--card-bg)',
-            borderRadius: 20,
-            padding: 32,
-            border: '1px solid var(--border)',
-            marginBottom: 32,
-          }}
-        >
-          <h2 style={{ margin: '0 0 8px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Nova campanha</h2>
-          <p style={{ margin: '0 0 24px', color: 'var(--sidebar-text)' }}>
-            Crie campanhas para materiais físicos e também um link exclusivo para a bio do Instagram. O código do link é gerado automaticamente.
-          </p>
+        <section className="kl-card" style={{ padding: 32 }}>
+          <h2 className="skin-card-title">Nova campanha</h2>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18 }}>
             {[
               {
-                title: 'QR Code rastreável',
+                title: 'QR Code rastreavel',
                 description: 'Ideal para mesas, panfletos, vitrine, fachada e eventos.',
                 channel: 'qr',
                 namePlaceholder: 'Nome da campanha (ex: Mesa 01)',
                 buttonLabel: 'Gerar QR Code',
-                accent: '#16a34a',
-                background: 'rgba(34, 197, 94, 0.06)',
+                accent: '#10b981',
+                background: '#ecfdf5',
               },
               {
                 title: 'Link da bio do Instagram',
-                description: 'Cria um link rastreável para medir os acessos vindos da bio.',
+                description: 'Cria um link rastreavel para medir acessos vindos da bio.',
                 channel: 'bio',
                 namePlaceholder: 'Nome da campanha (ex: Bio Instagram)',
                 buttonLabel: 'Gerar link da bio',
-                accent: '#2563eb',
-                background: 'rgba(59, 130, 246, 0.06)',
+                accent: '#3b82f6',
+                background: '#eff6ff',
               },
             ].map((campaign) => (
               <form
@@ -187,41 +171,16 @@ export default async function QrCodesPage(props: PageProps) {
                 <input type="hidden" name="channel" value={campaign.channel} />
 
                 <div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-main)', marginBottom: 6 }}>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: '#09090b', marginBottom: 6 }}>
                     {campaign.title}
                   </div>
-                  <div style={{ fontSize: 13, color: 'var(--sidebar-text)', lineHeight: 1.5 }}>
+                  <div style={{ fontSize: 13, color: '#52525b', lineHeight: 1.5 }}>
                     {campaign.description}
-                  </div>
-                  <div style={{ fontSize: 12, color: 'var(--sidebar-text)', lineHeight: 1.5, marginTop: 6 }}>
-                    O link público será único e criado automaticamente pelo sistema.
                   </div>
                 </div>
 
-                <input
-                  name="name"
-                  placeholder={campaign.namePlaceholder}
-                  required
-                  style={{
-                    padding: '12px 16px',
-                    borderRadius: 10,
-                    border: '1px solid var(--border)',
-                    background: '#fff',
-                    color: 'var(--text-main)',
-                  }}
-                />
-                <button
-                  type="submit"
-                  style={{
-                    background: campaign.accent,
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 10,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    padding: '12px 18px',
-                  }}
-                >
+                <input name="name" placeholder={campaign.namePlaceholder} required className="skin-input" />
+                <button type="submit" className="skin-btn" style={{ background: campaign.accent }}>
                   {campaign.buttonLabel}
                 </button>
               </form>
