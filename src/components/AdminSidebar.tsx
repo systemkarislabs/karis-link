@@ -59,7 +59,7 @@ export default function AdminSidebar({
           width={132}
           height={46}
           priority
-          style={{ width: 132, height: 'auto', objectFit: 'contain' }}
+          style={{ width: 118, height: 'auto', objectFit: 'contain' }}
         />
         <button
           type="button"
@@ -166,21 +166,21 @@ export default function AdminSidebar({
           transition: 'transform 0.24s ease',
         } as CSSProperties}
       >
-        <div style={{ marginBottom: 32, paddingBottom: 22, borderBottom: '1px solid #f4f4f5' }}>
+        <div style={{ marginBottom: 30, paddingBottom: 22, borderBottom: '1px solid #f4f4f5' }}>
           <Image
             src="/karis-link-logo.png"
             alt="Karis Link"
             width={146}
             height={52}
             priority
-            style={{ width: 146, maxWidth: '100%', height: 'auto', objectFit: 'contain' }}
+            style={{ width: 120, maxWidth: '100%', height: 'auto', objectFit: 'contain', display: 'block' }}
           />
           <Image
             src="/karis-labs-logo.png"
             alt="Karis Labs"
             width={132}
             height={64}
-            style={{ width: 132, maxWidth: '100%', height: 'auto', objectFit: 'contain', marginTop: 12 }}
+            style={{ width: 116, maxWidth: '100%', height: 'auto', objectFit: 'contain', marginTop: 18, display: 'block' }}
           />
         </div>
 

@@ -51,7 +51,7 @@ export default function SuperLoginClient() {
             width={156}
             height={56}
             priority
-            style={{ width: 156, maxWidth: '72%', height: 'auto', objectFit: 'contain', marginBottom: 22 }}
+            style={{ width: 116, maxWidth: '68%', height: 'auto', objectFit: 'contain', marginBottom: 22 }}
           />
           <h1 style={{ margin: 0, color: '#050505', fontSize: 21, fontWeight: 900, letterSpacing: '-0.07em', textTransform: 'uppercase' }}>
             Acesso Administrativo
@@ -108,7 +108,7 @@ export default function SuperLoginClient() {
             alt="Karis Labs"
             width={128}
             height={62}
-            style={{ width: 128, height: 'auto', objectFit: 'contain', opacity: 0.86 }}
+            style={{ width: 116, height: 'auto', objectFit: 'contain', opacity: 0.88 }}
           />
         </div>
       </section>
