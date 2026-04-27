@@ -4,6 +4,7 @@ import { randomBytes } from 'crypto';
 import { Prisma } from '@prisma/client';
 import { requireTenantAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { getPublicBaseUrl } from '@/lib/public-url';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -19,7 +20,7 @@ export async function createQrCode(formData: FormData) {
   const name = String(formData.get('name') || '').trim();
   const channel = String(formData.get('channel') || 'qr').trim().toLowerCase();
   const { tenantId } = await requireTenantAuth(slug);
-  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/$/, '');
+  const baseUrl = getPublicBaseUrl();
   const channelPath = channel === 'bio' ? 'bio' : 'go';
 
   if (!name) {
@@ -28,10 +29,6 @@ export async function createQrCode(formData: FormData) {
 
   if (name.length > 80) {
     throw new Error('O nome da campanha deve ter no maximo 80 caracteres.');
-  }
-
-  if (!baseUrl) {
-    throw new Error('NEXT_PUBLIC_BASE_URL nao esta configurado para gerar os links publicos.');
   }
 
   for (let attempt = 0; attempt < 8; attempt += 1) {
