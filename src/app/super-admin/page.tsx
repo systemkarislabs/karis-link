@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { requireSuperAuth } from '@/lib/auth';
+import { ensureTenantLogoColumn } from '@/lib/db-compat';
 import prisma from '@/lib/prisma';
 import { createTenant, deleteTenant, toggleTenant, updateTenantAdminPassword, updateTenantLogo } from './actions';
 import AdminSidebar from '@/components/AdminSidebar';
@@ -11,6 +12,8 @@ export const dynamic = 'force-dynamic';
 
 export default async function SuperAdminPage() {
   await requireSuperAuth();
+  await ensureTenantLogoColumn();
+
   const tenants = await prisma.tenant.findMany({
     orderBy: { name: 'asc' },
     select: {

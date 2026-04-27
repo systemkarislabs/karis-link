@@ -8,6 +8,7 @@ import {
   verifyPassword,
 } from '@/lib/auth';
 import { logAuditEvent } from '@/lib/audit';
+import { ensureTenantLogoColumn } from '@/lib/db-compat';
 import prisma from '@/lib/prisma';
 import { assertRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { ensureSuperAdminTableAvailable, findStoredSuperAdminAccount } from '@/lib/super-admin';
@@ -88,6 +89,7 @@ export async function execLogout() {
 
 export async function createTenant(formData: FormData) {
   await requireSuperAuth();
+  await ensureTenantLogoColumn();
 
   const name = String(formData.get('name') || '').trim();
   const slug = String(formData.get('slug') || '')
@@ -141,6 +143,7 @@ export async function createTenant(formData: FormData) {
 
 export async function updateTenantLogo(formData: FormData) {
   await requireSuperAuth();
+  await ensureTenantLogoColumn();
 
   const id = String(formData.get('id') || '').trim();
   const logoDataUrl = String(formData.get('logoDataUrl') || '').trim();

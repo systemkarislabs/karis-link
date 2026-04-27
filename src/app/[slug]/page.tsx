@@ -1,4 +1,5 @@
 import { getTenantSession } from '@/lib/auth';
+import { ensureTenantLogoColumn } from '@/lib/db-compat';
 import prisma from '@/lib/prisma';
 import { getTrackingCookie } from '@/lib/tracking';
 import { notFound } from 'next/navigation';
@@ -27,6 +28,8 @@ export async function generateMetadata({ params }: Pick<PublicTenantPageProps, '
 export default async function PublicTenantPage({ params }: PublicTenantPageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
+
+  await ensureTenantLogoColumn();
 
   const tenant = await prisma.tenant.findUnique({
     where: { slug },
