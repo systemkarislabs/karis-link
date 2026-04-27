@@ -59,7 +59,7 @@ export default function AdminSidebar({
           width={132}
           height={46}
           priority
-          style={{ width: 94, height: 'auto', objectFit: 'contain' }}
+          style={{ width: 92, height: 'auto', objectFit: 'contain' }}
         />
         <button
           type="button"
@@ -167,27 +167,42 @@ export default function AdminSidebar({
         } as CSSProperties}
       >
         <div style={{ marginBottom: 30, paddingBottom: 22, borderBottom: '1px solid #f4f4f5' }}>
-          <Image
-            src="/karis-link-logo.png"
-            alt="Karis Link"
-            width={146}
-            height={52}
-            priority
-            style={{ width: 98, maxWidth: '100%', height: 'auto', objectFit: 'contain', display: 'block' }}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="kl-brand-mark">K</span>
+            <div>
+              <div className="kl-brand-name">
+                Karis<span>Link</span>
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              marginTop: 8,
+              marginLeft: 48,
+              color: '#09090b',
+              fontSize: 10,
+              fontWeight: 900,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              opacity: 0.56,
+            }}
+          >
+            Powered by
+          </div>
           <Image
             src="/karis-labs-logo.png"
-            alt="Karis Labs"
+            alt="Karis Negocios"
             width={132}
             height={64}
             style={{
-              width: 82,
+              width: 64,
               maxWidth: '100%',
               height: 'auto',
               objectFit: 'contain',
-              marginTop: 12,
+              marginTop: 3,
+              marginLeft: 48,
               display: 'block',
-              opacity: 0.92,
+              opacity: 0.9,
             }}
           />
         </div>
