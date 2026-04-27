@@ -50,39 +50,61 @@ export default async function SuperAdminPage() {
               className="super-admin-grid"
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'minmax(0, 1.35fr) minmax(360px, 0.95fr)',
-                gap: 32,
+                gridTemplateColumns: '320px minmax(0, 1fr)',
+                gap: 24,
                 alignItems: 'start',
               }}
             >
-              <div className="super-admin-list" style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+              <div
+                className="super-admin-list"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                  gap: 16,
+                  minWidth: 0,
+                  order: 2,
+                }}
+              >
+                <h3
+                  style={{
+                    gridColumn: '1 / -1',
+                    fontSize: 14,
+                    fontWeight: 800,
+                    color: 'var(--text-main)',
+                    margin: '0 0 2px 2px',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  Empresas Ativas
+                </h3>
                 {tenants.map((tenant) => (
                   <div
                     key={tenant.id}
                     className="super-admin-tenant-card kl-card kl-card-hover"
                     style={{
                       background: 'var(--card-bg)',
-                      borderRadius: 18,
-                      padding: '20px 24px',
+                      borderRadius: 16,
+                      padding: 24,
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      flexWrap: 'wrap',
-                      gap: 16,
+                      flexDirection: 'column',
+                      alignItems: 'stretch',
+                      gap: 18,
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
                       <div
                         style={{
-                          width: 48,
-                          height: 48,
+                          width: 50,
+                          height: 50,
                           borderRadius: 14,
-                          background: tenant.active ? '#f0fdf4' : '#f8fafc',
-                          color: tenant.active ? '#16a34a' : '#94a3b8',
+                          background: tenant.active ? '#ecfdf5' : '#f4f4f5',
+                          color: tenant.active ? 'var(--brand-accent)' : '#a1a1aa',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: 700,
+                          fontWeight: 900,
+                          fontSize: 20,
+                          border: tenant.active ? '1.5px solid #d1fae5' : '1.5px solid #e4e4e7',
                           flexShrink: 0,
                         }}
                       >
@@ -90,13 +112,13 @@ export default async function SuperAdminPage() {
                       </div>
 
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, color: 'var(--text-main)', wordBreak: 'break-word' }}>
+                        <div style={{ fontWeight: 800, color: 'var(--text-main)', wordBreak: 'break-word', letterSpacing: '-0.03em' }}>
                           {tenant.name}
                         </div>
-                        <div style={{ fontSize: 12, color: 'var(--sidebar-text)', wordBreak: 'break-word' }}>
+                        <div style={{ fontSize: 11, color: 'var(--text-soft)', wordBreak: 'break-word', marginTop: 2 }}>
                           /{tenant.slug} - {tenant._count.sellers} vendedores
                         </div>
-                        <div style={{ fontSize: 12, color: 'var(--sidebar-text)', marginTop: 4 }}>
+                        <div style={{ fontSize: 11, color: 'var(--text-soft)', marginTop: 2 }}>
                           Usuario admin: {tenant.adminUser}
                         </div>
                       </div>
@@ -104,19 +126,20 @@ export default async function SuperAdminPage() {
 
                     <div
                       className="super-admin-tenant-actions"
-                      style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}
+                      style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, alignItems: 'center' }}
                     >
                       <form action={toggleTenant.bind(null, tenant.id, tenant.active)}>
                         <button
                           type="submit"
                           style={{
                             fontSize: 12,
-                            color: tenant.active ? '#b45309' : '#16a34a',
-                            padding: '7px 12px',
-                            borderRadius: 999,
-                            background: tenant.active ? '#fef3c7' : '#dcfce7',
+                            color: tenant.active ? '#f59e0b' : '#10b981',
+                            padding: 10,
+                            width: '100%',
+                            borderRadius: 10,
+                            background: tenant.active ? '#fffbeb' : '#ecfdf5',
                             fontWeight: 700,
-                            border: 'none',
+                            border: tenant.active ? '1px solid rgba(245,158,11,.3)' : '1px solid #d1fae5',
                             cursor: 'pointer',
                           }}
                         >
@@ -131,10 +154,12 @@ export default async function SuperAdminPage() {
                           fontSize: 12,
                           color: 'var(--sidebar-text)',
                           textDecoration: 'none',
-                          padding: '7px 12px',
-                          borderRadius: 999,
-                          background: 'var(--bg-main)',
+                          padding: 10,
+                          borderRadius: 10,
+                          background: '#f4f4f5',
                           fontWeight: 700,
+                          border: '1px solid var(--border)',
+                          textAlign: 'center',
                         }}
                       >
                         Site
@@ -146,13 +171,14 @@ export default async function SuperAdminPage() {
                           message={`Excluir definitivamente a empresa "${tenant.name}"? Todos os vendedores, campanhas e cliques serão removidos. Esta ação é IRREVERSÍVEL.`}
                           ariaLabel={`Excluir empresa ${tenant.name}`}
                         style={{
-                          fontSize: 12,
-                          color: '#e11d48',
-                          padding: '7px 12px',
-                          borderRadius: 999,
-                          background: '#fff1f2',
+                            fontSize: 12,
+                            color: '#e11d48',
+                            padding: 10,
+                            width: '100%',
+                            borderRadius: 10,
+                            background: '#fff1f2',
                             fontWeight: 700,
-                            border: 'none',
+                            border: '1px solid #fecdd3',
                             cursor: 'pointer',
                           }}
                         >
@@ -169,6 +195,7 @@ export default async function SuperAdminPage() {
                           flexWrap: 'wrap',
                           width: '100%',
                           marginTop: 4,
+                          gridColumn: '1 / -1',
                         }}
                       >
                         <input type="hidden" name="id" value={tenant.id} />
@@ -182,7 +209,7 @@ export default async function SuperAdminPage() {
                             flex: '1 1 220px',
                             minWidth: 0,
                             padding: '9px 12px',
-                            borderRadius: 14,
+                            borderRadius: 10,
                             border: '1px solid var(--border)',
                             fontSize: 12,
                             outline: 'none',
@@ -196,7 +223,7 @@ export default async function SuperAdminPage() {
                             fontSize: 12,
                             color: '#fff',
                             padding: '9px 12px',
-                            borderRadius: 999,
+                            borderRadius: 10,
                             background: 'var(--sidebar-active-text)',
                             fontWeight: 700,
                             border: 'none',
@@ -215,9 +242,10 @@ export default async function SuperAdminPage() {
                 className="super-admin-form-card kl-surface"
                 style={{
                   background: 'var(--card-bg)',
-                  borderRadius: 24,
-                  padding: 32,
+                  borderRadius: 16,
+                  padding: 24,
                   minWidth: 0,
+                  order: 1,
                 }}
               >
                 <Image

@@ -1,25 +1,32 @@
 'use client';
+
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Icon } from './Icon';
 import LogoutButton from './LogoutButton';
-import { usePathname } from 'next/navigation';
+
+type AdminSidebarProps = {
+  tenantName?: string;
+  isSuper?: boolean;
+  slug?: string;
+};
 
 export default function AdminSidebar({
   tenantName = 'Karis Labs',
   isSuper = false,
   slug = '',
-}) {
+}: AdminSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   const menuItems = isSuper
     ? [
         { label: 'Empresas', href: '/super-admin', icon: 'home' },
-        { label: 'Relatórios', href: '/super-admin/relatorios', icon: 'chart' },
-        { label: 'Configurações', href: '/super-admin/configuracoes', icon: 'settings' },
+        { label: 'Relatorios', href: '/super-admin/relatorios', icon: 'chart' },
+        { label: 'Configuracoes', href: '/super-admin/configuracoes', icon: 'settings' },
       ]
     : [
         { label: 'Dashboard', href: `/${slug}/admin`, icon: 'home' },
@@ -27,101 +34,158 @@ export default function AdminSidebar({
         { label: 'Campanhas', href: `/${slug}/admin/qrcodes`, icon: 'link' },
       ];
 
-  const activeStyle = {
-    background: 'var(--sidebar-active-bg)',
-    color: 'var(--sidebar-active-text)',
-    fontWeight: 600,
-  };
-
   return (
     <>
       <div
+        className="mobile-header"
         style={{
           display: 'none',
           position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
-          height: 60,
-          background: 'color-mix(in srgb, var(--sidebar-bg) 88%, transparent)',
-          backdropFilter: 'blur(16px)',
-          borderBottom: '1px solid color-mix(in srgb, var(--border) 76%, transparent)',
+          height: 64,
+          background: 'var(--sidebar-bg)',
+          borderBottom: '1px solid var(--border)',
           zIndex: 99,
           alignItems: 'center',
           padding: '0 20px',
           justifyContent: 'space-between',
         } as CSSProperties}
-        className="mobile-header"
       >
         <Image
           src={isSuper ? '/karis-labs-logo.png' : '/karis-link-logo.png'}
           alt={isSuper ? 'Karis Labs' : 'Karis Link'}
-          width={98}
-          height={28}
+          width={112}
+          height={32}
           priority
-          style={{ width: 98, height: 'auto', objectFit: 'contain' }}
+          style={{ width: 112, height: 'auto', objectFit: 'contain' }}
         />
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="kl-action-soft kl-press"
-          style={{ border: 'none', cursor: 'pointer', padding: 10, width: 44, height: 44 }}
+          className="kl-press"
+          style={{
+            width: 44,
+            height: 44,
+            padding: 10,
+            borderRadius: 12,
+            border: '1px solid var(--border)',
+            background: '#ffffff',
+            cursor: 'pointer',
+          }}
           aria-label="Abrir menu"
           aria-expanded={isOpen}
         >
-          <Icon name="menu" size={24} color="var(--text-main)" />
+          <Icon name="menu" size={22} color="var(--text-main)" />
         </button>
       </div>
 
-      {isOpen && (
+      {isOpen ? (
         <div
           onClick={() => setIsOpen(false)}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100 }}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(9, 9, 11, 0.5)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 100,
+          }}
         />
-      )}
+      ) : null}
+
+      <div
+        className="desktop-topbar"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 220,
+          right: 0,
+          height: 64,
+          background: '#ffffff',
+          borderBottom: '1px solid var(--border)',
+          zIndex: 80,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 40px',
+        }}
+      >
+        <div
+          style={{
+            height: 34,
+            width: 240,
+            borderRadius: 8,
+            background: '#f4f4f5',
+            border: '1px solid #eeeeef',
+          }}
+          aria-hidden="true"
+        />
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            color: 'var(--text-soft)',
+            fontSize: 12,
+            fontWeight: 700,
+          }}
+        >
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              background: 'var(--brand-accent)',
+              boxShadow: '0 0 0 4px rgba(16,185,129,.12)',
+            }}
+          />
+          Karis Link ativo
+        </div>
+      </div>
 
       <aside
+        className={`sidebar-container ${isOpen ? 'open' : ''}`}
         style={{
-          width: 280,
-          background: 'color-mix(in srgb, var(--sidebar-bg) 96%, transparent)',
-          borderRight: '1px solid color-mix(in srgb, var(--border) 78%, transparent)',
-          padding: '32px 20px 20px',
+          width: 220,
+          background: 'var(--sidebar-bg)',
+          borderRight: '1px solid var(--border)',
+          padding: '28px 16px 18px',
           display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
           height: '100dvh',
           boxSizing: 'border-box',
           zIndex: 101,
-          transition: 'transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1)',
-          boxShadow: '12px 0 38px rgba(15, 23, 42, 0.04)',
+          transition: 'transform 0.24s ease',
         } as CSSProperties}
-        className={`sidebar-container ${isOpen ? 'open' : ''}`}
       >
-        <div style={{ marginBottom: 32, padding: '0 16px' }}>
+        <div style={{ marginBottom: 30, padding: '0 12px' }}>
           <Image
             src={isSuper ? '/karis-labs-logo.png' : '/karis-link-logo.png'}
             alt={isSuper ? 'Karis Labs' : 'Karis Link'}
-            width={isSuper ? 128 : 148}
-            height={isSuper ? 36 : 42}
+            width={isSuper ? 136 : 146}
+            height={isSuper ? 38 : 42}
             priority
-            style={{ width: isSuper ? 128 : 148, height: 'auto', objectFit: 'contain' }}
+            style={{ width: isSuper ? 136 : 146, height: 'auto', objectFit: 'contain' }}
           />
           <div
             style={{
               fontSize: 10,
               color: 'var(--text-soft)',
-              fontWeight: 700,
-              marginTop: 8,
+              fontWeight: 800,
+              marginTop: 16,
               textTransform: 'uppercase',
-              letterSpacing: '0.12em',
+              letterSpacing: '0.16em',
             }}
           >
             {isSuper ? 'Ecossistema KarisLabs' : tenantName}
           </div>
-          {!isSuper && (
+          {!isSuper ? (
             <div style={{ fontSize: 11, color: 'var(--text-soft)', marginTop: 6 }}>
-              Operação da empresa no Karis Link
+              Operacao da empresa no Karis Link
             </div>
-          )}
+          ) : null}
         </div>
 
         <nav
@@ -129,7 +193,7 @@ export default function AdminSidebar({
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            gap: 4,
+            gap: 6,
             minHeight: 0,
             overflowY: 'auto',
             paddingBottom: 16,
@@ -139,8 +203,8 @@ export default function AdminSidebar({
             style={{
               color: 'var(--text-soft)',
               fontSize: 10,
-              fontWeight: 700,
-              padding: '0 16px 8px',
+              fontWeight: 800,
+              padding: '0 12px 10px',
               textTransform: 'uppercase',
               letterSpacing: '0.14em',
             }}
@@ -148,37 +212,38 @@ export default function AdminSidebar({
             Menu Principal
           </div>
 
-          {menuItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setIsOpen(false)}
-              className={`sidebar-link kl-press ${pathname === item.href ? 'is-active' : ''}`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                padding: '12px 16px',
-                borderRadius: 14,
-                textDecoration: 'none',
-                fontSize: 14,
-                letterSpacing: '-0.01em',
-                color: 'var(--sidebar-text)',
-                ...(pathname === item.href ? activeStyle : {}),
-              }}
-            >
-              <Icon
-                name={item.icon as never}
-                size={20}
-                color={
-                  pathname === item.href
-                    ? 'var(--sidebar-active-text)'
-                    : 'var(--sidebar-text)'
-                }
-              />
-              {item.label}
-            </Link>
-          ))}
+          {menuItems.map((item) => {
+            const isActive = pathname === item.href;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className={`sidebar-link kl-press ${isActive ? 'is-active' : ''}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '11px 12px',
+                  borderRadius: 10,
+                  textDecoration: 'none',
+                  fontSize: 14,
+                  fontWeight: isActive ? 800 : 600,
+                  letterSpacing: '-0.01em',
+                  color: isActive ? 'var(--sidebar-active-text)' : 'var(--sidebar-text)',
+                  background: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
+                }}
+              >
+                <Icon
+                  name={item.icon}
+                  size={18}
+                  color={isActive ? 'var(--sidebar-active-text)' : 'var(--sidebar-text)'}
+                />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div
@@ -201,19 +266,30 @@ export default function AdminSidebar({
           .mobile-header {
             display: flex !important;
           }
+
+          .desktop-topbar {
+            display: none !important;
+          }
+
           .sidebar-container {
             transform: translateX(-100%);
             padding-top: 84px !important;
             padding-bottom: 0 !important;
-            box-shadow: 26px 0 68px rgba(15, 23, 42, 0.16) !important;
+            box-shadow: 26px 0 68px rgba(9, 9, 11, 0.16) !important;
           }
+
           .sidebar-container.open {
             transform: translateX(0);
           }
         }
+
         @media (min-width: 1025px) {
           .sidebar-container {
             transform: translateX(0) !important;
+          }
+
+          .desktop-topbar {
+            display: flex !important;
           }
         }
       `}</style>
