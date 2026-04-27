@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useId, useState } from 'react';
+import { Icon } from './Icon';
 
 type Props = {
   inputName?: string;
@@ -17,6 +18,7 @@ export default function CompanyLogoField({
 }: Props) {
   const [preview, setPreview] = useState('');
   const [error, setError] = useState('');
+  const [fileName, setFileName] = useState('');
   const inputId = useId();
   const activePreview = preview || currentLogo || '';
 
@@ -26,12 +28,14 @@ export default function CompanyLogoField({
 
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       setError('Use JPG, PNG ou WEBP.');
+      setFileName('');
       event.target.value = '';
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
       setError('A imagem deve ter no máximo 2 MB.');
+      setFileName('');
       event.target.value = '';
       return;
     }
@@ -39,6 +43,7 @@ export default function CompanyLogoField({
     const reader = new FileReader();
     reader.onload = () => {
       setError('');
+      setFileName(file.name);
       setPreview(typeof reader.result === 'string' ? reader.result : '');
     };
     reader.readAsDataURL(file);
@@ -77,8 +82,58 @@ export default function CompanyLogoField({
         type="file"
         accept="image/png,image/jpeg,image/webp"
         onChange={handleFileChange}
-        style={{ width: '100%', fontSize: 12, color: '#71717a' }}
+        style={{ display: 'none' }}
       />
+      <label
+        htmlFor={inputId}
+        className="kl-press"
+        style={{
+          minHeight: compact ? 38 : 42,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+          padding: compact ? '9px 11px' : '10px 13px',
+          borderRadius: 12,
+          border: '1px solid var(--border)',
+          background: '#fafafa',
+          color: '#52525b',
+          fontSize: 12,
+          fontWeight: 800,
+          cursor: 'pointer',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.8)',
+        }}
+      >
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+          <span
+            style={{
+              width: 24,
+              height: 24,
+              display: 'grid',
+              placeItems: 'center',
+              borderRadius: 8,
+              background: 'rgba(16,185,129,.1)',
+              color: 'var(--brand-accent-strong)',
+              flexShrink: 0,
+            }}
+          >
+            <Icon name="photo" size={14} />
+          </span>
+          <span style={{ whiteSpace: 'nowrap' }}>Escolher logo</span>
+        </span>
+        <span
+          style={{
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            color: '#a1a1aa',
+            fontWeight: 700,
+          }}
+        >
+          {fileName || (activePreview ? 'Logo atual' : 'PNG, JPG ou WEBP')}
+        </span>
+      </label>
       {error ? <div style={{ color: '#dc2626', fontSize: 12, fontWeight: 700 }}>{error}</div> : null}
     </div>
   );

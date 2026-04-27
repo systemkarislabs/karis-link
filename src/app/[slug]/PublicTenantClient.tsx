@@ -208,7 +208,7 @@ export default function PublicTenantClient({
                 width={168}
                 height={60}
                 priority
-                style={{ width: 118, maxWidth: '68%', height: 'auto', objectFit: 'contain' }}
+                style={{ width: 96, maxWidth: '60%', height: 'auto', objectFit: 'contain' }}
               />
             )}
           </div>
@@ -225,7 +225,7 @@ export default function PublicTenantClient({
               alt="Karis Labs"
               width={132}
               height={64}
-              style={{ width: 110, maxWidth: '52%', height: 'auto', objectFit: 'contain', opacity: 0.92 }}
+              style={{ width: 74, maxWidth: '42%', height: 'auto', objectFit: 'contain', opacity: 0.88 }}
             />
           </div>
 

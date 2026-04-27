@@ -59,7 +59,7 @@ export default function AdminSidebar({
           width={132}
           height={46}
           priority
-          style={{ width: 118, height: 'auto', objectFit: 'contain' }}
+          style={{ width: 94, height: 'auto', objectFit: 'contain' }}
         />
         <button
           type="button"
@@ -173,14 +173,22 @@ export default function AdminSidebar({
             width={146}
             height={52}
             priority
-            style={{ width: 120, maxWidth: '100%', height: 'auto', objectFit: 'contain', display: 'block' }}
+            style={{ width: 98, maxWidth: '100%', height: 'auto', objectFit: 'contain', display: 'block' }}
           />
           <Image
             src="/karis-labs-logo.png"
             alt="Karis Labs"
             width={132}
             height={64}
-            style={{ width: 116, maxWidth: '100%', height: 'auto', objectFit: 'contain', marginTop: 18, display: 'block' }}
+            style={{
+              width: 82,
+              maxWidth: '100%',
+              height: 'auto',
+              objectFit: 'contain',
+              marginTop: 12,
+              display: 'block',
+              opacity: 0.92,
+            }}
           />
         </div>
 
