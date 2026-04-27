@@ -85,7 +85,7 @@ export default function SuperLoginClient() {
             </span>
             <span style={{ position: 'relative', display: 'block' }}>
               <span className="kl-field-icon"><Icon name="user" size={16} color="#a1a1aa" /></span>
-              <input name="username" placeholder="Digite seu usuário" required className="kl-soft-field" style={{ paddingLeft: 46 }} />
+              <input name="username" placeholder="Digite seu usuário" required className="kl-soft-field kl-field-with-icon" />
             </span>
           </label>
 
@@ -95,7 +95,7 @@ export default function SuperLoginClient() {
             </span>
             <span style={{ position: 'relative', display: 'block' }}>
               <span className="kl-field-icon"><Icon name="lock" size={16} color="#a1a1aa" /></span>
-              <input name="password" type="password" placeholder="••••••••" required className="kl-soft-field" style={{ paddingLeft: 46 }} />
+              <input name="password" type="password" placeholder="••••••••" required className="kl-soft-field kl-field-with-icon" />
             </span>
           </label>
 

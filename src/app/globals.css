@@ -423,6 +423,10 @@ a {
   pointer-events: none;
 }
 
+.kl-soft-field.kl-field-with-icon {
+  padding-left: 46px !important;
+}
+
 .skin-page {
   display: flex;
   flex-direction: column;
