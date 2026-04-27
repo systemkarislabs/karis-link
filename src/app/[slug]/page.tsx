@@ -34,6 +34,7 @@ export default async function PublicTenantPage({ params }: PublicTenantPageProps
       id: true,
       name: true,
       slug: true,
+      logo: true,
     },
   });
   if (!tenant) notFound();
@@ -62,6 +63,7 @@ export default async function PublicTenantPage({ params }: PublicTenantPageProps
     <PublicTenantClient
       slug={slug}
       tenantName={tenant.name}
+      tenantLogo={tenant.logo}
       sellers={sellers.map((seller) => ({
         id: seller.id,
         name: seller.name,

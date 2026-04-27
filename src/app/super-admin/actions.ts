@@ -11,10 +11,26 @@ import { logAuditEvent } from '@/lib/audit';
 import prisma from '@/lib/prisma';
 import { assertRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { ensureSuperAdminTableAvailable, findStoredSuperAdminAccount } from '@/lib/super-admin';
+import { validateImageDataUrl, validateImageFile } from '@/lib/image-validation';
 import { redirect } from 'next/navigation';
 
 function isValidSlug(value: string) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
+}
+
+async function resolveTenantLogo(logoDataUrl: string, logoFile: File | null | undefined) {
+  if (logoDataUrl) {
+    validateImageDataUrl(logoDataUrl);
+    return logoDataUrl;
+  }
+
+  if (logoFile && logoFile.size > 0) {
+    validateImageFile(logoFile);
+    const buffer = Buffer.from(await logoFile.arrayBuffer());
+    return `data:${logoFile.type};base64,${buffer.toString('base64')}`;
+  }
+
+  return null;
 }
 
 export async function handleSuperLogin(_: unknown, formData: FormData) {
@@ -80,6 +96,8 @@ export async function createTenant(formData: FormData) {
     .replace(/\s+/g, '-');
   const adminUser = String(formData.get('adminUser') || '').trim();
   const adminPass = String(formData.get('adminPass') || '');
+  const logoDataUrl = String(formData.get('logoDataUrl') || '').trim();
+  const logoFile = formData.get('logo') as File | null;
 
   if (!name || !slug || !adminUser || !adminPass) {
     throw new Error('Todos os campos da empresa são obrigatórios.');
@@ -107,6 +125,7 @@ export async function createTenant(formData: FormData) {
       slug,
       adminUser,
       adminPass: await hashPassword(adminPass),
+      logo: await resolveTenantLogo(logoDataUrl, logoFile),
     },
     select: { id: true },
   });
@@ -115,6 +134,36 @@ export async function createTenant(formData: FormData) {
     event: 'tenant_create',
     tenantId: created.id,
     metadata: { name, slug, adminUser },
+  });
+
+  redirect('/super-admin');
+}
+
+export async function updateTenantLogo(formData: FormData) {
+  await requireSuperAuth();
+
+  const id = String(formData.get('id') || '').trim();
+  const logoDataUrl = String(formData.get('logoDataUrl') || '').trim();
+  const logoFile = formData.get('logo') as File | null;
+
+  if (!id) {
+    throw new Error('Empresa inválida para atualizar logo.');
+  }
+
+  const logo = await resolveTenantLogo(logoDataUrl, logoFile);
+  if (!logo) {
+    throw new Error('Selecione uma imagem para atualizar a logo.');
+  }
+
+  await prisma.tenant.update({
+    where: { id },
+    data: { logo },
+  });
+
+  await logAuditEvent({
+    event: 'tenant_logo_update',
+    tenantId: id,
+    metadata: { logoUpdatedBySuper: true },
   });
 
   redirect('/super-admin');

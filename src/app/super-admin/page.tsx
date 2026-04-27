@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { requireSuperAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { createTenant, deleteTenant, toggleTenant, updateTenantAdminPassword } from './actions';
+import { createTenant, deleteTenant, toggleTenant, updateTenantAdminPassword, updateTenantLogo } from './actions';
 import AdminSidebar from '@/components/AdminSidebar';
+import CompanyLogoField from '@/components/CompanyLogoField';
 import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
 import { Icon } from '@/components/Icon';
 
@@ -17,6 +18,7 @@ export default async function SuperAdminPage() {
       name: true,
       slug: true,
       adminUser: true,
+      logo: true,
       active: true,
       _count: { select: { sellers: true } },
     },
@@ -54,6 +56,7 @@ export default async function SuperAdminPage() {
                 <input name="slug" placeholder="Slug (ex: texpar-vendas)" required className="kl-soft-field" />
                 <input name="adminUser" placeholder="Usuário administrador" required className="kl-soft-field" />
                 <input name="adminPass" type="password" placeholder="Senha inicial" required className="kl-soft-field" />
+                <CompanyLogoField label="Logo da empresa" />
                 <button type="submit" className="kl-green-button kl-press" style={{ marginTop: 4 }}>
                   Cadastrar empresa
                 </button>
@@ -69,9 +72,32 @@ export default async function SuperAdminPage() {
                 {tenants.map((tenant) => (
                   <article key={tenant.id} className="kl-card kl-card-hover kl-tenant-card super-admin-tenant-card">
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-                      <div className="kl-mini-avatar" style={!tenant.active ? { background: '#f4f4f5', borderColor: '#e4e4e7', color: '#a1a1aa' } : undefined}>
-                        {tenant.name.charAt(0).toUpperCase()}
-                      </div>
+                      {tenant.logo ? (
+                        <div
+                          style={{
+                            width: 50,
+                            height: 50,
+                            display: 'grid',
+                            placeItems: 'center',
+                            borderRadius: 15,
+                            border: '1px solid #e4e4e7',
+                            background: '#ffffff',
+                            overflow: 'hidden',
+                            flexShrink: 0,
+                            opacity: tenant.active ? 1 : 0.58,
+                          }}
+                        >
+                          <img
+                            src={tenant.logo}
+                            alt={`Logo ${tenant.name}`}
+                            style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 6 }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="kl-mini-avatar" style={!tenant.active ? { background: '#f4f4f5', borderColor: '#e4e4e7', color: '#a1a1aa' } : undefined}>
+                          {tenant.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
 
                       <div style={{ minWidth: 0 }}>
                         <h3 style={{ margin: 0, color: '#09090b', fontSize: 18, fontWeight: 900, letterSpacing: '-0.05em' }}>
@@ -87,6 +113,15 @@ export default async function SuperAdminPage() {
                     </div>
 
                     <div className="kl-tenant-actions super-admin-tenant-actions">
+                      <form action={updateTenantLogo} style={{ gridColumn: '1 / -1', display: 'grid', gap: 10 }}>
+                        <input type="hidden" name="id" value={tenant.id} />
+                        <CompanyLogoField currentLogo={tenant.logo} label="Logo da empresa" compact />
+                        <button type="submit" className="kl-ghost-button kl-press" style={{ width: '100%' }}>
+                          <Icon name="photo" size={14} />
+                          Atualizar logo
+                        </button>
+                      </form>
+
                       <form action={toggleTenant.bind(null, tenant.id, tenant.active)}>
                         <button type="submit" className={`kl-ghost-button kl-press ${tenant.active ? 'kl-warning-button' : ''}`} style={{ width: '100%' }}>
                           <Icon name="power" size={14} />

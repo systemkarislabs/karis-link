@@ -15,6 +15,7 @@ type SellerCard = {
 type Props = {
   slug: string;
   tenantName: string;
+  tenantLogo?: string | null;
   sellers: SellerCard[];
   isAdminLogged: boolean;
 };
@@ -58,6 +59,8 @@ function SubmitButton() {
 
 export default function PublicTenantClient({
   slug,
+  tenantName,
+  tenantLogo,
   sellers,
   isAdminLogged,
 }: Props) {
@@ -192,14 +195,22 @@ export default function PublicTenantClient({
               width: '100%',
             }}
           >
-            <Image
-              src="/karis-link-logo.png"
-              alt="Karis Link"
-              width={168}
-              height={60}
-              priority
-              style={{ width: 118, maxWidth: '68%', height: 'auto', objectFit: 'contain' }}
-            />
+            {tenantLogo ? (
+              <img
+                src={tenantLogo}
+                alt={`Logo ${tenantName}`}
+                style={{ width: 126, maxWidth: '72%', height: 'auto', maxHeight: 78, objectFit: 'contain' }}
+              />
+            ) : (
+              <Image
+                src="/karis-link-logo.png"
+                alt="Karis Link"
+                width={168}
+                height={60}
+                priority
+                style={{ width: 118, maxWidth: '68%', height: 'auto', objectFit: 'contain' }}
+              />
+            )}
           </div>
 
           <div
