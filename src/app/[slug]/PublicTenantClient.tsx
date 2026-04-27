@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useActionState } from 'react';
+import React, { useActionState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { handleTenantLogin } from './admin/auth-actions';
 import { Icon } from '@/components/Icon';
@@ -64,6 +64,19 @@ export default function PublicTenantClient({
   const [isLoginOpen, setIsLoginOpen] = React.useState(false);
   const [state, formAction] = useActionState<LoginState, FormData>(handleTenantLogin, null);
 
+  useEffect(() => {
+    if (!isLoginOpen) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsLoginOpen(false);
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLoginOpen]);
+
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '12px 14px',
@@ -78,12 +91,12 @@ export default function PublicTenantClient({
   return (
     <div
       style={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         background:
           'radial-gradient(circle at top, rgba(255,255,255,0.98) 0%, rgba(247,249,252,1) 38%, rgba(242,245,249,1) 100%)',
         color: 'var(--text-main)',
         fontFamily: 'var(--font-body)',
-        padding: '14px 20px 56px',
+        padding: 'max(14px, env(safe-area-inset-top)) 20px 56px',
       }}
     >
       {/* Botão de acesso admin */}
@@ -363,6 +376,9 @@ export default function PublicTenantClient({
             zIndex: 40,
           }}
           onClick={() => setIsLoginOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="tenant-login-title"
         >
           <div
             style={{
@@ -399,7 +415,7 @@ export default function PublicTenantClient({
                     alt="Karis Link"
                     style={{ width: 34, objectFit: 'contain' }}
                   />
-                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-main)' }}>
+                  <div id="tenant-login-title" style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-main)' }}>
                     Entrar no painel
                   </div>
                 </div>

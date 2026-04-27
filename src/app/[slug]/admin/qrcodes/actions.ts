@@ -1,6 +1,7 @@
 'use server';
 
 import { randomBytes } from 'crypto';
+import { Prisma } from '@prisma/client';
 import { requireTenantAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
@@ -22,52 +23,43 @@ export async function createQrCode(formData: FormData) {
   const channelPath = channel === 'bio' ? 'bio' : 'go';
 
   if (!name) {
-    throw new Error('Nome da campanha é obrigatório.');
+    throw new Error('Nome da campanha e obrigatorio.');
   }
 
   if (name.length > 80) {
-    throw new Error('O nome da campanha deve ter no máximo 80 caracteres.');
+    throw new Error('O nome da campanha deve ter no maximo 80 caracteres.');
   }
 
   if (!baseUrl) {
-    throw new Error('NEXT_PUBLIC_BASE_URL não está configurado para gerar os links públicos.');
+    throw new Error('NEXT_PUBLIC_BASE_URL nao esta configurado para gerar os links publicos.');
   }
 
-  let campaignCode = '';
-
   for (let attempt = 0; attempt < 8; attempt += 1) {
-    const candidate = generateCampaignCode();
-    const existingCampaign = await prisma.qrCode.findFirst({
-      where: {
-        tenantId,
-        slug: candidate,
-      },
-      select: { id: true },
-    });
+    const campaignCode = generateCampaignCode();
+    const finalUrl = `${baseUrl}/${slug}/${channelPath}/${campaignCode}`;
 
-    if (!existingCampaign) {
-      campaignCode = candidate;
-      break;
+    try {
+      await prisma.qrCode.create({
+        data: {
+          name,
+          slug: campaignCode,
+          url: finalUrl,
+          tenantId,
+        },
+      });
+
+      revalidatePath(`/${slug}/admin/qrcodes`);
+      redirect(`/${slug}/admin/qrcodes`);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        continue;
+      }
+
+      throw error;
     }
   }
 
-  if (!campaignCode) {
-    throw new Error('Não foi possível gerar um link único para esta campanha. Tente novamente.');
-  }
-
-  const finalUrl = `${baseUrl}/${slug}/${channelPath}/${campaignCode}`;
-
-  await prisma.qrCode.create({
-    data: {
-      name,
-      slug: campaignCode,
-      url: finalUrl,
-      tenantId,
-    },
-  });
-
-  revalidatePath(`/${slug}/admin/qrcodes`);
-  redirect(`/${slug}/admin/qrcodes`);
+  throw new Error('Nao foi possivel gerar um link unico para esta campanha. Tente novamente.');
 }
 
 export async function deleteQrCode(formData: FormData) {

@@ -65,8 +65,8 @@ model QrCode {
   tenant    Tenant   @relation(fields: [tenantId], references: [id])
   createdAt DateTime @default(now())
 
-  @@index([tenantId])
-  @@index([tenantId, slug])
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@unique([tenantId, slug])
 }
 
 model PageClickEvent {

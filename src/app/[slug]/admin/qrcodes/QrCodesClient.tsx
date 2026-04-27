@@ -87,7 +87,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 20 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: 20 }}>
       {qrCodes.map((qr) => (
         <div
           key={qr.id}

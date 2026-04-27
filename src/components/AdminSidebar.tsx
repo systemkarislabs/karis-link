@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Icon } from './Icon';
@@ -34,7 +35,6 @@ export default function AdminSidebar({
 
   return (
     <>
-      {/* Header mobile */}
       <div
         style={{
           display: 'none',
@@ -49,7 +49,7 @@ export default function AdminSidebar({
           alignItems: 'center',
           padding: '0 20px',
           justifyContent: 'space-between',
-        } as React.CSSProperties}
+        } as CSSProperties}
         className="mobile-header"
       >
         <Image
@@ -64,6 +64,7 @@ export default function AdminSidebar({
           onClick={() => setIsOpen(!isOpen)}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8 }}
           aria-label="Abrir menu"
+          aria-expanded={isOpen}
         >
           <Icon name="menu" size={24} color="var(--text-main)" />
         </button>
@@ -89,7 +90,7 @@ export default function AdminSidebar({
           boxSizing: 'border-box',
           zIndex: 101,
           transition: 'transform 0.3s ease',
-        } as React.CSSProperties}
+        } as CSSProperties}
         className={`sidebar-container ${isOpen ? 'open' : ''}`}
       >
         <div style={{ marginBottom: 32, padding: '0 16px' }}>

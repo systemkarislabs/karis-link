@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 
 type Props = {
   inputName?: string;
@@ -22,10 +22,10 @@ export default function SellerImageField({
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
   const [error, setError] = useState('');
+  const fileInputId = useId();
 
   useEffect(() => {
     if (!source) {
-      setPreview('');
       return;
     }
 
@@ -70,7 +70,7 @@ export default function SellerImageField({
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      setError('A imagem deve ter no máximo 2 MB.');
+      setError('A imagem deve ter no maximo 2 MB.');
       event.target.value = '';
       return;
     }
@@ -100,8 +100,11 @@ export default function SellerImageField({
     <div className="seller-image-field" style={{ display: 'grid', gap: 12 }}>
       <input type="hidden" name={inputName} value={preview} />
 
-      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)' }}>{label}</div>
+      <label htmlFor={fileInputId} style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)' }}>
+        {label}
+      </label>
       <input
+        id={fileInputId}
         type="file"
         accept="image/*"
         onChange={handleFileChange}
@@ -134,7 +137,11 @@ export default function SellerImageField({
               }}
             >
               {preview ? (
-                <img src={preview} alt="Preview recortado" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img
+                  src={preview}
+                  alt="Preview recortado"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
               ) : null}
             </div>
 
