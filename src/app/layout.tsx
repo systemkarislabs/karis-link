@@ -11,10 +11,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/karis-favicon.png?v=2', type: 'image/png' },
-      { url: '/favicon.ico?v=2', sizes: 'any' },
+      { url: '/karis-favicon.png?v=4', type: 'image/png' },
+      { url: '/favicon.ico?v=4', sizes: 'any' },
     ],
-    apple: '/apple-icon.png?v=2',
+    apple: '/apple-icon.png?v=4',
   },
   appleWebApp: {
     title: 'Karis Link',

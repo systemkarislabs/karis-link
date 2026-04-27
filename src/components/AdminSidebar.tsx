@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon } from './Icon';
@@ -52,10 +53,14 @@ export default function AdminSidebar({
           justifyContent: 'space-between',
         } as CSSProperties}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span className="kl-brand-mark" style={{ width: 36, height: 36, fontSize: 18 }}>K</span>
-          <span className="kl-brand-name">Karis<span>Link</span></span>
-        </div>
+        <Image
+          src="/karis-link-logo.png"
+          alt="Karis Link"
+          width={132}
+          height={46}
+          priority
+          style={{ width: 132, height: 'auto', objectFit: 'contain' }}
+        />
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
@@ -97,8 +102,7 @@ export default function AdminSidebar({
           left: 272,
           right: 0,
           height: 72,
-          background: 'rgba(255,255,255,.92)',
-          backdropFilter: 'blur(12px)',
+          background: '#ffffff',
           borderBottom: '1px solid var(--border)',
           zIndex: 80,
           display: 'flex',
@@ -163,25 +167,21 @@ export default function AdminSidebar({
         } as CSSProperties}
       >
         <div style={{ marginBottom: 32, paddingBottom: 22, borderBottom: '1px solid #f4f4f5' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="kl-brand-mark">K</span>
-            <span className="kl-brand-name">Karis<span>Link</span></span>
-          </div>
-          <div
-            style={{
-              marginTop: 12,
-              marginLeft: 48,
-              color: '#71717a',
-              fontSize: 9,
-              fontWeight: 900,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              lineHeight: 1.25,
-            }}
-          >
-            Powered by<br />
-            <span style={{ color: '#09090b', letterSpacing: 0, fontSize: 11 }}>Karis <span style={{ color: '#10b981' }}>Labs</span></span>
-          </div>
+          <Image
+            src="/karis-link-logo.png"
+            alt="Karis Link"
+            width={146}
+            height={52}
+            priority
+            style={{ width: 146, maxWidth: '100%', height: 'auto', objectFit: 'contain' }}
+          />
+          <Image
+            src="/karis-labs-logo.png"
+            alt="Karis Labs"
+            width={132}
+            height={64}
+            style={{ width: 132, maxWidth: '100%', height: 'auto', objectFit: 'contain', marginTop: 12 }}
+          />
         </div>
 
         <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 9, minHeight: 0 }}>

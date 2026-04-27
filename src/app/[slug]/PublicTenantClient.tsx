@@ -30,16 +30,6 @@ function getInitials(name: string) {
     .join('');
 }
 
-function splitBrandName(name: string) {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length <= 1) return { main: name, accent: '' };
-
-  return {
-    main: parts.slice(0, -1).join(' '),
-    accent: parts[parts.length - 1],
-  };
-}
-
 function SubmitButton() {
   const { pending } = useFormStatus();
 
@@ -68,13 +58,11 @@ function SubmitButton() {
 
 export default function PublicTenantClient({
   slug,
-  tenantName,
   sellers,
   isAdminLogged,
 }: Props) {
   const [isLoginOpen, setIsLoginOpen] = React.useState(false);
   const [state, formAction] = useActionState<LoginState, FormData>(handleTenantLogin, null);
-  const brandName = splitBrandName(tenantName);
 
   useEffect(() => {
     if (!isLoginOpen) return;
@@ -199,42 +187,35 @@ export default function PublicTenantClient({
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 12,
-              marginBottom: 10,
+              justifyContent: 'center',
+              marginBottom: 12,
+              width: '100%',
             }}
           >
-            <span className="kl-brand-mark" style={{ width: 40, height: 40, borderRadius: 12, fontSize: 20 }}>
-              K
-            </span>
-            <span
-              style={{
-                color: '#050505',
-                fontSize: 22,
-                fontWeight: 900,
-                lineHeight: 1,
-                letterSpacing: '-0.065em',
-              }}
-            >
-              {brandName.main}
-              {brandName.accent ? <span style={{ color: 'var(--brand-accent)' }}>{brandName.accent}</span> : null}
-            </span>
+            <Image
+              src="/karis-link-logo.png"
+              alt="Karis Link"
+              width={168}
+              height={60}
+              priority
+              style={{ width: 168, maxWidth: '72%', height: 'auto', objectFit: 'contain' }}
+            />
           </div>
 
           <div
             style={{
-              marginBottom: 20,
-              color: '#71717a',
-              fontSize: 9,
-              fontWeight: 900,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              lineHeight: 1.25,
+              marginBottom: 18,
+              display: 'flex',
+              justifyContent: 'center',
             }}
           >
-            Powered by<br />
-            <span style={{ color: '#09090b', letterSpacing: 0, fontSize: 11 }}>
-              Karis <span style={{ color: 'var(--brand-accent)' }}>Labs</span>
-            </span>
+            <Image
+              src="/karis-labs-logo.png"
+              alt="Karis Labs"
+              width={132}
+              height={64}
+              style={{ width: 132, maxWidth: '58%', height: 'auto', objectFit: 'contain' }}
+            />
           </div>
 
           <p

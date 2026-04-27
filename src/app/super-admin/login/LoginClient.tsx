@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useActionState } from 'react';
+import Image from 'next/image';
 import { useFormStatus } from 'react-dom';
 import { Icon } from '@/components/Icon';
 import { handleSuperLogin } from '../actions';
@@ -44,9 +45,14 @@ export default function SuperLoginClient() {
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: 34 }}>
-          <div className="kl-brand-mark" style={{ width: 52, height: 52, borderRadius: 14, fontSize: 25, margin: '0 auto 20px' }}>
-            K
-          </div>
+          <Image
+            src="/karis-link-logo.png"
+            alt="Karis Link"
+            width={156}
+            height={56}
+            priority
+            style={{ width: 156, maxWidth: '72%', height: 'auto', objectFit: 'contain', marginBottom: 22 }}
+          />
           <h1 style={{ margin: 0, color: '#050505', fontSize: 21, fontWeight: 900, letterSpacing: '-0.07em', textTransform: 'uppercase' }}>
             Acesso Administrativo
           </h1>
@@ -78,8 +84,8 @@ export default function SuperLoginClient() {
               Usuário
             </span>
             <span style={{ position: 'relative', display: 'block' }}>
-              <Icon name="user" size={16} color="#a1a1aa" style={{ position: 'absolute', left: 15, top: 14 }} />
-              <input name="username" placeholder="Digite seu usuário" required className="kl-soft-field" style={{ paddingLeft: 44 }} />
+              <span className="kl-field-icon"><Icon name="user" size={16} color="#a1a1aa" /></span>
+              <input name="username" placeholder="Digite seu usuário" required className="kl-soft-field" style={{ paddingLeft: 46 }} />
             </span>
           </label>
 
@@ -88,27 +94,23 @@ export default function SuperLoginClient() {
               Senha
             </span>
             <span style={{ position: 'relative', display: 'block' }}>
-              <Icon name="lock" size={16} color="#a1a1aa" style={{ position: 'absolute', left: 15, top: 14 }} />
-              <input name="password" type="password" placeholder="••••••••" required className="kl-soft-field" style={{ paddingLeft: 44 }} />
+              <span className="kl-field-icon"><Icon name="lock" size={16} color="#a1a1aa" /></span>
+              <input name="password" type="password" placeholder="••••••••" required className="kl-soft-field" style={{ paddingLeft: 46 }} />
             </span>
           </label>
 
           <SubmitButton />
         </form>
 
-        <p
-          style={{
-            margin: '32px 0 0',
-            color: '#a1a1aa',
-            textAlign: 'center',
-            fontSize: 10,
-            fontWeight: 900,
-            letterSpacing: '0.11em',
-            textTransform: 'uppercase',
-          }}
-        >
-          Karis Labs © 2026 · Todos os direitos reservados
-        </p>
+        <div style={{ margin: '32px 0 0', display: 'flex', justifyContent: 'center' }}>
+          <Image
+            src="/karis-labs-logo.png"
+            alt="Karis Labs"
+            width={128}
+            height={62}
+            style={{ width: 128, height: 'auto', objectFit: 'contain', opacity: 0.86 }}
+          />
+        </div>
       </section>
     </main>
   );
