@@ -1,5 +1,6 @@
 'use client';
 import React, { useActionState } from 'react';
+import Image from 'next/image';
 import { useFormStatus } from 'react-dom';
 import { handleSuperLogin } from '../actions';
 
@@ -69,10 +70,13 @@ export default function SuperLoginClient() {
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <img
+          <Image
             src="/karis-labs-logo.png"
             alt="Karis Labs"
-            style={{ width: '140px', marginBottom: 16 }}
+            width={140}
+            height={40}
+            priority
+            style={{ width: '140px', height: 'auto', marginBottom: 16 }}
           />
           <h1 style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', margin: 0 }}>
             Acesso Administrativo

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useActionState, useEffect } from 'react';
+import Image from 'next/image';
 import { useFormStatus } from 'react-dom';
 import { handleTenantLogin } from './admin/auth-actions';
 import { Icon } from '@/components/Icon';
@@ -208,10 +209,13 @@ export default function PublicTenantClient({
             padding: 16,
           }}
         >
-          <img
+          <Image
             src="/karis-link-logo.png"
             alt="Karis Link"
-            style={{ width: '100%', maxWidth: 112, objectFit: 'contain' }}
+            width={112}
+            height={32}
+            priority
+            style={{ width: '100%', maxWidth: 112, height: 'auto', objectFit: 'contain' }}
           />
         </div>
 
@@ -353,10 +357,12 @@ export default function PublicTenantClient({
           }}
         >
           <span>Powered by</span>
-          <img
+          <Image
             src="/karis-labs-logo.png"
             alt="Karis Labs"
-            style={{ height: 30, objectFit: 'contain' }}
+            width={72}
+            height={30}
+            style={{ width: 72, height: 'auto', objectFit: 'contain' }}
           />
         </div>
       </div>
@@ -410,10 +416,12 @@ export default function PublicTenantClient({
                     marginBottom: 10,
                   }}
                 >
-                  <img
+                  <Image
                     src="/karis-link-logo.png"
                     alt="Karis Link"
-                    style={{ width: 34, objectFit: 'contain' }}
+                    width={34}
+                    height={12}
+                    style={{ width: 34, height: 'auto', objectFit: 'contain' }}
                   />
                   <div id="tenant-login-title" style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-main)' }}>
                     Entrar no painel

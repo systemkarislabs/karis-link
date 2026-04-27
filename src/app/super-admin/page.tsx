@@ -4,36 +4,39 @@ import { createTenant, deleteTenant, toggleTenant, updateTenantAdminPassword } f
 import AdminSidebar from '@/components/AdminSidebar';
 import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const dynamic = 'force-dynamic';
 
 export default async function SuperAdminPage() {
-  try {
-    await requireSuperAuth();
-    const tenants = await prisma.tenant.findMany({
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        adminUser: true,
-        active: true,
-        createdAt: true,
-        _count: { select: { sellers: true } },
-      },
-    });
+  await requireSuperAuth();
+  const tenants = await prisma.tenant.findMany({
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      adminUser: true,
+      active: true,
+      createdAt: true,
+      _count: { select: { sellers: true } },
+    },
+  });
 
-    return (
+  return (
       <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
         <AdminSidebar isSuper={true} />
 
         <main className="main-content">
           <div className="super-admin-shell" style={{ maxWidth: 1240, width: '100%', margin: '0 auto' }}>
             <header className="super-admin-header" style={{ marginBottom: 40 }}>
-              <img
+              <Image
                 src="/karis-link-logo.png"
                 alt="Karis Link"
-                style={{ width: 176, maxWidth: '100%', marginBottom: 18, objectFit: 'contain' }}
+                width={176}
+                height={50}
+                priority
+                style={{ width: 176, maxWidth: '100%', height: 'auto', marginBottom: 18, objectFit: 'contain' }}
               />
               <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
                 Dashboard Gerencial
@@ -221,10 +224,12 @@ export default async function SuperAdminPage() {
                   minWidth: 0,
                 }}
               >
-                <img
+                <Image
                   src="/karis-link-logo.png"
                   alt="Karis Link"
-                  style={{ width: 164, maxWidth: '100%', marginBottom: 22, objectFit: 'contain' }}
+                  width={164}
+                  height={46}
+                  style={{ width: 164, maxWidth: '100%', height: 'auto', marginBottom: 22, objectFit: 'contain' }}
                 />
                 <h3 style={{ margin: '0 0 10px', fontSize: 20, fontWeight: 700, color: 'var(--text-main)' }}>
                   Cadastrar empresa
@@ -316,18 +321,5 @@ export default async function SuperAdminPage() {
 
         </main>
       </div>
-    );
-  } catch (e: any) {
-    if (e.message?.includes('NEXT_REDIRECT') || e.digest?.includes('NEXT_REDIRECT')) throw e;
-
-    return (
-      <div style={{ padding: 40, fontFamily: 'sans-serif' }}>
-        <h2 style={{ color: '#e11d48' }}>Erro Tecnico Detectado</h2>
-        <p>Por favor, envie este codigo para o suporte:</p>
-        <pre style={{ background: '#f1f5f9', padding: 20, borderRadius: 8, overflow: 'auto' }}>
-          {e.message || 'Erro desconhecido'}
-        </pre>
-      </div>
-    );
-  }
+  );
 }

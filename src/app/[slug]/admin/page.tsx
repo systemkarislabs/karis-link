@@ -12,6 +12,13 @@ type PageProps = {
   searchParams: Promise<{ period?: string }>;
 };
 
+type MetricCard = {
+  label: string;
+  value: number | string;
+  icon: string;
+  color: string;
+};
+
 export default async function TenantAdminPage(props: PageProps) {
   const params = await props.params;
   const searchParams = await props.searchParams;
@@ -86,14 +93,14 @@ export default async function TenantAdminPage(props: PageProps) {
         </header>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24, marginBottom: 40 }}>
-          {[
+          {([
             { label: 'Visitas no Link', value: totalVisits, icon: 'chart', color: '#6366f1' },
             { label: 'Cliques por Vendedor', value: totalClicksInPeriod, icon: 'users', color: '#17DB4E' },
             { label: 'Conversão Real', value: `${conversion}%`, icon: 'link', color: '#e11d48' },
-          ].map(s => (
+          ] satisfies MetricCard[]).map(s => (
             <div key={s.label} style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 24, border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 20 }}>
               <div style={{ width: 54, height: 54, borderRadius: 14, background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Icon name={s.icon as any} size={24} color={s.color} />
+                <Icon name={s.icon} size={24} color={s.color} />
               </div>
               <div>
                 <div style={{ color: 'var(--sidebar-text)', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>{s.label}</div>

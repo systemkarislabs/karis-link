@@ -1,5 +1,5 @@
-import { LoginClient } from "./LoginClient";
+import { redirect } from 'next/navigation';
 
-export default function AdminLogin() {
-  return <LoginClient />;
+export default function OldAdminLogin() {
+  redirect('/super-admin/login');
 }
