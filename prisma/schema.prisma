@@ -14,12 +14,10 @@ model Tenant {
   slug      String   @unique
   adminUser String
   adminPass String
-  recoveryEmail String?
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   sellers   Seller[]
   qrcodes   QrCode[]
-  resetTokens PasswordResetToken[]
 }
 
 model SuperAdminAccount {
@@ -28,19 +26,6 @@ model SuperAdminAccount {
   passwordHash String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-}
-
-model PasswordResetToken {
-  id        String   @id @default(cuid())
-  tokenHash String   @unique
-  tenantId  String
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  expiresAt DateTime
-  usedAt    DateTime?
-  createdAt DateTime @default(now())
-
-  @@index([tenantId])
-  @@index([expiresAt])
 }
 
 model Seller {
