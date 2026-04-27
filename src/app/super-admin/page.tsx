@@ -11,14 +11,13 @@ export const dynamic = 'force-dynamic';
 export default async function SuperAdminPage() {
   await requireSuperAuth();
   const tenants = await prisma.tenant.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { name: 'asc' },
     select: {
       id: true,
       name: true,
       slug: true,
       adminUser: true,
       active: true,
-      createdAt: true,
       _count: { select: { sellers: true } },
     },
   });
