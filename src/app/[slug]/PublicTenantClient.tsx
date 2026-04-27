@@ -196,11 +196,25 @@ export default function PublicTenantClient({
             }}
           >
             {tenantLogo ? (
-              <img
-                src={tenantLogo}
-                alt={`Logo ${tenantName}`}
-                style={{ width: 126, maxWidth: '72%', height: 'auto', maxHeight: 78, objectFit: 'contain' }}
-              />
+              <span
+                style={{
+                  width: 92,
+                  height: 92,
+                  display: 'inline-grid',
+                  placeItems: 'center',
+                  borderRadius: '999px',
+                  border: '1px solid var(--border)',
+                  background: '#ffffff',
+                  boxShadow: '0 18px 46px rgba(9, 9, 11, 0.08)',
+                  overflow: 'hidden',
+                }}
+              >
+                <img
+                  src={tenantLogo}
+                  alt={`Logo ${tenantName}`}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </span>
             ) : (
               <Image
                 src="/karis-link-logo.png"

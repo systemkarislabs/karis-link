@@ -60,19 +60,20 @@ export default function CompanyLogoField({
         <div
           style={{
             width: compact ? 96 : 132,
-            height: compact ? 54 : 74,
+            height: compact ? 96 : 132,
             display: 'grid',
             placeItems: 'center',
-            borderRadius: 14,
+            borderRadius: '999px',
             border: '1px solid var(--border)',
             background: '#ffffff',
             overflow: 'hidden',
+            boxShadow: '0 12px 28px rgba(9, 9, 11, 0.06)',
           }}
         >
           <img
             src={activePreview}
             alt="Logo da empresa"
-            style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 8 }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         </div>
       ) : null}

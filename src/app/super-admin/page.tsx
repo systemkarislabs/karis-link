@@ -82,7 +82,7 @@ export default async function SuperAdminPage() {
                             height: 50,
                             display: 'grid',
                             placeItems: 'center',
-                            borderRadius: 15,
+                            borderRadius: '999px',
                             border: '1px solid #e4e4e7',
                             background: '#ffffff',
                             overflow: 'hidden',
@@ -93,7 +93,7 @@ export default async function SuperAdminPage() {
                           <img
                             src={tenant.logo}
                             alt={`Logo ${tenant.name}`}
-                            style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 6 }}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           />
                         </div>
                       ) : (
