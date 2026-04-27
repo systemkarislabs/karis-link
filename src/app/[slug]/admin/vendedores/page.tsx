@@ -173,7 +173,7 @@ export default async function VendedoresPage(props: PageProps) {
           }}
         >
           <h3 style={{ margin: '0 0 20px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Novo Vendedor</h3>
-          <form action={createSeller} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+          <form action={createSeller} className="seller-create-form">
             <input type="hidden" name="slug" value={slug} />
             <input
               name="name"
@@ -202,12 +202,14 @@ export default async function VendedoresPage(props: PageProps) {
             <SellerImageField />
             <PendingButton
               pendingLabel="Salvando..."
+              className="seller-create-submit"
               style={{
                 background: 'var(--sidebar-active-text)',
                 color: '#fff',
                 border: 'none',
                 borderRadius: 10,
                 minHeight: 48,
+                width: '100%',
                 fontWeight: 600,
               }}
             >

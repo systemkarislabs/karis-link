@@ -8,7 +8,7 @@ type Props = {
   helperText?: string;
 };
 
-const PREVIEW_SIZE = 280;
+const PREVIEW_SIZE = 220;
 const EXPORT_SIZE = 480;
 
 export default function SellerImageField({
@@ -97,11 +97,16 @@ export default function SellerImageField({
   }
 
   return (
-    <div style={{ display: 'grid', gap: 12 }}>
+    <div className="seller-image-field" style={{ display: 'grid', gap: 12 }}>
       <input type="hidden" name={inputName} value={preview} />
 
       <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)' }}>{label}</div>
-      <input type="file" accept="image/*" onChange={handleFileChange} style={{ fontSize: 13, color: 'var(--sidebar-text)' }} />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        style={{ width: '100%', maxWidth: '100%', fontSize: 13, color: 'var(--sidebar-text)' }}
+      />
       {error ? <div style={{ fontSize: 12, color: '#dc2626', fontWeight: 600 }}>{error}</div> : null}
 
       {source ? (

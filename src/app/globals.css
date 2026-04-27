@@ -136,6 +136,31 @@ a {
   transition: margin-left 0.3s ease;
 }
 
+.seller-create-form {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 1fr)
+    minmax(180px, 1fr)
+    minmax(260px, 340px)
+    minmax(150px, 180px);
+  gap: 16px;
+  align-items: start;
+}
+
+.seller-create-form > input {
+  min-height: 48px;
+}
+
+.seller-image-field {
+  min-width: 0;
+  width: 100%;
+}
+
+.seller-create-submit {
+  align-self: start;
+  margin-top: 27px;
+}
+
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 0 !important;
@@ -168,6 +193,14 @@ a {
   .super-admin-tenant-actions {
     width: 100%;
   }
+
+  .seller-create-form {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  }
+
+  .seller-create-submit {
+    margin-top: 0;
+  }
 }
 
 @media (hover: hover) {
@@ -197,6 +230,14 @@ a {
     width: 100%;
     justify-content: center;
     text-align: center;
+  }
+
+  .seller-create-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .seller-image-field {
+    max-width: 100%;
   }
 }
 

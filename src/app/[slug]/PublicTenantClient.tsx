@@ -83,7 +83,7 @@ export default function PublicTenantClient({
           'radial-gradient(circle at top, rgba(255,255,255,0.98) 0%, rgba(247,249,252,1) 38%, rgba(242,245,249,1) 100%)',
         color: 'var(--text-main)',
         fontFamily: 'var(--font-body)',
-        padding: '36px 20px 72px',
+        padding: '14px 20px 56px',
       }}
     >
       {/* Botão de acesso admin */}
@@ -91,7 +91,7 @@ export default function PublicTenantClient({
         style={{
           width: '100%',
           maxWidth: '980px',
-          margin: '0 auto 10px',
+          margin: '0 auto 8px',
           display: 'flex',
           justifyContent: 'flex-end',
           alignItems: 'flex-start',
@@ -173,7 +173,7 @@ export default function PublicTenantClient({
       <div
         style={{
           width: '100%',
-          maxWidth: '460px',
+          maxWidth: '420px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
@@ -182,30 +182,30 @@ export default function PublicTenantClient({
       >
         <div
           style={{
-            width: 220,
-            minHeight: 220,
-            borderRadius: 30,
+            width: 150,
+            minHeight: 150,
+            borderRadius: 24,
             background: '#fff',
             border: '1px solid var(--border)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: 'var(--shadow-soft)',
-            marginBottom: 24,
-            padding: 18,
+            marginBottom: 22,
+            padding: 16,
           }}
         >
           <img
             src="/karis-link-logo.png"
             alt="Karis Link"
-            style={{ width: '100%', maxWidth: 176, objectFit: 'contain' }}
+            style={{ width: '100%', maxWidth: 112, objectFit: 'contain' }}
           />
         </div>
 
-        <header style={{ textAlign: 'center', marginBottom: 30 }}>
+        <header style={{ textAlign: 'center', marginBottom: 28 }}>
           <h1
             style={{
-              fontSize: 24,
+              fontSize: 23,
               lineHeight: 1.15,
               fontWeight: 800,
               color: 'var(--text-main)',
@@ -217,9 +217,9 @@ export default function PublicTenantClient({
           <p
             style={{
               color: 'var(--text-soft)',
-              maxWidth: 360,
+              maxWidth: 340,
               margin: '0 auto',
-              fontSize: 15,
+              fontSize: 14,
               lineHeight: 1.35,
             }}
           >
@@ -312,7 +312,7 @@ export default function PublicTenantClient({
             <div
               style={{
                 textAlign: 'center',
-                padding: '32px 20px',
+                padding: '26px 20px',
                 color: 'var(--text-soft)',
                 fontSize: 14,
                 background: 'var(--card-bg)',
@@ -328,7 +328,7 @@ export default function PublicTenantClient({
         {/* Rodapé */}
         <div
           style={{
-            marginTop: 26,
+            marginTop: 28,
             display: 'inline-flex',
             alignItems: 'center',
             gap: 8,
@@ -343,7 +343,7 @@ export default function PublicTenantClient({
           <img
             src="/karis-labs-logo.png"
             alt="Karis Labs"
-            style={{ height: 24, objectFit: 'contain' }}
+            style={{ height: 30, objectFit: 'contain' }}
           />
         </div>
       </div>
