@@ -24,29 +24,28 @@ export default function LogoutButton({ isSuper = true, slug = '' }: Props) {
   };
 
   return (
-    <div
+    <button
+      type="button"
       onClick={handle}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && handle()}
+      className="sidebar-link kl-press"
       style={{
         display: 'flex',
         alignItems: 'center',
         gap: 12,
         padding: '12px 16px',
-        borderRadius: 12,
+        borderRadius: 14,
         color: 'var(--sidebar-text)',
         cursor: 'pointer',
         fontSize: 14,
-        fontWeight: 500,
-        transition: 'all 0.2s',
+        fontWeight: 600,
         width: '100%',
+        border: 'none',
+        background: 'transparent',
+        textAlign: 'left',
       }}
-      onMouseOver={(e) => (e.currentTarget.style.background = 'var(--sidebar-active-bg)')}
-      onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
     >
       <Icon name="logout" size={20} color="var(--sidebar-text)" />
       <span>Sair do Painel</span>
-    </div>
+    </button>
   );
 }

@@ -27,7 +27,7 @@ export default async function SuperAdminPage() {
       <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
         <AdminSidebar isSuper={true} />
 
-        <main className="main-content">
+        <main className="main-content kl-page-enter">
           <div className="super-admin-shell" style={{ maxWidth: 1240, width: '100%', margin: '0 auto' }}>
             <header className="super-admin-header" style={{ marginBottom: 40 }}>
               <Image
@@ -59,18 +59,16 @@ export default async function SuperAdminPage() {
                 {tenants.map((tenant) => (
                   <div
                     key={tenant.id}
-                    className="super-admin-tenant-card"
+                    className="super-admin-tenant-card kl-card kl-card-hover"
                     style={{
                       background: 'var(--card-bg)',
                       borderRadius: 18,
                       padding: '20px 24px',
-                      border: '1px solid var(--border)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       flexWrap: 'wrap',
                       gap: 16,
-                      boxShadow: 'var(--shadow-soft)',
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
@@ -115,7 +113,7 @@ export default async function SuperAdminPage() {
                             fontSize: 12,
                             color: tenant.active ? '#b45309' : '#16a34a',
                             padding: '7px 12px',
-                            borderRadius: 10,
+                            borderRadius: 999,
                             background: tenant.active ? '#fef3c7' : '#dcfce7',
                             fontWeight: 700,
                             border: 'none',
@@ -134,7 +132,7 @@ export default async function SuperAdminPage() {
                           color: 'var(--sidebar-text)',
                           textDecoration: 'none',
                           padding: '7px 12px',
-                          borderRadius: 10,
+                          borderRadius: 999,
                           background: 'var(--bg-main)',
                           fontWeight: 700,
                         }}
@@ -147,12 +145,12 @@ export default async function SuperAdminPage() {
                         <ConfirmSubmitButton
                           message={`Excluir definitivamente a empresa "${tenant.name}"? Todos os vendedores, campanhas e cliques serão removidos. Esta ação é IRREVERSÍVEL.`}
                           ariaLabel={`Excluir empresa ${tenant.name}`}
-                          style={{
-                            fontSize: 12,
-                            color: '#e11d48',
-                            padding: '7px 12px',
-                            borderRadius: 10,
-                            background: '#fff1f2',
+                        style={{
+                          fontSize: 12,
+                          color: '#e11d48',
+                          padding: '7px 12px',
+                          borderRadius: 999,
+                          background: '#fff1f2',
                             fontWeight: 700,
                             border: 'none',
                             cursor: 'pointer',
@@ -184,7 +182,7 @@ export default async function SuperAdminPage() {
                             flex: '1 1 220px',
                             minWidth: 0,
                             padding: '9px 12px',
-                            borderRadius: 10,
+                            borderRadius: 14,
                             border: '1px solid var(--border)',
                             fontSize: 12,
                             outline: 'none',
@@ -198,7 +196,7 @@ export default async function SuperAdminPage() {
                             fontSize: 12,
                             color: '#fff',
                             padding: '9px 12px',
-                            borderRadius: 10,
+                            borderRadius: 999,
                             background: 'var(--sidebar-active-text)',
                             fontWeight: 700,
                             border: 'none',
@@ -214,13 +212,11 @@ export default async function SuperAdminPage() {
               </div>
 
               <div
-                className="super-admin-form-card"
+                className="super-admin-form-card kl-surface"
                 style={{
                   background: 'var(--card-bg)',
                   borderRadius: 24,
                   padding: 32,
-                  border: '1px solid var(--border)',
-                  boxShadow: 'var(--shadow-soft)',
                   minWidth: 0,
                 }}
               >
@@ -246,7 +242,7 @@ export default async function SuperAdminPage() {
                     style={{
                       width: '100%',
                       padding: '12px 16px',
-                      borderRadius: 12,
+                      borderRadius: 14,
                       border: '1px solid var(--border)',
                       fontSize: 14,
                       outline: 'none',
@@ -261,7 +257,7 @@ export default async function SuperAdminPage() {
                     style={{
                       width: '100%',
                       padding: '12px 16px',
-                      borderRadius: 12,
+                      borderRadius: 14,
                       border: '1px solid var(--border)',
                       fontSize: 14,
                       outline: 'none',
@@ -276,7 +272,7 @@ export default async function SuperAdminPage() {
                     style={{
                       width: '100%',
                       padding: '12px 16px',
-                      borderRadius: 12,
+                      borderRadius: 14,
                       border: '1px solid var(--border)',
                       fontSize: 14,
                       outline: 'none',
@@ -292,7 +288,7 @@ export default async function SuperAdminPage() {
                     style={{
                       width: '100%',
                       padding: '12px 16px',
-                      borderRadius: 12,
+                      borderRadius: 14,
                       border: '1px solid var(--border)',
                       fontSize: 14,
                       outline: 'none',
@@ -302,13 +298,10 @@ export default async function SuperAdminPage() {
                   />
                   <button
                     type="submit"
+                    className="kl-action kl-action-primary kl-press"
                     style={{
                       padding: '14px',
-                      borderRadius: 12,
-                      background: 'var(--sidebar-active-text)',
-                      color: '#fff',
                       border: 'none',
-                      fontWeight: 700,
                       cursor: 'pointer',
                     }}
                   >

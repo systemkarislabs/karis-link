@@ -68,7 +68,7 @@ export default async function TenantAdminPage(props: PageProps) {
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
       <AdminSidebar slug={slug} tenantName={tenant?.name} isSuper={false} />
 
-      <main className="main-content">
+      <main className="main-content kl-page-enter">
         <header style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Painel de Performance</h1>
@@ -98,7 +98,7 @@ export default async function TenantAdminPage(props: PageProps) {
             { label: 'Cliques por Vendedor', value: totalClicksInPeriod, icon: 'users', color: '#17DB4E' },
             { label: 'Conversão Real', value: `${conversion}%`, icon: 'link', color: '#e11d48' },
           ] satisfies MetricCard[]).map(s => (
-            <div key={s.label} style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 24, border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 20 }}>
+            <div key={s.label} className="kl-card kl-card-hover" style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 24, display: 'flex', alignItems: 'center', gap: 20 }}>
               <div style={{ width: 54, height: 54, borderRadius: 14, background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Icon name={s.icon} size={24} color={s.color} />
               </div>
@@ -111,7 +111,7 @@ export default async function TenantAdminPage(props: PageProps) {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 32 }}>
-          <div style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 32, border: '1px solid var(--border)' }}>
+          <div className="kl-card" style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 32 }}>
             <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Performance por Vendedor</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {sellers.map((s, idx) => (
@@ -134,7 +134,7 @@ export default async function TenantAdminPage(props: PageProps) {
             </div>
           </div>
 
-          <div style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 32, border: '1px solid var(--border)' }}>
+          <div className="kl-card" style={{ background: 'var(--card-bg)', borderRadius: 20, padding: 32 }}>
             <h3 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: 'var(--text-main)' }}>Histórico Recente</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {recentClicks.map(log => (

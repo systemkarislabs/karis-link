@@ -63,6 +63,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
         }}
       >
         <div
+          className="empty-campaign-icon"
           aria-hidden="true"
           style={{
             width: 56,
@@ -71,7 +72,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
             background: 'rgba(23, 219, 78, 0.10)',
             display: 'grid',
             placeItems: 'center',
-            fontSize: 26,
+            fontSize: 0,
           }}
         >
           📡
@@ -87,16 +88,15 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: 20 }}>
+    <div className="kl-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: 20 }}>
       {qrCodes.map((qr) => (
         <div
           key={qr.id}
+          className="kl-card kl-card-hover"
           style={{
             background: 'var(--card-bg)',
             borderRadius: 20,
             padding: 24,
-            border: '1px solid var(--border)',
-            boxShadow: '0 10px 24px rgba(148, 163, 184, 0.12)',
           }}
         >
           <div

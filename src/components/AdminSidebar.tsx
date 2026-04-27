@@ -43,8 +43,9 @@ export default function AdminSidebar({
           left: 0,
           right: 0,
           height: 60,
-          background: 'var(--sidebar-bg)',
-          borderBottom: '1px solid var(--border)',
+          background: 'color-mix(in srgb, var(--sidebar-bg) 88%, transparent)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid color-mix(in srgb, var(--border) 76%, transparent)',
           zIndex: 99,
           alignItems: 'center',
           padding: '0 20px',
@@ -62,7 +63,8 @@ export default function AdminSidebar({
         />
         <button
           onClick={() => setIsOpen(!isOpen)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8 }}
+          className="kl-action-soft kl-press"
+          style={{ border: 'none', cursor: 'pointer', padding: 10, width: 44, height: 44 }}
           aria-label="Abrir menu"
           aria-expanded={isOpen}
         >
@@ -80,8 +82,8 @@ export default function AdminSidebar({
       <aside
         style={{
           width: 280,
-          background: 'var(--sidebar-bg)',
-          borderRight: '1px solid var(--border)',
+          background: 'color-mix(in srgb, var(--sidebar-bg) 96%, transparent)',
+          borderRight: '1px solid color-mix(in srgb, var(--border) 78%, transparent)',
           padding: '32px 20px 20px',
           display: 'flex',
           flexDirection: 'column',
@@ -89,7 +91,8 @@ export default function AdminSidebar({
           height: '100dvh',
           boxSizing: 'border-box',
           zIndex: 101,
-          transition: 'transform 0.3s ease',
+          transition: 'transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1)',
+          boxShadow: '12px 0 38px rgba(15, 23, 42, 0.04)',
         } as CSSProperties}
         className={`sidebar-container ${isOpen ? 'open' : ''}`}
       >
@@ -150,6 +153,7 @@ export default function AdminSidebar({
               key={item.href}
               href={item.href}
               onClick={() => setIsOpen(false)}
+              className={`sidebar-link kl-press ${pathname === item.href ? 'is-active' : ''}`}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -158,6 +162,7 @@ export default function AdminSidebar({
                 borderRadius: 14,
                 textDecoration: 'none',
                 fontSize: 14,
+                letterSpacing: '-0.01em',
                 color: 'var(--sidebar-text)',
                 ...(pathname === item.href ? activeStyle : {}),
               }}
@@ -200,6 +205,7 @@ export default function AdminSidebar({
             transform: translateX(-100%);
             padding-top: 84px !important;
             padding-bottom: 0 !important;
+            box-shadow: 26px 0 68px rgba(15, 23, 42, 0.16) !important;
           }
           .sidebar-container.open {
             transform: translateX(0);

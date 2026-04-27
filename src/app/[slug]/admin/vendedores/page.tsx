@@ -129,7 +129,7 @@ export default async function VendedoresPage(props: PageProps) {
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
       <AdminSidebar slug={slug} tenantName={tenant?.name} isSuper={false} />
 
-      <main className="main-content">
+      <main className="main-content kl-page-enter">
         <header style={{ marginBottom: 32 }}>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)' }}>Gestão de Vendedores</h1>
           <p style={{ color: 'var(--sidebar-text)' }}>
@@ -147,12 +147,11 @@ export default async function VendedoresPage(props: PageProps) {
           ].map((item) => (
             <div
               key={item.label}
+              className="kl-card kl-card-hover"
               style={{
                 background: 'var(--card-bg)',
                 borderRadius: 18,
                 padding: 22,
-                border: '1px solid var(--border)',
-                boxShadow: '0 10px 24px rgba(148, 163, 184, 0.12)',
               }}
             >
               <div style={{ color: 'var(--sidebar-text)', fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
@@ -164,11 +163,11 @@ export default async function VendedoresPage(props: PageProps) {
         </div>
 
         <section
+          className="kl-surface"
           style={{
             background: 'var(--card-bg)',
             borderRadius: 20,
             padding: 32,
-            border: '1px solid var(--border)',
             marginBottom: 40,
           }}
         >
@@ -202,15 +201,11 @@ export default async function VendedoresPage(props: PageProps) {
             <SellerImageField />
             <PendingButton
               pendingLabel="Salvando..."
-              className="seller-create-submit"
+              className="seller-create-submit kl-action kl-action-primary kl-press"
               style={{
-                background: 'var(--sidebar-active-text)',
-                color: '#fff',
                 border: 'none',
-                borderRadius: 10,
                 minHeight: 48,
                 width: '100%',
-                fontWeight: 600,
               }}
             >
               Salvar vendedor
@@ -218,16 +213,15 @@ export default async function VendedoresPage(props: PageProps) {
           </form>
         </section>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
+        <div className="kl-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
           {sellerMetrics.map((seller) => (
             <div
               key={seller.id}
+              className="kl-card kl-card-hover"
               style={{
                 background: 'var(--card-bg)',
                 borderRadius: 20,
                 padding: 24,
-                border: '1px solid var(--border)',
-                boxShadow: '0 10px 24px rgba(148, 163, 184, 0.12)',
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, marginBottom: 18 }}>

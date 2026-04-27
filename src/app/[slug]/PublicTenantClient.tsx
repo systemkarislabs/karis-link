@@ -91,10 +91,9 @@ export default function PublicTenantClient({
 
   return (
     <div
+      className="public-shell"
       style={{
         minHeight: '100dvh',
-        background:
-          'radial-gradient(circle at top, rgba(255,255,255,0.98) 0%, rgba(247,249,252,1) 38%, rgba(242,245,249,1) 100%)',
         color: 'var(--text-main)',
         fontFamily: 'var(--font-body)',
         padding: 'max(14px, env(safe-area-inset-top)) 20px 56px',
@@ -114,20 +113,14 @@ export default function PublicTenantClient({
         {isAdminLogged ? (
           <a
             href={`/${slug}/admin`}
+            className="kl-action kl-action-soft kl-press"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
               padding: '10px 15px',
-              borderRadius: '999px',
               textDecoration: 'none',
-              background: 'rgba(2, 5, 21, 0.08)',
-              color: 'var(--brand-dark)',
-              border: '1px solid rgba(203, 213, 225, 0.95)',
-              boxShadow: 'var(--shadow-soft)',
               fontSize: 13,
-              fontWeight: 700,
-              letterSpacing: '0.01em',
             }}
           >
             <span
@@ -146,22 +139,17 @@ export default function PublicTenantClient({
             Ir para o painel
           </a>
         ) : (
-          <button
+            <button
             type="button"
             onClick={() => setIsLoginOpen(true)}
+            className="kl-action kl-action-soft kl-press"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
               padding: '10px 15px',
-              borderRadius: '999px',
-              background: 'rgba(255,255,255,0.55)',
               color: 'var(--text-soft)',
-              border: '1px solid rgba(219, 227, 238, 0.9)',
-              boxShadow: 'var(--shadow-soft)',
               fontSize: 13,
-              fontWeight: 600,
-              letterSpacing: '0.01em',
               cursor: 'pointer',
             }}
           >
@@ -185,6 +173,7 @@ export default function PublicTenantClient({
 
       {/* Conteúdo principal */}
       <div
+        className="kl-page-enter"
         style={{
           width: '100%',
           maxWidth: '420px',
@@ -195,16 +184,14 @@ export default function PublicTenantClient({
         }}
       >
         <div
+          className="public-logo-card kl-surface"
           style={{
             width: 150,
             minHeight: 150,
-            borderRadius: 24,
-            background: '#fff',
-            border: '1px solid var(--border)',
+            borderRadius: 28,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: 'var(--shadow-soft)',
             marginBottom: 22,
             padding: 16,
           }}
@@ -245,11 +232,12 @@ export default function PublicTenantClient({
         </header>
 
         {/* Lista de vendedores */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
+        <div className="kl-stagger" style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
           {sellers.map((seller) => (
             <a
               key={seller.id}
               href={`/api/redirect/${seller.id}`}
+              className="seller-public-card kl-card kl-card-hover kl-press"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -258,11 +246,8 @@ export default function PublicTenantClient({
                 padding: '14px 18px',
                 background: 'var(--card-bg)',
                 color: 'var(--text-main)',
-                borderRadius: 14,
+                borderRadius: 18,
                 textDecoration: 'none',
-                border: '1px solid var(--border)',
-                boxShadow: 'var(--shadow-soft)',
-                transition: 'transform 0.18s ease, box-shadow 0.18s ease',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
@@ -309,6 +294,7 @@ export default function PublicTenantClient({
               </div>
 
               <div
+                className="seller-whatsapp-bubble"
                 style={{
                   width: 34,
                   height: 34,
@@ -316,11 +302,12 @@ export default function PublicTenantClient({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  background: 'rgba(23, 219, 78, 0.08)',
+                  background: 'rgba(23, 219, 78, 0.1)',
+                  color: 'var(--brand-accent)',
                   flexShrink: 0,
                 }}
               >
-                <Icon name="whatsapp" size={18} color="var(--brand-accent)" />
+                <Icon name="whatsapp" size={18} color="currentColor" />
               </div>
             </a>
           ))}
@@ -335,6 +322,7 @@ export default function PublicTenantClient({
                 background: 'var(--card-bg)',
                 borderRadius: 14,
                 border: '1px solid var(--border)',
+                boxShadow: 'var(--shadow-soft)',
               }}
             >
               Nenhum especialista disponível no momento.
@@ -373,8 +361,8 @@ export default function PublicTenantClient({
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(15, 23, 42, 0.36)',
-            backdropFilter: 'blur(6px)',
+            background: 'rgba(15, 23, 42, 0.42)',
+            backdropFilter: 'blur(10px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -387,14 +375,13 @@ export default function PublicTenantClient({
           aria-labelledby="tenant-login-title"
         >
           <div
+            className="kl-surface kl-page-enter"
             style={{
               width: '100%',
               maxWidth: 380,
               background: '#ffffff',
-              borderRadius: 20,
+              borderRadius: 24,
               padding: 28,
-              boxShadow: '0 24px 60px rgba(15, 23, 42, 0.2)',
-              border: '1px solid rgba(226, 232, 240, 0.95)',
             }}
             onClick={(event) => event.stopPropagation()}
           >
