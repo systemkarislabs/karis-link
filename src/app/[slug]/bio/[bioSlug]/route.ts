@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { attachTrackingCookie } from '@/lib/tracking';
+import { buildTenantPublicUrl } from '@/lib/public-url';
 
 export async function GET(
   request: NextRequest,
@@ -50,7 +51,7 @@ export async function GET(
       },
     });
 
-    const redirectUrl = new URL(`/${bioCampaign.tenant.slug}`, request.url);
+    const redirectUrl = new URL(buildTenantPublicUrl(bioCampaign.tenant.slug));
     redirectUrl.searchParams.set('kl_track', '1');
     const response = NextResponse.redirect(redirectUrl);
     await attachTrackingCookie(response, pageClickEvent.id, bioCampaign.tenantId);

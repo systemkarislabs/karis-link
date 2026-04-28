@@ -8,6 +8,8 @@ export function getPublicBaseUrl() {
   }
 
   const isTemporaryHost =
+    configuredUrl.includes('localhost') ||
+    configuredUrl.includes('127.0.0.1') ||
     configuredUrl.includes('vercel.app') ||
     configuredUrl.includes('railway.app') ||
     configuredUrl.includes('karis-link.vercel.app');
