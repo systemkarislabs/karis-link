@@ -168,7 +168,7 @@ export default function AdminSidebar({
           transition: 'transform 0.24s ease',
         } as CSSProperties}
       >
-        <div style={{ marginBottom: 28, paddingBottom: 22, borderBottom: '1px solid #f0f1f2' }}>
+        <div style={{ marginBottom: 30, paddingBottom: 24, borderBottom: '1px solid #f0f1f2' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="kl-brand-mark">K</span>
             <div>
@@ -179,14 +179,14 @@ export default function AdminSidebar({
           </div>
           <div
             style={{
-              marginTop: 8,
-              marginLeft: 48,
+              marginTop: 10,
+              marginLeft: 50,
               color: 'var(--text-main)',
               fontSize: 10,
               fontWeight: 900,
-              letterSpacing: '0.18em',
+              letterSpacing: '0.2em',
               textTransform: 'uppercase',
-              opacity: 0.56,
+              opacity: 0.48,
             }}
           >
             Powered by
@@ -197,14 +197,14 @@ export default function AdminSidebar({
             width={132}
             height={64}
             style={{
-              width: 64,
+              width: 58,
               maxWidth: '100%',
               height: 'auto',
               objectFit: 'contain',
               marginTop: 3,
-              marginLeft: 48,
+              marginLeft: 50,
               display: 'block',
-              opacity: 0.86,
+              opacity: 0.76,
             }}
           />
         </div>
@@ -220,19 +220,19 @@ export default function AdminSidebar({
                 onClick={() => setIsOpen(false)}
                 className={`sidebar-link kl-press ${isActive ? 'is-active' : ''}`}
                 style={{
-                  minHeight: 44,
+                  minHeight: 46,
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
-                  padding: '11px 15px',
-                  borderRadius: 13,
+                  padding: '11px 16px',
+                  borderRadius: 14,
                   textDecoration: 'none',
                   fontSize: 14,
-                  fontWeight: isActive ? 900 : 700,
+                  fontWeight: isActive ? 850 : 750,
                   letterSpacing: '-0.02em',
                   color: isActive ? 'var(--brand-accent-strong)' : 'var(--sidebar-text)',
-                  background: isActive ? 'rgba(18, 185, 129, 0.085)' : 'transparent',
-                  border: isActive ? '1px solid rgba(18,185,129,.22)' : '1px solid transparent',
+                  background: isActive ? 'rgba(18, 185, 129, 0.105)' : 'transparent',
+                  border: isActive ? '1px solid rgba(18,185,129,.28)' : '1px solid transparent',
                 }}
               >
                 <Icon name={item.icon} size={18} color="currentColor" />

@@ -180,14 +180,14 @@ export default function PublicTenantClient({
         className="kl-page-enter"
         style={{
           width: '100%',
-          maxWidth: '430px',
+          maxWidth: '424px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
         }}
       >
-        <header style={{ textAlign: 'center', marginBottom: 28 }}>
+        <header style={{ textAlign: 'center', marginBottom: 30 }}>
           <div
             style={{
               display: 'inline-flex',
@@ -200,14 +200,14 @@ export default function PublicTenantClient({
             {tenantLogo ? (
               <span
                 style={{
-                  width: 88,
-                  height: 88,
+                  width: 96,
+                  height: 96,
                   display: 'inline-grid',
                   placeItems: 'center',
                   borderRadius: '999px',
                   border: '1px solid var(--border)',
                   background: '#ffffff',
-                  boxShadow: '0 14px 34px rgba(17, 24, 39, 0.075)',
+                  boxShadow: '0 18px 42px rgba(17, 24, 39, 0.085)',
                   overflow: 'hidden',
                 }}
               >
@@ -224,14 +224,14 @@ export default function PublicTenantClient({
                 width={168}
                 height={60}
                 priority
-                style={{ width: 92, maxWidth: '58%', height: 'auto', objectFit: 'contain' }}
+                style={{ width: 104, maxWidth: '62%', height: 'auto', objectFit: 'contain' }}
               />
             )}
           </div>
 
           <div
             style={{
-              marginBottom: 16,
+              marginBottom: 18,
               display: 'flex',
               justifyContent: 'center',
             }}
@@ -241,7 +241,7 @@ export default function PublicTenantClient({
               alt="Karis Labs"
               width={132}
               height={64}
-              style={{ width: 62, maxWidth: '38%', height: 'auto', objectFit: 'contain', opacity: 0.82 }}
+              style={{ width: 58, maxWidth: '34%', height: 'auto', objectFit: 'contain', opacity: 0.72 }}
             />
           </div>
 
@@ -259,7 +259,7 @@ export default function PublicTenantClient({
         </header>
 
         {/* Lista de vendedores */}
-        <div className="kl-stagger" style={{ display: 'flex', flexDirection: 'column', gap: 14, width: '100%' }}>
+        <div className="kl-stagger" style={{ display: 'flex', flexDirection: 'column', gap: 15, width: '100%' }}>
           {sellers.map((seller) => (
             <a
               key={seller.id}
@@ -270,18 +270,18 @@ export default function PublicTenantClient({
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 gap: 16,
-                padding: '13px 16px',
+                padding: '14px 17px',
                 background: 'var(--card-bg)',
                 color: 'var(--text-main)',
-                borderRadius: 17,
+                borderRadius: 18,
                 textDecoration: 'none',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
                 <div
                   style={{
-                    width: 42,
-                    height: 42,
+                    width: 44,
+                    height: 44,
                     borderRadius: '999px',
                     overflow: 'hidden',
                     flexShrink: 0,
@@ -309,7 +309,7 @@ export default function PublicTenantClient({
 
                 <span
                   style={{
-                    fontWeight: 800,
+                    fontWeight: 850,
                     fontSize: 15,
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',

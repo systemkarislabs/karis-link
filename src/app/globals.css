@@ -125,6 +125,7 @@ body {
   color: var(--text-main);
   transition: background 0.3s, color 0.3s;
   text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
 }
 
 body::before {
@@ -165,7 +166,7 @@ a {
 
 .kl-brand-name {
   color: var(--text-main);
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 900;
   letter-spacing: -0.05em;
 }
@@ -220,7 +221,7 @@ a {
 .kl-panel-title {
   margin: 0;
   color: var(--text-main);
-  font-size: 27px;
+  font-size: 28px;
   font-weight: 900;
   line-height: 1.08;
   letter-spacing: -0.048em;
@@ -469,7 +470,7 @@ a {
 }
 
 .skin-stat-card {
-  padding: 26px !important;
+  padding: 28px !important;
 }
 
 .skin-stat-top {
@@ -498,7 +499,7 @@ a {
 
 .skin-stat-value {
   margin: 0;
-  font-size: 42px;
+  font-size: 44px;
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -628,11 +629,11 @@ a {
 }
 
 .kl-card {
-  border-radius: 20px !important;
+  border-radius: 18px !important;
 }
 
 .kl-surface {
-  border-radius: 20px !important;
+  border-radius: 18px !important;
 }
 
 .kl-card::before,
@@ -725,9 +726,13 @@ a {
 .public-shell {
   min-height: 100dvh;
   background:
-    radial-gradient(circle at 50% 0%, rgba(18, 185, 129, 0.035), transparent 30%),
+    radial-gradient(circle at 50% 0%, rgba(18, 185, 129, 0.05), transparent 28%),
     var(--bg-main);
   overflow-x: hidden;
+}
+
+.seller-public-card {
+  min-height: 72px;
 }
 
 .public-logo-card {

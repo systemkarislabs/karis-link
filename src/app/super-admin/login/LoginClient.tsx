@@ -36,23 +36,34 @@ export default function SuperLoginClient() {
         className="kl-page-enter"
         style={{
           width: '100%',
-          maxWidth: 420,
-          borderRadius: 24,
+          maxWidth: 418,
+          borderRadius: 26,
           background: '#ffffff',
-          padding: '38px 40px 34px',
+          padding: '42px 40px 36px',
           border: '1px solid rgba(230, 232, 235, 0.92)',
-          boxShadow: '0 22px 70px rgba(17, 24, 39, 0.075)',
+          boxShadow: '0 28px 80px rgba(17, 24, 39, 0.09)',
         }}
       >
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <Image
-            src="/karis-link-logo.png"
-            alt="Karis Link"
-            width={156}
-            height={56}
-            priority
-            style={{ width: 104, maxWidth: '64%', height: 'auto', objectFit: 'contain', marginBottom: 22 }}
-          />
+        <div style={{ textAlign: 'center', marginBottom: 34 }}>
+          <span
+            aria-hidden="true"
+            style={{
+              width: 54,
+              height: 54,
+              display: 'inline-grid',
+              placeItems: 'center',
+              borderRadius: 15,
+              background: 'var(--brand-dark)',
+              color: '#ffffff',
+              fontSize: 25,
+              fontWeight: 900,
+              letterSpacing: '-0.08em',
+              boxShadow: '0 18px 34px rgba(7, 17, 31, 0.18)',
+              marginBottom: 22,
+            }}
+          >
+            K
+          </span>
           <h1 style={{ margin: 0, color: 'var(--text-main)', fontSize: 21, fontWeight: 900, letterSpacing: '-0.055em', textTransform: 'uppercase' }}>
             Acesso Administrativo
           </h1>
@@ -102,13 +113,21 @@ export default function SuperLoginClient() {
           <SubmitButton />
         </form>
 
-        <div style={{ margin: '30px 0 0', display: 'flex', justifyContent: 'center' }}>
+        <div
+          style={{
+            margin: '32px 0 0',
+            paddingTop: 24,
+            borderTop: '1px solid #f0f1f2',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
           <Image
             src="/karis-labs-logo.png"
-            alt="Karis Labs"
+            alt="Karis Negocios"
             width={128}
             height={62}
-            style={{ width: 92, height: 'auto', objectFit: 'contain', opacity: 0.82 }}
+            style={{ width: 76, height: 'auto', objectFit: 'contain', opacity: 0.76 }}
           />
         </div>
       </section>
