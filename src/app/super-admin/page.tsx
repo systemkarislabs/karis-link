@@ -57,7 +57,9 @@ export default async function SuperAdminPage() {
 
               <form action={createTenant} style={{ display: 'grid', gap: 13 }}>
                 <input name="name" placeholder="Nome da empresa" required className="kl-soft-field" />
-                <input name="slug" placeholder="Slug (ex: texpar-vendas)" required className="kl-soft-field" />
+                <p style={{ margin: '-4px 0 2px', color: 'var(--text-soft)', fontSize: 12, lineHeight: 1.45 }}>
+                  O link sera gerado automaticamente pelo nome junto. Ex: Texpar Malhas vira /texparmalhas.
+                </p>
                 <input name="adminUser" placeholder="Usuário administrador" required className="kl-soft-field" />
                 <input name="adminPass" type="password" placeholder="Senha inicial" required className="kl-soft-field" />
                 <CompanyLogoField label="Logo da empresa" />

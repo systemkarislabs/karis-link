@@ -15,8 +15,16 @@ import { ensureSuperAdminTableAvailable, findStoredSuperAdminAccount } from '@/l
 import { validateImageDataUrl, validateImageFile } from '@/lib/image-validation';
 import { redirect } from 'next/navigation';
 
+function normalizeTenantSlug(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
+
 function isValidSlug(value: string) {
-  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
+  return /^[a-z0-9]+$/.test(value);
 }
 
 async function resolveTenantLogo(logoDataUrl: string, logoFile: File | null | undefined) {
@@ -92,10 +100,7 @@ export async function createTenant(formData: FormData) {
   await ensureTenantLogoColumn();
 
   const name = String(formData.get('name') || '').trim();
-  const slug = String(formData.get('slug') || '')
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, '-');
+  const slug = normalizeTenantSlug(name);
   const adminUser = String(formData.get('adminUser') || '').trim();
   const adminPass = String(formData.get('adminPass') || '');
   const logoDataUrl = String(formData.get('logoDataUrl') || '').trim();
@@ -110,7 +115,16 @@ export async function createTenant(formData: FormData) {
   }
 
   if (!isValidSlug(slug) || slug.length < 3 || slug.length > 50) {
-    throw new Error('O slug deve usar apenas letras minúsculas, números e hifens.');
+    throw new Error('O nome da empresa precisa gerar um link com 3 a 50 letras ou numeros.');
+  }
+
+  const existingSlug = await prisma.tenant.findUnique({
+    where: { slug },
+    select: { id: true },
+  });
+
+  if (existingSlug) {
+    throw new Error(`Ja existe uma empresa usando o link "${slug}". Ajuste o nome da empresa para diferenciar.`);
   }
 
   if (adminUser.length < 3 || adminUser.length > 50) {
