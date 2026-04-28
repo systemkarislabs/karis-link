@@ -47,7 +47,7 @@ export default async function VendedoresPage(props: PageProps) {
   const [sellers, sellerEvents] = await Promise.all([
     prisma.seller.findMany({ where: { tenantId }, orderBy: { name: 'asc' } }),
     prisma.sellerClickEvent.findMany({
-      where: { seller: { tenantId }, createdAt: { gte: analyticsStart } },
+      where: { seller: { tenantId }, source: { in: ['qr', 'bio'] }, createdAt: { gte: analyticsStart } },
       orderBy: { createdAt: 'desc' },
       take: 5000,
     }),

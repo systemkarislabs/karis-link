@@ -14,3 +14,8 @@ export function getPublicBaseUrl() {
 
   return isTemporaryHost ? CANONICAL_PUBLIC_BASE_URL : configuredUrl;
 }
+
+export function buildCampaignUrl(tenantSlug: string, channel: 'qr' | 'bio', campaignSlug: string) {
+  const channelPath = channel === 'bio' ? 'bio' : 'go';
+  return `${getPublicBaseUrl()}/${tenantSlug}/${channelPath}/${campaignSlug}`;
+}

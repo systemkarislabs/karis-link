@@ -2,7 +2,7 @@ import prisma from '@/lib/prisma';
 import { clearTrackingCookieFromResponse, getTrackingCookie } from '@/lib/tracking';
 import { NextResponse } from 'next/server';
 
-export async function handleSellerRedirect(sellerId: string) {
+export async function handleSellerRedirect(sellerId: string, allowTracking = false) {
   if (!sellerId) {
     return NextResponse.json({ error: 'Missing sellerId' }, { status: 400 });
   }
@@ -27,8 +27,8 @@ export async function handleSellerRedirect(sellerId: string) {
       return NextResponse.json({ error: 'Seller phone is invalid' }, { status: 400 });
     }
 
-    const tracking = await getTrackingCookie();
-    let source = 'direct';
+    const tracking = allowTracking ? await getTrackingCookie() : null;
+    let source: 'qr' | 'bio' | null = null;
     let campaign: string | null = null;
 
     if (tracking?.tenantId === seller.tenantId) {
@@ -43,31 +43,33 @@ export async function handleSellerRedirect(sellerId: string) {
         },
       });
 
-      if (pageClickEvent) {
-        source = pageClickEvent.source || 'direct';
+      if (pageClickEvent?.source === 'qr' || pageClickEvent?.source === 'bio') {
+        source = pageClickEvent.source;
         campaign = pageClickEvent.campaign || null;
       }
     }
 
-    await prisma.$transaction([
-      prisma.seller.update({
-        where: { id: sellerId },
-        data: { clicks: { increment: 1 } },
-      }),
-      prisma.sellerClickEvent.create({
-        data: {
-          sellerId,
-          source,
-          campaign,
-        },
-      }),
-    ]);
-
-    const message = encodeURIComponent(`Olá ${seller.name}, vim pelo link da plataforma!`);
+    const message = encodeURIComponent(`Ola ${seller.name}, vim pelo link da plataforma!`);
     const waUrl = `https://wa.me/${sanitizedPhone}?text=${message}`;
     const response = NextResponse.redirect(waUrl);
 
-    clearTrackingCookieFromResponse(response);
+    if (source) {
+      await prisma.$transaction([
+        prisma.seller.update({
+          where: { id: sellerId },
+          data: { clicks: { increment: 1 } },
+        }),
+        prisma.sellerClickEvent.create({
+          data: {
+            sellerId,
+            source,
+            campaign,
+          },
+        }),
+      ]);
+
+      clearTrackingCookieFromResponse(response);
+    }
 
     return response;
   } catch (error) {

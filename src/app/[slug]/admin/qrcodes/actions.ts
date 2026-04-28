@@ -4,7 +4,7 @@ import { randomBytes } from 'crypto';
 import { Prisma } from '@prisma/client';
 import { requireTenantAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { getPublicBaseUrl } from '@/lib/public-url';
+import { buildCampaignUrl } from '@/lib/public-url';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -20,8 +20,7 @@ export async function createQrCode(formData: FormData) {
   const name = String(formData.get('name') || '').trim();
   const channel = String(formData.get('channel') || 'qr').trim().toLowerCase();
   const { tenantId } = await requireTenantAuth(slug);
-  const baseUrl = getPublicBaseUrl();
-  const channelPath = channel === 'bio' ? 'bio' : 'go';
+  const normalizedChannel = channel === 'bio' ? 'bio' : 'qr';
 
   if (!name) {
     throw new Error('Nome da campanha e obrigatorio.');
@@ -33,7 +32,7 @@ export async function createQrCode(formData: FormData) {
 
   for (let attempt = 0; attempt < 8; attempt += 1) {
     const campaignCode = generateCampaignCode();
-    const finalUrl = `${baseUrl}/${slug}/${channelPath}/${campaignCode}`;
+    const finalUrl = buildCampaignUrl(slug, normalizedChannel, campaignCode);
 
     try {
       await prisma.qrCode.create({

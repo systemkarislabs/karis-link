@@ -272,7 +272,7 @@ export default function QrCodesClient({ qrCodes, slug, deleteAction }: Props) {
             <CopyLinkButton value={qr.url} label="Copiar link" copiedLabel="Link copiado!" />
 
             <a
-              href={`/${slug}/${qr.channel === 'bio' ? 'bio' : 'go'}/${qr.slug}`}
+              href={qr.url}
               target="_blank"
               rel="noopener noreferrer"
               style={{

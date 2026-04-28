@@ -35,16 +35,18 @@ export default async function TenantAdminPage(props: PageProps) {
       select: { id: true, name: true },
     }),
     prisma.seller.findMany({ where: { tenantId } }),
-    prisma.pageClickEvent.count({ where: { tenantId, createdAt: { gte: startDate } } }),
+    prisma.pageClickEvent.count({
+      where: { tenantId, source: { in: ['qr', 'bio'] }, createdAt: { gte: startDate } },
+    }),
     prisma.sellerClickEvent.findMany({
-      where: { seller: { tenantId }, createdAt: { gte: startDate } },
+      where: { seller: { tenantId }, source: { in: ['qr', 'bio'] }, createdAt: { gte: startDate } },
       take: 8,
       orderBy: { createdAt: 'desc' },
       include: { seller: true },
     }),
     prisma.sellerClickEvent.groupBy({
       by: ['sellerId'],
-      where: { seller: { tenantId }, createdAt: { gte: startDate } },
+      where: { seller: { tenantId }, source: { in: ['qr', 'bio'] }, createdAt: { gte: startDate } },
       _count: { id: true },
     }),
   ]);

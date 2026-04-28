@@ -16,6 +16,7 @@ type Props = {
   slug: string;
   tenantName: string;
   tenantLogo?: string | null;
+  hasTrackingContext: boolean;
   sellers: SellerCard[];
   isAdminLogged: boolean;
 };
@@ -61,6 +62,7 @@ export default function PublicTenantClient({
   slug,
   tenantName,
   tenantLogo,
+  hasTrackingContext,
   sellers,
   isAdminLogged,
 }: Props) {
@@ -261,7 +263,7 @@ export default function PublicTenantClient({
           {sellers.map((seller) => (
             <a
               key={seller.id}
-              href={`/api/redirect/${seller.id}`}
+              href={`/api/redirect/${seller.id}${hasTrackingContext ? '?tracked=1' : ''}`}
               className="seller-public-card kl-card kl-card-hover kl-press"
               style={{
                 display: 'flex',

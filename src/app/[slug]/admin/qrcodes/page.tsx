@@ -3,6 +3,7 @@ import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
 import { createQrCode, deleteQrCode } from './actions';
 import QrCodesClient from './QrCodesClient';
+import { buildCampaignUrl } from '@/lib/public-url';
 import { formatRecifeDateTime } from '@/lib/recife-time';
 import { Icon } from '@/components/Icon';
 
@@ -55,6 +56,7 @@ export default async function QrCodesPage(props: PageProps) {
 
   const qrMetrics: QrCodeMetric[] = qrcodes.map((qr) => {
     const channel = qr.url.includes('/bio/') ? 'bio' : 'qr';
+    const canonicalUrl = buildCampaignUrl(slug, channel, qr.slug);
     const visits = pageVisits.filter((event) => event.campaign === qr.slug && event.source === channel);
     const choices = sellerChoices.filter((event) => event.campaign === qr.slug && event.source === channel);
 
@@ -73,7 +75,7 @@ export default async function QrCodesPage(props: PageProps) {
       id: qr.id,
       name: qr.name,
       slug: qr.slug,
-      url: qr.url,
+      url: canonicalUrl,
       channel,
       visits: visits.length,
       clicks: choices.length,

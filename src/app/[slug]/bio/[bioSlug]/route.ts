@@ -34,7 +34,9 @@ export async function GET(
       },
     });
 
-    const response = NextResponse.redirect(new URL(`/${slug}`, request.url));
+    const redirectUrl = new URL(`/${slug}`, request.url);
+    redirectUrl.searchParams.set('kl_track', '1');
+    const response = NextResponse.redirect(redirectUrl);
     await attachTrackingCookie(response, pageClickEvent.id, bioCampaign.tenantId);
 
     return response;

@@ -1,7 +1,6 @@
 import { getTenantSession } from '@/lib/auth';
 import { ensureTenantLogoColumn } from '@/lib/db-compat';
 import prisma from '@/lib/prisma';
-import { getTrackingCookie } from '@/lib/tracking';
 import { notFound } from 'next/navigation';
 import PublicTenantClient from './PublicTenantClient';
 import type { Metadata } from 'next';
@@ -11,6 +10,7 @@ export const revalidate = 0;
 
 type PublicTenantPageProps = {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ kl_track?: string }>;
 };
 
 export async function generateMetadata({ params }: Pick<PublicTenantPageProps, 'params'>): Promise<Metadata> {
@@ -25,9 +25,11 @@ export async function generateMetadata({ params }: Pick<PublicTenantPageProps, '
   };
 }
 
-export default async function PublicTenantPage({ params }: PublicTenantPageProps) {
+export default async function PublicTenantPage({ params, searchParams }: PublicTenantPageProps) {
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const slug = resolvedParams.slug;
+  const isTrackedCampaignVisit = resolvedSearchParams?.kl_track === '1';
 
   await ensureTenantLogoColumn();
 
@@ -42,18 +44,6 @@ export default async function PublicTenantPage({ params }: PublicTenantPageProps
   });
   if (!tenant) notFound();
 
-  const activeTracking = await getTrackingCookie();
-
-  if (!activeTracking || activeTracking.tenantId !== tenant.id) {
-    await prisma.pageClickEvent.create({
-      data: {
-        tenantId: tenant.id,
-        source: 'direct',
-        campaign: null,
-      },
-    });
-  }
-
   const [sellers, session] = await Promise.all([
     prisma.seller.findMany({
       where: { tenantId: tenant.id },
@@ -67,6 +57,7 @@ export default async function PublicTenantPage({ params }: PublicTenantPageProps
       slug={slug}
       tenantName={tenant.name}
       tenantLogo={tenant.logo}
+      hasTrackingContext={isTrackedCampaignVisit}
       sellers={sellers.map((seller) => ({
         id: seller.id,
         name: seller.name,

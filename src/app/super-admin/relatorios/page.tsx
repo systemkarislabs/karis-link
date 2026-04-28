@@ -24,8 +24,12 @@ export default async function ReportsPage(props: PageProps) {
   const whereTenant = tenantId === 'all' ? {} : { tenantId };
 
   const [totalVisits, totalClicks] = await Promise.all([
-    prisma.pageClickEvent.count({ where: { ...whereTenant, createdAt: { gte: startDate } } }),
-    prisma.sellerClickEvent.count({ where: { seller: { ...whereTenant }, createdAt: { gte: startDate } } }),
+    prisma.pageClickEvent.count({
+      where: { ...whereTenant, source: { in: ['qr', 'bio'] }, createdAt: { gte: startDate } },
+    }),
+    prisma.sellerClickEvent.count({
+      where: { seller: { ...whereTenant }, source: { in: ['qr', 'bio'] }, createdAt: { gte: startDate } },
+    }),
   ]);
 
   const conversion = totalVisits > 0 ? ((totalClicks / totalVisits) * 100).toFixed(1) : '0';
