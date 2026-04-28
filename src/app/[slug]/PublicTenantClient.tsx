@@ -100,15 +100,15 @@ export default function PublicTenantClient({
         minHeight: '100dvh',
         color: 'var(--text-main)',
         fontFamily: 'var(--font-body)',
-        padding: 'max(12px, env(safe-area-inset-top)) 18px 52px',
+        padding: 'max(16px, env(safe-area-inset-top)) 18px 56px',
       }}
     >
       {/* Botão de acesso admin */}
       <div
         style={{
           width: '100%',
-          maxWidth: '980px',
-          margin: '0 auto 4px',
+          maxWidth: '1060px',
+          margin: '0 auto 8px',
           display: 'flex',
           justifyContent: 'flex-end',
           alignItems: 'flex-start',
@@ -122,7 +122,7 @@ export default function PublicTenantClient({
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              padding: '10px 14px',
+              padding: '10px 16px',
               textDecoration: 'none',
               fontSize: 13,
             }}
@@ -132,7 +132,7 @@ export default function PublicTenantClient({
                 width: 22,
                 height: 22,
                 borderRadius: '999px',
-                background: 'rgba(2, 5, 21, 0.08)',
+                background: 'rgba(55, 50, 47, 0.07)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -151,7 +151,7 @@ export default function PublicTenantClient({
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              padding: '10px 14px',
+              padding: '10px 16px',
               color: 'var(--text-main)',
               fontSize: 13,
               cursor: 'pointer',
@@ -187,7 +187,7 @@ export default function PublicTenantClient({
           alignItems: 'center',
         }}
       >
-        <header style={{ textAlign: 'center', marginBottom: 30 }}>
+        <header style={{ textAlign: 'center', marginBottom: 32 }}>
           <div
             style={{
               display: 'inline-flex',
@@ -207,7 +207,7 @@ export default function PublicTenantClient({
                   borderRadius: '999px',
                   border: '1px solid var(--border)',
                   background: '#ffffff',
-                  boxShadow: '0 18px 42px rgba(17, 24, 39, 0.085)',
+                  boxShadow: '0 0 0 6px rgba(255,255,255,.72), 0 18px 42px rgba(55, 50, 47, 0.105)',
                   overflow: 'hidden',
                 }}
               >
@@ -241,7 +241,7 @@ export default function PublicTenantClient({
               alt="Karis Labs"
               width={132}
               height={64}
-              style={{ width: 58, maxWidth: '34%', height: 'auto', objectFit: 'contain', opacity: 0.72 }}
+              style={{ width: 56, maxWidth: '34%', height: 'auto', objectFit: 'contain', opacity: 0.68 }}
             />
           </div>
 
@@ -273,8 +273,9 @@ export default function PublicTenantClient({
                 padding: '14px 17px',
                 background: 'var(--card-bg)',
                 color: 'var(--text-main)',
-                borderRadius: 18,
+                borderRadius: 16,
                 textDecoration: 'none',
+                boxShadow: '0 1px 2px rgba(55,50,47,.055), 0 14px 36px rgba(55,50,47,.045)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
@@ -285,7 +286,7 @@ export default function PublicTenantClient({
                     borderRadius: '999px',
                     overflow: 'hidden',
                     flexShrink: 0,
-                    background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
+                  background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',

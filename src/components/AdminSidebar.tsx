@@ -45,7 +45,7 @@ export default function AdminSidebar({
           left: 0,
           right: 0,
           height: 70,
-          background: 'rgba(255, 255, 255, 0.96)',
+          background: 'rgba(247, 245, 243, 0.94)',
           backdropFilter: 'blur(14px)',
           borderBottom: '1px solid var(--border)',
           zIndex: 99,
@@ -72,7 +72,7 @@ export default function AdminSidebar({
             padding: 10,
             borderRadius: 13,
             border: '1px solid var(--border)',
-            background: '#ffffff',
+            background: 'rgba(255, 255, 255, 0.78)',
             cursor: 'pointer',
           }}
           aria-label="Abrir menu"
@@ -103,7 +103,7 @@ export default function AdminSidebar({
           left: 272,
           right: 0,
           height: 72,
-          background: 'rgba(255, 255, 255, 0.94)',
+          background: 'rgba(247, 245, 243, 0.86)',
           backdropFilter: 'blur(16px)',
           borderBottom: '1px solid var(--border)',
           zIndex: 80,
@@ -125,11 +125,11 @@ export default function AdminSidebar({
                 width: 7,
                 height: 7,
                 borderRadius: '50%',
-                background: 'var(--brand-accent)',
-                boxShadow: '0 0 0 4px rgba(16,185,129,.12)',
+              background: 'var(--brand-accent)',
+              boxShadow: '0 0 0 4px rgba(16,185,129,.11)',
               }}
             />
-            <Icon name="clock" size={14} color="#a1a1aa" />
+            <Icon name="clock" size={14} color="rgba(55,50,47,.42)" />
             Última atualização: 1m atrás
           </div>
           <button
@@ -141,13 +141,13 @@ export default function AdminSidebar({
               height: 36,
               borderRadius: 10,
               border: '1px solid var(--border)',
-              background: '#ffffff',
+              background: 'rgba(255, 255, 255, 0.72)',
               display: 'grid',
               placeItems: 'center',
               cursor: 'pointer',
             }}
           >
-            <Icon name="bell" size={16} color="#71717a" />
+            <Icon name="bell" size={16} color="var(--text-soft)" />
           </button>
         </div>
       </div>
@@ -156,7 +156,8 @@ export default function AdminSidebar({
         className={`sidebar-container ${isOpen ? 'open' : ''}`}
         style={{
           width: 272,
-          background: 'rgba(255, 255, 255, 0.98)',
+          background: 'rgba(255, 255, 255, 0.74)',
+          backdropFilter: 'blur(18px)',
           borderRight: '1px solid var(--border)',
           padding: '24px 20px 22px',
           display: 'flex',
@@ -168,7 +169,7 @@ export default function AdminSidebar({
           transition: 'transform 0.24s ease',
         } as CSSProperties}
       >
-        <div style={{ marginBottom: 30, paddingBottom: 24, borderBottom: '1px solid #f0f1f2' }}>
+        <div style={{ marginBottom: 30, paddingBottom: 24, borderBottom: '1px solid rgba(55,50,47,.09)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="kl-brand-mark">K</span>
             <div>
@@ -231,8 +232,9 @@ export default function AdminSidebar({
                   fontWeight: isActive ? 850 : 750,
                   letterSpacing: '-0.02em',
                   color: isActive ? 'var(--brand-accent-strong)' : 'var(--sidebar-text)',
-                  background: isActive ? 'rgba(18, 185, 129, 0.105)' : 'transparent',
-                  border: isActive ? '1px solid rgba(18,185,129,.28)' : '1px solid transparent',
+                  background: isActive ? 'rgba(16, 185, 129, 0.105)' : 'transparent',
+                  border: isActive ? '1px solid rgba(16,185,129,.28)' : '1px solid transparent',
+                  boxShadow: isActive ? '0 0 0 4px rgba(16,185,129,.055)' : 'none',
                 }}
               >
                 <Icon name={item.icon} size={18} color="currentColor" />
@@ -242,7 +244,7 @@ export default function AdminSidebar({
           })}
         </nav>
 
-        <div style={{ paddingTop: 16, borderTop: '1px solid #f0f1f2' }}>
+        <div style={{ paddingTop: 16, borderTop: '1px solid rgba(55,50,47,.09)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
             <span
               style={{

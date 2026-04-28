@@ -37,11 +37,12 @@ export default function SuperLoginClient() {
         style={{
           width: '100%',
           maxWidth: 418,
-          borderRadius: 26,
-          background: '#ffffff',
+          borderRadius: 22,
+          background: 'rgba(255, 255, 255, 0.86)',
+          backdropFilter: 'blur(10px)',
           padding: '42px 40px 36px',
-          border: '1px solid rgba(230, 232, 235, 0.92)',
-          boxShadow: '0 28px 80px rgba(17, 24, 39, 0.09)',
+          border: '1px solid rgba(55, 50, 47, 0.12)',
+          boxShadow: '0 0 0 4px rgba(255,255,255,.72), 0 28px 80px rgba(55, 50, 47, 0.1)',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: 34 }}>
@@ -52,13 +53,13 @@ export default function SuperLoginClient() {
               height: 54,
               display: 'inline-grid',
               placeItems: 'center',
-              borderRadius: 15,
+              borderRadius: 14,
               background: 'var(--brand-dark)',
               color: '#ffffff',
               fontSize: 25,
               fontWeight: 900,
               letterSpacing: '-0.08em',
-              boxShadow: '0 18px 34px rgba(7, 17, 31, 0.18)',
+              boxShadow: '0 0 0 4px rgba(55, 50, 47, 0.05), 0 18px 34px rgba(55, 50, 47, 0.18)',
               marginBottom: 22,
             }}
           >
@@ -117,7 +118,7 @@ export default function SuperLoginClient() {
           style={{
             margin: '32px 0 0',
             paddingTop: 24,
-            borderTop: '1px solid #f0f1f2',
+            borderTop: '1px solid rgba(55,50,47,.09)',
             display: 'flex',
             justifyContent: 'center',
           }}
