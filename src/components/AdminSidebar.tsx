@@ -45,9 +45,8 @@ export default function AdminSidebar({
           left: 0,
           right: 0,
           height: 70,
-          background: 'rgba(247, 245, 243, 0.94)',
-          backdropFilter: 'blur(14px)',
-          borderBottom: '1px solid var(--border)',
+          background: 'var(--brand-navy)',
+          borderBottom: '1px solid rgba(255,255,255,.08)',
           zIndex: 99,
           alignItems: 'center',
           padding: '0 20px',
@@ -55,12 +54,12 @@ export default function AdminSidebar({
         } as CSSProperties}
       >
         <Image
-          src="/karis-link-logo.png"
+          src="/karis-link-logo-full.png"
           alt="Karis Link"
           width={132}
           height={46}
           priority
-          style={{ width: 92, height: 'auto', objectFit: 'contain' }}
+          style={{ width: 112, height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
         />
         <button
           type="button"
@@ -70,15 +69,15 @@ export default function AdminSidebar({
             width: 44,
             height: 44,
             padding: 10,
-            borderRadius: 13,
-            border: '1px solid var(--border)',
-            background: 'rgba(255, 255, 255, 0.78)',
+            borderRadius: 8,
+            border: '1px solid rgba(255,255,255,.12)',
+            background: 'rgba(255,255,255,.08)',
             cursor: 'pointer',
           }}
           aria-label="Abrir menu"
           aria-expanded={isOpen}
         >
-          <Icon name="menu" size={22} color="var(--text-main)" />
+          <Icon name="menu" size={22} color="#fff" />
         </button>
       </div>
 
@@ -100,11 +99,10 @@ export default function AdminSidebar({
         style={{
           position: 'fixed',
           top: 0,
-          left: 272,
+          left: 240,
           right: 0,
           height: 64,
-          background: 'rgba(248, 250, 252, 0.88)',
-          backdropFilter: 'blur(12px)',
+          background: 'var(--card-bg)',
           borderBottom: '1px solid var(--border)',
           zIndex: 80,
           display: 'flex',
@@ -129,11 +127,10 @@ export default function AdminSidebar({
       <aside
         className={`sidebar-container ${isOpen ? 'open' : ''}`}
         style={{
-          width: 272,
-          background: 'rgba(255, 255, 255, 0.74)',
-          backdropFilter: 'blur(18px)',
-          borderRight: '1px solid var(--border)',
-          padding: '24px 20px 22px',
+          width: 240,
+          background: 'var(--brand-navy)',
+          borderRight: '1px solid rgba(255,255,255,.06)',
+          padding: '20px 12px 16px',
           display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
@@ -143,17 +140,28 @@ export default function AdminSidebar({
           transition: 'transform 0.24s ease',
         } as CSSProperties}
       >
-        <div style={{ marginBottom: 28, paddingBottom: 22, borderBottom: '1px solid var(--border)' }}>
+        <div style={{ marginBottom: 12, padding: '0 8px 18px', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
           <Image
-            src="/karis-link-logo.png"
+            src="/karis-link-logo-full.png"
             alt="Karis Link"
-            width={132}
-            height={46}
+            width={180}
+            height={64}
             priority
             className="kl-brand-logo"
-            style={{ width: 118, height: 'auto', objectFit: 'contain', display: 'block' }}
+            style={{ width: 150, height: 'auto', objectFit: 'contain', display: 'block', filter: 'brightness(0) invert(1)' }}
           />
         </div>
+
+        {!isSuper ? (
+          <div style={{ padding: '0 8px', marginBottom: 16 }}>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,.35)', fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 3 }}>
+              Empresa
+            </div>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,.82)', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {tenantName}
+            </div>
+          </div>
+        ) : null}
 
         <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 9, minHeight: 0 }}>
           {menuItems.map((item) => {
@@ -166,20 +174,20 @@ export default function AdminSidebar({
                 onClick={() => setIsOpen(false)}
                 className={`sidebar-link kl-press ${isActive ? 'is-active' : ''}`}
                 style={{
-                  minHeight: 46,
+                  minHeight: 40,
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
-                  padding: '11px 16px',
-                  borderRadius: 14,
+                  padding: '10px 12px',
+                  borderRadius: 8,
                   textDecoration: 'none',
-                  fontSize: 14,
-                  fontWeight: isActive ? 850 : 750,
+                  fontSize: 13,
+                  fontWeight: isActive ? 800 : 600,
                   letterSpacing: '-0.02em',
-                  color: isActive ? 'var(--brand-accent-strong)' : 'var(--sidebar-text)',
-                  background: isActive ? 'rgba(16, 185, 129, 0.105)' : 'transparent',
-                  border: isActive ? '1px solid rgba(16,185,129,.28)' : '1px solid transparent',
-                  boxShadow: isActive ? '0 0 0 4px rgba(16,185,129,.055)' : 'none',
+                  color: isActive ? '#4ade80' : 'rgba(255,255,255,.56)',
+                  background: isActive ? 'rgba(22,163,74,.2)' : 'transparent',
+                  border: '1px solid transparent',
+                  boxShadow: 'none',
                 }}
               >
                 <Icon name={item.icon} size={18} color="currentColor" />
@@ -189,7 +197,7 @@ export default function AdminSidebar({
           })}
         </nav>
 
-        <div style={{ paddingTop: 16, borderTop: '1px solid rgba(55,50,47,.09)' }}>
+        <div style={{ paddingTop: 12, borderTop: '1px solid rgba(255,255,255,.08)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
             <span
               style={{
@@ -198,17 +206,17 @@ export default function AdminSidebar({
                 display: 'grid',
                 placeItems: 'center',
                 borderRadius: '50%',
-                border: '1px solid var(--border)',
-                color: 'var(--text-soft)',
+                background: 'rgba(255,255,255,.1)',
+                color: 'rgba(255,255,255,.6)',
               }}
             >
               <Icon name="user" size={16} />
             </span>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 12, fontWeight: 900, color: 'var(--text-main)' }}>
+              <div style={{ fontSize: 12, fontWeight: 800, color: 'rgba(255,255,255,.86)' }}>
                 {isSuper ? 'Super Admin' : tenantName}
               </div>
-              <div style={{ fontSize: 11, color: 'var(--text-soft)' }}>karisnegocios.com.br</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.35)' }}>link.karisnegocios.com.br</div>
             </div>
           </div>
           <LogoutButton isSuper={isSuper} slug={slug} />

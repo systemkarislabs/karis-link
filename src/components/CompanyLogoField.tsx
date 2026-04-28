@@ -63,11 +63,11 @@ export default function CompanyLogoField({
             height: compact ? 96 : 132,
             display: 'grid',
             placeItems: 'center',
-            borderRadius: '999px',
+          borderRadius: '50%',
             border: '1px solid var(--border)',
             background: '#ffffff',
             overflow: 'hidden',
-            boxShadow: '0 12px 28px rgba(9, 9, 11, 0.06)',
+          boxShadow: '0 10px 24px rgba(15, 28, 63, 0.08)',
           }}
         >
           <img
@@ -95,14 +95,14 @@ export default function CompanyLogoField({
           justifyContent: 'space-between',
           gap: 10,
           padding: compact ? '9px 11px' : '10px 13px',
-          borderRadius: 12,
-          border: '1px solid var(--border)',
-          background: '#fafafa',
+          borderRadius: 10,
+          border: '2px dashed var(--border)',
+          background: 'var(--bg-main)',
           color: '#52525b',
           fontSize: 12,
           fontWeight: 800,
           cursor: 'pointer',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.8)',
+          boxShadow: 'none',
         }}
       >
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, minWidth: 0 }}>

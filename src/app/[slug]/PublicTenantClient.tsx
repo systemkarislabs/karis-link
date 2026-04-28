@@ -193,21 +193,21 @@ export default function PublicTenantClient({
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: 10,
+              marginBottom: 16,
               width: '100%',
             }}
           >
             {tenantLogo ? (
               <span
                 style={{
-                  width: 96,
-                  height: 96,
+                  width: 104,
+                  height: 104,
                   display: 'inline-grid',
                   placeItems: 'center',
                   borderRadius: '999px',
                   border: '1px solid var(--border)',
                   background: '#ffffff',
-                  boxShadow: '0 0 0 6px rgba(255,255,255,.72), 0 18px 42px rgba(55, 50, 47, 0.105)',
+                  boxShadow: '0 16px 34px rgba(15, 28, 63, 0.12)',
                   overflow: 'hidden',
                 }}
               >
@@ -219,31 +219,35 @@ export default function PublicTenantClient({
               </span>
             ) : (
               <Image
-                src="/karis-link-logo.png"
+                src="/karis-link-logo-full.png"
                 alt="Karis Link"
-                width={168}
-                height={60}
+                width={220}
+                height={80}
                 priority
-                style={{ width: 104, maxWidth: '62%', height: 'auto', objectFit: 'contain' }}
+                style={{ width: 156, maxWidth: '72%', height: 'auto', objectFit: 'contain' }}
               />
             )}
           </div>
 
           <div
             style={{
-              marginBottom: 18,
+              marginBottom: 10,
               display: 'flex',
               justifyContent: 'center',
             }}
           >
             <Image
-              src="/karis-labs-logo.png"
-              alt="Karis Labs"
+              src="/karis-negocios-logo.png"
+              alt="Karis Negocios"
               width={132}
               height={64}
-              style={{ width: 56, maxWidth: '34%', height: 'auto', objectFit: 'contain', opacity: 0.68 }}
+              style={{ width: 64, maxWidth: '34%', height: 'auto', objectFit: 'contain', opacity: 0.56 }}
             />
           </div>
+
+          <h1 style={{ margin: '0 0 6px', color: 'var(--text-main)', fontSize: 22, fontWeight: 850, letterSpacing: '-0.04em' }}>
+            {tenantName}
+          </h1>
 
           <p
             style={{

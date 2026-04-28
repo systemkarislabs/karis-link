@@ -23,26 +23,70 @@ export default function SuperLoginClient() {
 
   return (
     <main
-      className="kl-login-grid-bg"
       style={{
         minHeight: '100dvh',
         display: 'grid',
-        placeItems: 'center',
-        padding: 24,
+        gridTemplateColumns: 'minmax(320px, 1fr) minmax(360px, 1fr)',
         fontFamily: 'var(--font-body)',
+        background: '#fff',
       }}
     >
+      <aside
+        className="auth-brand-panel"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 32,
+          padding: 48,
+          background: 'var(--brand-navy)',
+          color: '#fff',
+        }}
+      >
+        <Image
+          src="/karis-link-logo-full.png"
+          alt="Karis Link"
+          width={240}
+          height={92}
+          priority
+          style={{ width: 190, height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+        />
+        <div style={{ textAlign: 'center', maxWidth: 340 }}>
+          <h2 style={{ margin: '0 0 12px', fontSize: 28, fontWeight: 850, letterSpacing: '-0.04em', lineHeight: 1.1 }}>
+            Gerencie seus leads com inteligencia
+          </h2>
+          <p style={{ margin: 0, fontSize: 14, color: 'rgba(255,255,255,.58)', lineHeight: 1.65 }}>
+            Controle empresas, campanhas e metricas em uma plataforma Karis Link.
+          </p>
+        </div>
+        <Image
+          src="/karis-negocios-logo.png"
+          alt="Karis Negocios"
+          width={180}
+          height={76}
+          style={{ marginTop: 'auto', width: 126, height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.46 }}
+        />
+      </aside>
+
+      <div
+        style={{
+          display: 'grid',
+          placeItems: 'center',
+          padding: 24,
+          background: '#fafafa',
+        }}
+      >
       <section
         className="kl-page-enter"
         style={{
           width: '100%',
-          maxWidth: 418,
-          borderRadius: 22,
-          background: 'rgba(255, 255, 255, 0.86)',
-          backdropFilter: 'blur(10px)',
-          padding: '42px 40px 36px',
-          border: '1px solid rgba(55, 50, 47, 0.12)',
-          boxShadow: '0 0 0 4px rgba(255,255,255,.72), 0 28px 80px rgba(55, 50, 47, 0.1)',
+          maxWidth: 380,
+          borderRadius: 10,
+          background: 'transparent',
+          padding: 0,
+          border: 0,
+          boxShadow: 'none',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: 34 }}>
@@ -66,7 +110,7 @@ export default function SuperLoginClient() {
             K
           </span>
           <h1 style={{ margin: 0, color: 'var(--text-main)', fontSize: 21, fontWeight: 900, letterSpacing: '-0.055em', textTransform: 'uppercase' }}>
-            Acesso Administrativo
+            Super Admin
           </h1>
           <p style={{ margin: '6px 0 0', color: 'var(--text-soft)', fontSize: 13 }}>
             Entre com suas credenciais de super-admin.
@@ -114,24 +158,20 @@ export default function SuperLoginClient() {
           <SubmitButton />
         </form>
 
-        <div
-          style={{
-            margin: '32px 0 0',
-            paddingTop: 24,
-            borderTop: '1px solid rgba(55,50,47,.09)',
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          <Image
-            src="/karis-labs-logo.png"
-            alt="Karis Negocios"
-            width={128}
-            height={62}
-            style={{ width: 76, height: 'auto', objectFit: 'contain', opacity: 0.76 }}
-          />
-        </div>
       </section>
+      </div>
+
+      <style jsx>{`
+        @media (max-width: 820px) {
+          main {
+            grid-template-columns: 1fr !important;
+          }
+
+          .auth-brand-panel {
+            display: none !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }

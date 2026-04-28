@@ -1,5 +1,6 @@
 'use client';
 import React, { useActionState } from 'react';
+import Image from 'next/image';
 import { useFormStatus } from 'react-dom';
 import { handleTenantLogin } from '../admin/auth-actions';
 
@@ -43,26 +44,59 @@ export default function LoginClient({ slug }: { slug: string }) {
 
   return (
     <div
+      className="tenant-login-shell"
       style={{
         minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--bg-main)',
+        display: 'grid',
+        gridTemplateColumns: 'minmax(320px, 1fr) minmax(360px, 1fr)',
+        background: '#fff',
         color: 'var(--text-main)',
         fontFamily: 'var(--font-body)',
-        padding: 20,
       }}
     >
+      <aside
+        className="auth-brand-panel"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 28,
+          padding: 48,
+          background: 'var(--brand-navy)',
+          color: '#fff',
+        }}
+      >
+        <Image
+          src="/karis-link-logo-full.png"
+          alt="Karis Link"
+          width={240}
+          height={92}
+          priority
+          style={{ width: 184, height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+        />
+        <div style={{ textAlign: 'center', maxWidth: 330 }}>
+          <h2 style={{ margin: '0 0 12px', fontSize: 28, fontWeight: 850, letterSpacing: '-0.04em', lineHeight: 1.1 }}>
+            Painel da empresa
+          </h2>
+          <p style={{ margin: 0, fontSize: 14, color: 'rgba(255,255,255,.58)', lineHeight: 1.65 }}>
+            Acompanhe vendedores, campanhas e conversoes rastreaveis.
+          </p>
+        </div>
+        <Image
+          src="/karis-negocios-logo.png"
+          alt="Karis Negocios"
+          width={180}
+          height={76}
+          style={{ marginTop: 'auto', width: 124, height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.46 }}
+        />
+      </aside>
+
+      <div style={{ display: 'grid', placeItems: 'center', padding: 24, background: '#fafafa' }}>
       <div
         style={{
-          background: 'var(--card-bg)',
-          borderRadius: 16,
-          padding: 40,
           width: '100%',
           maxWidth: 380,
-          boxShadow: 'var(--shadow-soft)',
-          border: '1px solid var(--border)',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
@@ -70,8 +104,8 @@ export default function LoginClient({ slug }: { slug: string }) {
             style={{
               width: 52,
               height: 52,
-              borderRadius: '50%',
-              background: '#17DB4E',
+              borderRadius: 12,
+              background: 'var(--brand-navy)',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -127,6 +161,19 @@ export default function LoginClient({ slug }: { slug: string }) {
           </a>
         </div>
       </div>
+      </div>
+
+      <style jsx>{`
+        @media (max-width: 820px) {
+          .tenant-login-shell {
+            grid-template-columns: 1fr !important;
+          }
+
+          .auth-brand-panel {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
