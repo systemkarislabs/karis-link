@@ -102,53 +102,27 @@ export default function AdminSidebar({
           top: 0,
           left: 272,
           right: 0,
-          height: 72,
-          background: 'rgba(247, 245, 243, 0.86)',
-          backdropFilter: 'blur(16px)',
+          height: 64,
+          background: 'rgba(248, 250, 252, 0.88)',
+          backdropFilter: 'blur(12px)',
           borderBottom: '1px solid var(--border)',
           zIndex: 80,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 36px',
+          padding: '0 32px',
         }}
       >
         <label className="kl-topbar-search" aria-label="Pesquisar">
-          <Icon name="search" size={15} />
+          <Icon name="search" size={14} />
           <input placeholder="Pesquisar..." />
         </label>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-          <div className="kl-topbar-meta">
-            <span
-              style={{
-                width: 7,
-                height: 7,
-                borderRadius: '50%',
-              background: 'var(--brand-accent)',
-              boxShadow: '0 0 0 4px rgba(16,185,129,.11)',
-              }}
-            />
-            <Icon name="clock" size={14} color="rgba(55,50,47,.42)" />
-            Última atualização: 1m atrás
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-soft)', fontSize: 12 }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--brand-accent)', flexShrink: 0 }} />
+            Ao vivo
           </div>
-          <button
-            type="button"
-            aria-label="Notificações"
-            className="kl-press"
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 10,
-              border: '1px solid var(--border)',
-              background: 'rgba(255, 255, 255, 0.72)',
-              display: 'grid',
-              placeItems: 'center',
-              cursor: 'pointer',
-            }}
-          >
-            <Icon name="bell" size={16} color="var(--text-soft)" />
-          </button>
         </div>
       </div>
 
@@ -169,44 +143,15 @@ export default function AdminSidebar({
           transition: 'transform 0.24s ease',
         } as CSSProperties}
       >
-        <div style={{ marginBottom: 30, paddingBottom: 24, borderBottom: '1px solid rgba(55,50,47,.09)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="kl-brand-mark">K</span>
-            <div>
-              <div className="kl-brand-name">
-                Karis<span>Link</span>
-              </div>
-            </div>
-          </div>
-          <div
-            style={{
-              marginTop: 10,
-              marginLeft: 50,
-              color: 'var(--text-main)',
-              fontSize: 10,
-              fontWeight: 900,
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              opacity: 0.48,
-            }}
-          >
-            Powered by
-          </div>
+        <div style={{ marginBottom: 28, paddingBottom: 22, borderBottom: '1px solid var(--border)' }}>
           <Image
-            src="/karis-labs-logo.png"
-            alt="Karis Negocios"
+            src="/karis-link-logo.png"
+            alt="Karis Link"
             width={132}
-            height={64}
-            style={{
-              width: 58,
-              maxWidth: '100%',
-              height: 'auto',
-              objectFit: 'contain',
-              marginTop: 3,
-              marginLeft: 50,
-              display: 'block',
-              opacity: 0.76,
-            }}
+            height={46}
+            priority
+            className="kl-brand-logo"
+            style={{ width: 118, height: 'auto', objectFit: 'contain', display: 'block' }}
           />
         </div>
 

@@ -81,50 +81,59 @@ button:disabled {
 }
 
 :root {
-  --brand-dark: #37322f;
-  --brand-accent: #10b981;
-  --brand-accent-strong: #059669;
-  --brand-accent-soft: #edf9f3;
+  /* ── Karis Link — Minimal Skin ─────────────────────────────── */
+  --brand-dark: #0f172a;
+  --brand-accent: #16a34a;
+  --brand-accent-strong: #15803d;
+  --brand-accent-soft: #f0fdf4;
+
+  /* Surfaces */
   --sidebar-bg: #ffffff;
-  --sidebar-text: rgba(55, 50, 47, 0.78);
-  --sidebar-active-bg: rgba(16, 185, 129, 0.105);
-  --sidebar-active-text: #059669;
-  --bg-main: #f7f5f3;
+  --sidebar-text: #64748b;
+  --sidebar-active-bg: #f0fdf4;
+  --sidebar-active-text: #15803d;
+  --bg-main: #f8fafc;
   --card-bg: #ffffff;
-  --surface-muted: #fbfaf8;
-  --text-main: #37322f;
-  --border: rgba(55, 50, 47, 0.12);
-  --text-soft: rgba(55, 50, 47, 0.68);
-  --shadow-soft: 0 1px 2px rgba(55, 50, 47, 0.055), 0 16px 44px rgba(55, 50, 47, 0.045);
-  --shadow-lift: 0 18px 46px rgba(55, 50, 47, 0.105);
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --surface-muted: #f8fafc;
+
+  /* Text */
+  --text-main: #0f172a;
+  --text-soft: #64748b;
+
+  /* Borders & shadows — ultra-flat */
+  --border: #e2e8f0;
+  --shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.03);
+  --shadow-lift: 0 4px 14px rgba(15, 23, 42, 0.09);
+
+  /* Radius — tighter = more minimal */
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+
   --font-header: 'Manrope', sans-serif;
   --font-body: 'Manrope', sans-serif;
 }
 
 [data-theme='dark'] {
-  --sidebar-bg: #0f172a;
+  --sidebar-bg: #0c1220;
   --sidebar-text: #94a3b8;
-  --sidebar-active-bg: rgba(23, 219, 78, 0.12);
-  --sidebar-active-text: #17db4e;
-  --bg-main: #020617;
-  --card-bg: #1e293b;
+  --sidebar-active-bg: rgba(22, 163, 74, 0.12);
+  --sidebar-active-text: #4ade80;
+  --bg-main: #060d1a;
+  --card-bg: #111827;
+  --surface-muted: #0f172a;
   --text-main: #f1f5f9;
-  --border: #334155;
+  --border: #1e293b;
   --text-soft: #94a3b8;
-  --shadow-soft: 0 14px 34px rgba(2, 6, 23, 0.35);
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --shadow-lift: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 body {
   margin: 0;
   font-family: var(--font-body);
-  background:
-    radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.68), transparent 34%),
-    linear-gradient(180deg, #fbfaf8 0%, var(--bg-main) 100%),
-    var(--bg-main);
+  background: var(--bg-main);
   color: var(--text-main);
-  transition: background 0.3s, color 0.3s;
+  transition: background 0.25s, color 0.25s;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
 }
@@ -147,33 +156,25 @@ a {
 .main-content {
   margin-left: 272px;
   flex: 1;
-  padding: 104px 42px 52px;
+  padding: 92px 40px 52px;
   transition: margin-left 0.3s ease;
 }
 
+/* Brand logo — use <Image src="/karis-link-logo.png"> instead of mark+text */
+.kl-brand-logo {
+  display: block;
+  height: auto;
+  max-width: 120px;
+  width: 120px;
+}
+
+/* Kept for legacy compatibility if referenced anywhere */
 .kl-brand-mark {
-  width: 40px;
-  height: 40px;
-  display: inline-grid;
-  place-items: center;
-  border-radius: 12px;
-  background: var(--brand-dark);
-  color: #ffffff;
-  font-size: 19px;
-  font-weight: 900;
-  letter-spacing: -0.06em;
-  box-shadow: 0 0 0 4px rgba(55, 50, 47, 0.045), 0 14px 30px rgba(55, 50, 47, 0.16);
+  display: none;
 }
 
 .kl-brand-name {
-  color: var(--text-main);
-  font-size: 20px;
-  font-weight: 850;
-  letter-spacing: -0.06em;
-}
-
-.kl-brand-name span {
-  color: var(--brand-accent);
+  display: none;
 }
 
 .kl-topbar-search {
@@ -284,14 +285,14 @@ a {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 18px;
+  padding: 12px 20px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--brand-accent);
   color: #ffffff;
-  font-weight: 900;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 14px 28px rgba(16, 185, 129, 0.18), 0 0 0 4px rgba(16, 185, 129, 0.08);
+  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.3);
 }
 
 .kl-ghost-button {
@@ -418,11 +419,10 @@ a {
 
 .kl-login-grid-bg {
   background:
-    linear-gradient(90deg, rgba(55, 50, 47, 0.045) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(55, 50, 47, 0.045) 1px, transparent 1px),
-    radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.74), transparent 36%),
-    #f7f5f3;
-  background-size: 40px 40px, 40px 40px, auto, auto;
+    linear-gradient(90deg, rgba(15, 23, 42, 0.032) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.032) 1px, transparent 1px),
+    #f8fafc;
+  background-size: 44px 44px, 44px 44px, auto;
 }
 
 .kl-field-icon {
@@ -546,16 +546,17 @@ a {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 44px;
-  padding: 11px 20px;
-  border-radius: 999px;
+  min-height: 40px;
+  padding: 9px 18px;
+  border-radius: 8px;
   border: none;
   background: var(--brand-accent);
   color: #ffffff;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 12px 24px -12px rgba(18, 185, 129, 0.65);
+  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.28);
+  letter-spacing: -0.01em;
 }
 
 .skin-btn-ghost {
@@ -634,11 +635,11 @@ a {
 }
 
 .kl-card {
-  border-radius: 16px !important;
+  border-radius: 12px !important;
 }
 
 .kl-surface {
-  border-radius: 16px !important;
+  border-radius: 12px !important;
 }
 
 .kl-card::before,
@@ -661,7 +662,7 @@ a {
   background: var(--brand-accent) !important;
   color: #ffffff !important;
   border: 1px solid var(--brand-accent) !important;
-  box-shadow: 0 12px 24px -12px rgba(18, 185, 129, 0.62) !important;
+  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.28) !important;
 }
 
 .kl-action-soft {
@@ -730,10 +731,7 @@ a {
 
 .public-shell {
   min-height: 100dvh;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.72), transparent 30%),
-    linear-gradient(180deg, #fbfaf8 0%, var(--bg-main) 100%),
-    var(--bg-main);
+  background: var(--bg-main);
   overflow-x: hidden;
 }
 
