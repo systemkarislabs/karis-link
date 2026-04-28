@@ -100,7 +100,7 @@ export default function PublicTenantClient({
         minHeight: '100dvh',
         color: 'var(--text-main)',
         fontFamily: 'var(--font-body)',
-        padding: 'max(14px, env(safe-area-inset-top)) 20px 56px',
+        padding: 'max(12px, env(safe-area-inset-top)) 18px 52px',
       }}
     >
       {/* Botão de acesso admin */}
@@ -108,7 +108,7 @@ export default function PublicTenantClient({
         style={{
           width: '100%',
           maxWidth: '980px',
-          margin: '0 auto 8px',
+          margin: '0 auto 4px',
           display: 'flex',
           justifyContent: 'flex-end',
           alignItems: 'flex-start',
@@ -122,7 +122,7 @@ export default function PublicTenantClient({
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              padding: '10px 15px',
+              padding: '10px 14px',
               textDecoration: 'none',
               fontSize: 13,
             }}
@@ -143,7 +143,7 @@ export default function PublicTenantClient({
             Ir para o painel
           </a>
         ) : (
-            <button
+          <button
             type="button"
             onClick={() => setIsLoginOpen(true)}
             className="kl-action kl-action-soft kl-press"
@@ -151,8 +151,8 @@ export default function PublicTenantClient({
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              padding: '10px 15px',
-              color: 'var(--text-soft)',
+              padding: '10px 14px',
+              color: 'var(--text-main)',
               fontSize: 13,
               cursor: 'pointer',
             }}
@@ -162,13 +162,13 @@ export default function PublicTenantClient({
                 width: 22,
                 height: 22,
                 borderRadius: '999px',
-                background: 'rgba(226, 232, 240, 0.9)',
+                background: 'var(--brand-accent-soft)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <Icon name="lock" size={14} color="var(--text-soft)" />
+              <Icon name="lock" size={14} color="var(--brand-accent-strong)" />
             </span>
             Acesso da empresa
           </button>
@@ -180,34 +180,34 @@ export default function PublicTenantClient({
         className="kl-page-enter"
         style={{
           width: '100%',
-          maxWidth: '420px',
+          maxWidth: '430px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
         }}
       >
-        <header style={{ textAlign: 'center', marginBottom: 30 }}>
+        <header style={{ textAlign: 'center', marginBottom: 28 }}>
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: 12,
+              marginBottom: 10,
               width: '100%',
             }}
           >
             {tenantLogo ? (
               <span
                 style={{
-                  width: 92,
-                  height: 92,
+                  width: 88,
+                  height: 88,
                   display: 'inline-grid',
                   placeItems: 'center',
                   borderRadius: '999px',
                   border: '1px solid var(--border)',
                   background: '#ffffff',
-                  boxShadow: '0 18px 46px rgba(9, 9, 11, 0.08)',
+                  boxShadow: '0 14px 34px rgba(17, 24, 39, 0.075)',
                   overflow: 'hidden',
                 }}
               >
@@ -224,14 +224,14 @@ export default function PublicTenantClient({
                 width={168}
                 height={60}
                 priority
-                style={{ width: 96, maxWidth: '60%', height: 'auto', objectFit: 'contain' }}
+                style={{ width: 92, maxWidth: '58%', height: 'auto', objectFit: 'contain' }}
               />
             )}
           </div>
 
           <div
             style={{
-              marginBottom: 18,
+              marginBottom: 16,
               display: 'flex',
               justifyContent: 'center',
             }}
@@ -241,17 +241,17 @@ export default function PublicTenantClient({
               alt="Karis Labs"
               width={132}
               height={64}
-              style={{ width: 74, maxWidth: '42%', height: 'auto', objectFit: 'contain', opacity: 0.88 }}
+              style={{ width: 62, maxWidth: '38%', height: 'auto', objectFit: 'contain', opacity: 0.82 }}
             />
           </div>
 
           <p
             style={{
               color: 'var(--text-soft)',
-              maxWidth: 340,
+              maxWidth: 330,
               margin: '0 auto',
-              fontSize: 14,
-              lineHeight: 1.35,
+              fontSize: 13,
+              lineHeight: 1.45,
             }}
           >
             Conecte seus leads ao especialista certo com a experiência Karis Link.
@@ -259,7 +259,7 @@ export default function PublicTenantClient({
         </header>
 
         {/* Lista de vendedores */}
-        <div className="kl-stagger" style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
+        <div className="kl-stagger" style={{ display: 'flex', flexDirection: 'column', gap: 14, width: '100%' }}>
           {sellers.map((seller) => (
             <a
               key={seller.id}
@@ -269,19 +269,19 @@ export default function PublicTenantClient({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                gap: 18,
-                padding: '14px 18px',
+                gap: 16,
+                padding: '13px 16px',
                 background: 'var(--card-bg)',
                 color: 'var(--text-main)',
-                borderRadius: 18,
+                borderRadius: 17,
                 textDecoration: 'none',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
                 <div
                   style={{
-                    width: 44,
-                    height: 44,
+                    width: 42,
+                    height: 42,
                     borderRadius: '999px',
                     overflow: 'hidden',
                     flexShrink: 0,
@@ -309,8 +309,8 @@ export default function PublicTenantClient({
 
                 <span
                   style={{
-                    fontWeight: 700,
-                    fontSize: 16,
+                    fontWeight: 800,
+                    fontSize: 15,
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -384,8 +384,8 @@ export default function PublicTenantClient({
               width: '100%',
               maxWidth: 380,
               background: '#ffffff',
-              borderRadius: 24,
-              padding: 28,
+              borderRadius: 20,
+              padding: 26,
             }}
             onClick={(event) => event.stopPropagation()}
           >

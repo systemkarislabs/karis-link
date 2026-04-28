@@ -45,7 +45,8 @@ export default function AdminSidebar({
           left: 0,
           right: 0,
           height: 70,
-          background: '#ffffff',
+          background: 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(14px)',
           borderBottom: '1px solid var(--border)',
           zIndex: 99,
           alignItems: 'center',
@@ -69,7 +70,7 @@ export default function AdminSidebar({
             width: 44,
             height: 44,
             padding: 10,
-            borderRadius: 14,
+            borderRadius: 13,
             border: '1px solid var(--border)',
             background: '#ffffff',
             cursor: 'pointer',
@@ -102,7 +103,8 @@ export default function AdminSidebar({
           left: 272,
           right: 0,
           height: 72,
-          background: '#ffffff',
+          background: 'rgba(255, 255, 255, 0.94)',
+          backdropFilter: 'blur(16px)',
           borderBottom: '1px solid var(--border)',
           zIndex: 80,
           display: 'flex',
@@ -139,7 +141,7 @@ export default function AdminSidebar({
               height: 36,
               borderRadius: 10,
               border: '1px solid var(--border)',
-              background: '#fafafa',
+              background: '#ffffff',
               display: 'grid',
               placeItems: 'center',
               cursor: 'pointer',
@@ -154,9 +156,9 @@ export default function AdminSidebar({
         className={`sidebar-container ${isOpen ? 'open' : ''}`}
         style={{
           width: 272,
-          background: '#ffffff',
+          background: 'rgba(255, 255, 255, 0.98)',
           borderRight: '1px solid var(--border)',
-          padding: '26px 20px 22px',
+          padding: '24px 20px 22px',
           display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
@@ -166,7 +168,7 @@ export default function AdminSidebar({
           transition: 'transform 0.24s ease',
         } as CSSProperties}
       >
-        <div style={{ marginBottom: 30, paddingBottom: 22, borderBottom: '1px solid #f4f4f5' }}>
+        <div style={{ marginBottom: 28, paddingBottom: 22, borderBottom: '1px solid #f0f1f2' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="kl-brand-mark">K</span>
             <div>
@@ -179,7 +181,7 @@ export default function AdminSidebar({
             style={{
               marginTop: 8,
               marginLeft: 48,
-              color: '#09090b',
+              color: 'var(--text-main)',
               fontSize: 10,
               fontWeight: 900,
               letterSpacing: '0.18em',
@@ -202,7 +204,7 @@ export default function AdminSidebar({
               marginTop: 3,
               marginLeft: 48,
               display: 'block',
-              opacity: 0.9,
+              opacity: 0.86,
             }}
           />
         </div>
@@ -222,15 +224,15 @@ export default function AdminSidebar({
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
-                  padding: '11px 16px',
+                  padding: '11px 15px',
                   borderRadius: 13,
                   textDecoration: 'none',
                   fontSize: 14,
                   fontWeight: isActive ? 900 : 700,
                   letterSpacing: '-0.02em',
-                  color: isActive ? 'var(--brand-accent)' : '#52525b',
-                  background: isActive ? 'rgba(16, 185, 129, 0.09)' : 'transparent',
-                  border: isActive ? '1px solid rgba(16,185,129,.24)' : '1px solid transparent',
+                  color: isActive ? 'var(--brand-accent-strong)' : 'var(--sidebar-text)',
+                  background: isActive ? 'rgba(18, 185, 129, 0.085)' : 'transparent',
+                  border: isActive ? '1px solid rgba(18,185,129,.22)' : '1px solid transparent',
                 }}
               >
                 <Icon name={item.icon} size={18} color="currentColor" />
@@ -240,7 +242,7 @@ export default function AdminSidebar({
           })}
         </nav>
 
-        <div style={{ paddingTop: 16, borderTop: '1px solid #f4f4f5' }}>
+        <div style={{ paddingTop: 16, borderTop: '1px solid #f0f1f2' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
             <span
               style={{
@@ -250,16 +252,16 @@ export default function AdminSidebar({
                 placeItems: 'center',
                 borderRadius: '50%',
                 border: '1px solid var(--border)',
-                color: '#71717a',
+                color: 'var(--text-soft)',
               }}
             >
               <Icon name="user" size={16} />
             </span>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 12, fontWeight: 900, color: '#18181b' }}>
+              <div style={{ fontSize: 12, fontWeight: 900, color: 'var(--text-main)' }}>
                 {isSuper ? 'Super Admin' : tenantName}
               </div>
-              <div style={{ fontSize: 11, color: '#71717a' }}>karislabs.com.br</div>
+              <div style={{ fontSize: 11, color: 'var(--text-soft)' }}>karisnegocios.com.br</div>
             </div>
           </div>
           <LogoutButton isSuper={isSuper} slug={slug} />

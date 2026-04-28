@@ -81,22 +81,23 @@ button:disabled {
 }
 
 :root {
-  --brand-dark: #09090b;
-  --brand-accent: #10b981;
-  --brand-accent-strong: #059669;
-  --brand-accent-soft: #ecfdf5;
+  --brand-dark: #07111f;
+  --brand-accent: #12b981;
+  --brand-accent-strong: #079669;
+  --brand-accent-soft: #eefbf6;
   --sidebar-bg: #ffffff;
-  --sidebar-text: #52525b;
-  --sidebar-active-bg: rgba(16, 185, 129, 0.08);
-  --sidebar-active-text: #10b981;
-  --bg-main: #fafafa;
+  --sidebar-text: #505a66;
+  --sidebar-active-bg: rgba(18, 185, 129, 0.085);
+  --sidebar-active-text: #079669;
+  --bg-main: #f7f8f7;
   --card-bg: #ffffff;
-  --text-main: #09090b;
-  --border: #e4e4e7;
-  --text-soft: #71717a;
-  --shadow-soft: 0 1px 2px rgba(9, 9, 11, 0.04), 0 8px 24px rgba(9, 9, 11, 0.035);
-  --shadow-lift: 0 10px 30px rgba(9, 9, 11, 0.08);
-  --radius-lg: 16px;
+  --surface-muted: #fbfbfa;
+  --text-main: #111827;
+  --border: #e6e8eb;
+  --text-soft: #667085;
+  --shadow-soft: 0 1px 2px rgba(17, 24, 39, 0.035), 0 12px 34px rgba(17, 24, 39, 0.04);
+  --shadow-lift: 0 16px 42px rgba(17, 24, 39, 0.085);
+  --radius-lg: 14px;
   --radius-xl: 18px;
   --font-header: 'Manrope', sans-serif;
   --font-body: 'Manrope', sans-serif;
@@ -118,7 +119,9 @@ button:disabled {
 body {
   margin: 0;
   font-family: var(--font-body);
-  background: var(--bg-main);
+  background:
+    radial-gradient(circle at 50% -10%, rgba(18, 185, 129, 0.035), transparent 34%),
+    var(--bg-main);
   color: var(--text-main);
   transition: background 0.3s, color 0.3s;
   text-rendering: geometricPrecision;
@@ -142,26 +145,26 @@ a {
 .main-content {
   margin-left: 272px;
   flex: 1;
-  padding: 108px 36px 44px;
+  padding: 104px 38px 48px;
   transition: margin-left 0.3s ease;
 }
 
 .kl-brand-mark {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   display: inline-grid;
   place-items: center;
-  border-radius: 12px;
-  background: #050505;
+  border-radius: 11px;
+  background: var(--brand-dark);
   color: #ffffff;
   font-size: 19px;
   font-weight: 900;
   letter-spacing: -0.06em;
-  box-shadow: 0 10px 22px rgba(9, 9, 11, 0.14);
+  box-shadow: 0 12px 26px rgba(7, 17, 31, 0.14);
 }
 
 .kl-brand-name {
-  color: #09090b;
+  color: var(--text-main);
   font-size: 19px;
   font-weight: 900;
   letter-spacing: -0.05em;
@@ -186,12 +189,12 @@ a {
 
 .kl-topbar-search input {
   width: 100%;
-  height: 36px;
+  height: 38px;
   padding: 0 14px 0 40px !important;
   border: 1px solid var(--border) !important;
-  border-radius: 12px !important;
-  background: #fafafa !important;
-  color: #18181b !important;
+  border-radius: 13px !important;
+  background: var(--surface-muted) !important;
+  color: var(--text-main) !important;
   font-size: 13px;
 }
 
@@ -216,16 +219,16 @@ a {
 
 .kl-panel-title {
   margin: 0;
-  color: #050505;
+  color: var(--text-main);
   font-size: 27px;
   font-weight: 900;
   line-height: 1.08;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.048em;
 }
 
 .kl-panel-subtitle {
   margin: 6px 0 0;
-  color: #52525b;
+  color: var(--text-soft);
   font-size: 14px;
   line-height: 1.45;
 }
@@ -243,7 +246,7 @@ a {
   gap: 12px;
   padding-bottom: 16px;
   margin-bottom: 24px;
-  border-bottom: 1px solid #f1f1f2;
+  border-bottom: 1px solid #f0f1f2;
 }
 
 .kl-card-icon {
@@ -251,10 +254,10 @@ a {
   height: 42px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: 13px;
   border: 1px solid var(--border);
   background: #ffffff;
-  color: #18181b;
+  color: var(--text-main);
   flex-shrink: 0;
 }
 
@@ -262,10 +265,10 @@ a {
   width: 100%;
   min-height: 44px;
   padding: 11px 15px !important;
-  border-radius: 12px !important;
+  border-radius: 13px !important;
   border: 1px solid var(--border) !important;
-  background: #fafafa !important;
-  color: #18181b !important;
+  background: var(--surface-muted) !important;
+  color: var(--text-main) !important;
 }
 
 .kl-soft-field:focus {
@@ -281,12 +284,12 @@ a {
   gap: 8px;
   padding: 12px 18px;
   border: 0;
-  border-radius: 12px;
-  background: #10b981;
+  border-radius: 13px;
+  background: var(--brand-accent);
   color: #ffffff;
   font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 12px 24px rgba(16, 185, 129, 0.18);
+  box-shadow: 0 14px 28px rgba(18, 185, 129, 0.18);
 }
 
 .kl-ghost-button {
@@ -296,10 +299,10 @@ a {
   justify-content: center;
   gap: 8px;
   padding: 9px 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid var(--border);
-  background: #fafafa;
-  color: #09090b;
+  background: var(--surface-muted);
+  color: var(--text-main);
   font-size: 12px;
   font-weight: 800;
   text-decoration: none;
@@ -340,10 +343,10 @@ a {
   height: 50px;
   display: grid;
   place-items: center;
-  border-radius: 15px;
+  border-radius: 999px;
   background: #dff8ee;
   border: 1px solid #b7efd8;
-  color: #10b981;
+  color: var(--brand-accent);
   font-weight: 900;
   font-size: 22px;
   flex-shrink: 0;
@@ -412,7 +415,9 @@ a {
 }
 
 .kl-login-grid-bg {
-  background: #ffffff;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(18, 185, 129, 0.045), transparent 32%),
+    #ffffff;
 }
 
 .kl-field-icon {
@@ -443,16 +448,16 @@ a {
 
 .skin-header h1 {
   margin: 0;
-  color: #09090b;
+  color: var(--text-main);
   font-size: 26px;
   font-weight: 900;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.045em;
   line-height: 1.08;
 }
 
 .skin-header p {
   margin: 5px 0 0;
-  color: #52525b;
+  color: var(--text-soft);
   font-size: 14px;
   line-height: 1.45;
 }
@@ -464,7 +469,7 @@ a {
 }
 
 .skin-stat-card {
-  padding: 28px !important;
+  padding: 26px !important;
 }
 
 .skin-stat-top {
@@ -476,7 +481,7 @@ a {
 }
 
 .skin-stat-title {
-  color: #09090b;
+  color: var(--text-main);
   font-size: 13px;
   font-weight: 600;
   line-height: 1.35;
@@ -487,8 +492,8 @@ a {
   height: 34px;
   display: grid;
   place-items: center;
-  border-radius: 10px;
-  border: 1px solid #f4f4f5;
+  border-radius: 12px;
+  border: 1px solid #f0f1f2;
 }
 
 .skin-stat-value {
@@ -507,7 +512,7 @@ a {
 
 .skin-card-title {
   margin: 0 0 24px;
-  color: #09090b;
+  color: var(--text-main);
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -516,11 +521,11 @@ a {
 .skin-input {
   width: 100%;
   min-height: 46px;
-  background: #fafafa !important;
-  border: 1px solid #e4e4e7 !important;
-  border-radius: 12px !important;
+  background: var(--surface-muted) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 13px !important;
   padding: 12px 16px !important;
-  color: #09090b !important;
+  color: var(--text-main) !important;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -537,14 +542,14 @@ a {
   gap: 8px;
   min-height: 44px;
   padding: 11px 20px;
-  border-radius: 12px;
+  border-radius: 13px;
   border: none;
   background: var(--brand-accent);
   color: #ffffff;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 14px -4px rgba(16, 185, 129, 0.6);
+  box-shadow: 0 12px 24px -12px rgba(18, 185, 129, 0.65);
 }
 
 .skin-btn-ghost {
@@ -572,16 +577,16 @@ a {
 }
 
 .main-content > header h1 {
-  color: #09090b !important;
+  color: var(--text-main) !important;
   font-size: 26px !important;
   font-weight: 900 !important;
-  letter-spacing: -0.04em !important;
+  letter-spacing: -0.045em !important;
   line-height: 1.08 !important;
   margin: 0 !important;
 }
 
 .main-content > header p {
-  color: #52525b !important;
+  color: var(--text-soft) !important;
   font-size: 14px !important;
   line-height: 1.45 !important;
   margin-top: 5px !important;
@@ -590,10 +595,10 @@ a {
 .main-content input:not([type='hidden']),
 .main-content select,
 .main-content textarea {
-  background: #fafafa !important;
-  border: 1px solid #e4e4e7 !important;
-  border-radius: 12px !important;
-  color: #09090b !important;
+  background: var(--surface-muted) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 13px !important;
+  color: var(--text-main) !important;
   min-height: 44px;
 }
 
@@ -605,9 +610,9 @@ a {
 }
 
 .main-content .super-admin-form-card {
-  border-radius: 24px !important;
-  border: 1px solid rgba(228, 228, 231, 0.68) !important;
-  box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(230, 232, 235, 0.86) !important;
+  box-shadow: var(--shadow-soft) !important;
 }
 
 .kl-page-enter {
@@ -618,16 +623,16 @@ a {
 .kl-surface {
   position: relative;
   background: var(--card-bg) !important;
-  border: 1px solid rgba(228, 228, 231, 0.68) !important;
+  border: 1px solid rgba(230, 232, 235, 0.88) !important;
   box-shadow: var(--shadow-soft) !important;
 }
 
 .kl-card {
-  border-radius: 24px !important;
+  border-radius: 20px !important;
 }
 
 .kl-surface {
-  border-radius: 24px !important;
+  border-radius: 20px !important;
 }
 
 .kl-card::before,
@@ -641,7 +646,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 12px !important;
+  border-radius: 13px !important;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
@@ -650,19 +655,19 @@ a {
   background: var(--brand-accent) !important;
   color: #ffffff !important;
   border: 1px solid var(--brand-accent) !important;
-  box-shadow: 0 4px 14px -4px rgba(16, 185, 129, 0.48) !important;
+  box-shadow: 0 12px 24px -12px rgba(18, 185, 129, 0.62) !important;
 }
 
 .kl-action-soft {
-  background: #f4f4f5 !important;
-  color: #3f3f46 !important;
+  background: #ffffff !important;
+  color: var(--text-main) !important;
   border: 1px solid var(--border) !important;
-  box-shadow: none !important;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.03) !important;
 }
 
 .kl-input {
   min-height: 46px;
-  border-radius: 12px !important;
+  border-radius: 13px !important;
   border: 1px solid var(--border) !important;
   box-shadow: none;
 }
@@ -670,7 +675,7 @@ a {
 .kl-icon-bubble {
   display: inline-grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: 13px;
   background: var(--brand-accent-soft);
   color: var(--brand-accent-strong);
 }
@@ -702,9 +707,9 @@ a {
 .sidebar-link::after {
   content: '';
   position: absolute;
-  inset: 8px;
+  inset: 7px;
   z-index: -1;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--sidebar-active-bg);
   opacity: 0;
   transform: scaleX(0.92);
@@ -719,7 +724,9 @@ a {
 
 .public-shell {
   min-height: 100dvh;
-  background: var(--bg-main);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(18, 185, 129, 0.035), transparent 30%),
+    var(--bg-main);
   overflow-x: hidden;
 }
 

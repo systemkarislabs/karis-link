@@ -37,26 +37,26 @@ export default function SuperLoginClient() {
         style={{
           width: '100%',
           maxWidth: 420,
-          borderRadius: 28,
+          borderRadius: 24,
           background: '#ffffff',
-          padding: '40px 40px 36px',
-          border: '1px solid rgba(228, 228, 231, 0.84)',
-          boxShadow: '0 22px 70px rgba(9, 9, 11, 0.08)',
+          padding: '38px 40px 34px',
+          border: '1px solid rgba(230, 232, 235, 0.92)',
+          boxShadow: '0 22px 70px rgba(17, 24, 39, 0.075)',
         }}
       >
-        <div style={{ textAlign: 'center', marginBottom: 34 }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <Image
             src="/karis-link-logo.png"
             alt="Karis Link"
             width={156}
             height={56}
             priority
-            style={{ width: 116, maxWidth: '68%', height: 'auto', objectFit: 'contain', marginBottom: 22 }}
+            style={{ width: 104, maxWidth: '64%', height: 'auto', objectFit: 'contain', marginBottom: 22 }}
           />
-          <h1 style={{ margin: 0, color: '#050505', fontSize: 21, fontWeight: 900, letterSpacing: '-0.07em', textTransform: 'uppercase' }}>
+          <h1 style={{ margin: 0, color: 'var(--text-main)', fontSize: 21, fontWeight: 900, letterSpacing: '-0.055em', textTransform: 'uppercase' }}>
             Acesso Administrativo
           </h1>
-          <p style={{ margin: '6px 0 0', color: '#71717a', fontSize: 13 }}>
+          <p style={{ margin: '6px 0 0', color: 'var(--text-soft)', fontSize: 13 }}>
             Entre com suas credenciais de super-admin.
           </p>
         </div>
@@ -102,13 +102,13 @@ export default function SuperLoginClient() {
           <SubmitButton />
         </form>
 
-        <div style={{ margin: '32px 0 0', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ margin: '30px 0 0', display: 'flex', justifyContent: 'center' }}>
           <Image
             src="/karis-labs-logo.png"
             alt="Karis Labs"
             width={128}
             height={62}
-            style={{ width: 116, height: 'auto', objectFit: 'contain', opacity: 0.88 }}
+            style={{ width: 92, height: 'auto', objectFit: 'contain', opacity: 0.82 }}
           />
         </div>
       </section>
