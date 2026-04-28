@@ -9,15 +9,31 @@ export async function GET(
   const { slug, qrSlug } = await params;
 
   try {
-    const qrCode = await prisma.qrCode.findFirst({
+    let qrCode = await prisma.qrCode.findFirst({
       where: {
         slug: qrSlug,
         tenant: { slug },
       },
       select: {
         tenantId: true,
+        tenant: { select: { slug: true } },
       },
     });
+
+    if (!qrCode) {
+      const matches = await prisma.qrCode.findMany({
+        where: { slug: qrSlug },
+        select: {
+          tenantId: true,
+          tenant: { select: { slug: true } },
+        },
+        take: 2,
+      });
+
+      if (matches.length === 1) {
+        qrCode = matches[0];
+      }
+    }
 
     if (!qrCode) {
       return NextResponse.json({ error: 'QR Code nao encontrado' }, { status: 404 });
@@ -34,7 +50,7 @@ export async function GET(
       },
     });
 
-    const redirectUrl = new URL(`/${slug}`, request.url);
+    const redirectUrl = new URL(`/${qrCode.tenant.slug}`, request.url);
     redirectUrl.searchParams.set('kl_track', '1');
     const response = NextResponse.redirect(redirectUrl);
     await attachTrackingCookie(response, pageClickEvent.id, qrCode.tenantId);

@@ -7,6 +7,7 @@ import AdminSidebar from '@/components/AdminSidebar';
 import CompanyLogoField from '@/components/CompanyLogoField';
 import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
 import { Icon } from '@/components/Icon';
+import { buildTenantPublicUrl } from '@/lib/public-url';
 
 export const dynamic = 'force-dynamic';
 
@@ -132,7 +133,7 @@ export default async function SuperAdminPage() {
                         </button>
                       </form>
 
-                      <Link href={`/${tenant.slug}`} target="_blank" className="kl-ghost-button kl-press">
+                      <Link href={buildTenantPublicUrl(tenant.slug)} target="_blank" className="kl-ghost-button kl-press">
                         <Icon name="arrowRight" size={14} />
                         Acessar
                       </Link>

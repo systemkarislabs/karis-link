@@ -19,3 +19,7 @@ export function buildCampaignUrl(tenantSlug: string, channel: 'qr' | 'bio', camp
   const channelPath = channel === 'bio' ? 'bio' : 'go';
   return `${getPublicBaseUrl()}/${tenantSlug}/${channelPath}/${campaignSlug}`;
 }
+
+export function buildTenantPublicUrl(tenantSlug: string) {
+  return `${getPublicBaseUrl()}/${tenantSlug}`;
+}

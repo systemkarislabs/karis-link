@@ -9,15 +9,31 @@ export async function GET(
   const { slug, bioSlug } = await params;
 
   try {
-    const bioCampaign = await prisma.qrCode.findFirst({
+    let bioCampaign = await prisma.qrCode.findFirst({
       where: {
         slug: bioSlug,
         tenant: { slug },
       },
       select: {
         tenantId: true,
+        tenant: { select: { slug: true } },
       },
     });
+
+    if (!bioCampaign) {
+      const matches = await prisma.qrCode.findMany({
+        where: { slug: bioSlug },
+        select: {
+          tenantId: true,
+          tenant: { select: { slug: true } },
+        },
+        take: 2,
+      });
+
+      if (matches.length === 1) {
+        bioCampaign = matches[0];
+      }
+    }
 
     if (!bioCampaign) {
       return NextResponse.json({ error: 'Link da bio nao encontrado' }, { status: 404 });
@@ -34,7 +50,7 @@ export async function GET(
       },
     });
 
-    const redirectUrl = new URL(`/${slug}`, request.url);
+    const redirectUrl = new URL(`/${bioCampaign.tenant.slug}`, request.url);
     redirectUrl.searchParams.set('kl_track', '1');
     const response = NextResponse.redirect(redirectUrl);
     await attachTrackingCookie(response, pageClickEvent.id, bioCampaign.tenantId);
