@@ -9,16 +9,31 @@ datasource db {
 }
 
 model Tenant {
+  id                  String       @id @default(cuid())
+  name                String
+  slug                String       @unique
+  adminUser           String
+  adminPass           String
+  logo                String?
+  active              Boolean      @default(true)
+  cityGroupingEnabled Boolean      @default(false)
+  createdAt           DateTime     @default(now())
+  sellers             Seller[]
+  qrcodes             QrCode[]
+  cities              TenantCity[]
+}
+
+model TenantCity {
   id        String   @id @default(cuid())
   name      String
-  slug      String   @unique
-  adminUser String
-  adminPass String
-  logo      String?
   active    Boolean  @default(true)
-  createdAt DateTime @default(now())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
   sellers   Seller[]
-  qrcodes   QrCode[]
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, active])
+  @@unique([tenantId, name])
 }
 
 model SuperAdminAccount {
@@ -37,9 +52,12 @@ model Seller {
   clicks    Int      @default(0)
   tenantId  String
   tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  cityId    String?
+  city      TenantCity? @relation(fields: [cityId], references: [id])
   events    SellerClickEvent[]
 
   @@index([tenantId])
+  @@index([cityId])
 }
 
 model QrCode {

@@ -1,5 +1,5 @@
 import { getTenantSession } from '@/lib/auth';
-import { ensureTenantLogoColumn } from '@/lib/db-compat';
+import { ensureTenantCitySupport, ensureTenantLogoColumn } from '@/lib/db-compat';
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import PublicTenantClient from './PublicTenantClient';
@@ -32,6 +32,7 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
   const isTrackedCampaignVisit = resolvedSearchParams?.kl_track === '1';
 
   await ensureTenantLogoColumn();
+  await ensureTenantCitySupport();
 
   const tenant = await prisma.tenant.findUnique({
     where: { slug },
@@ -40,14 +41,16 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
       name: true,
       slug: true,
       logo: true,
+      cityGroupingEnabled: true,
     },
   });
   if (!tenant) notFound();
 
   const [sellers, session] = await Promise.all([
     prisma.seller.findMany({
-      where: { tenantId: tenant.id },
+      where: tenant.cityGroupingEnabled ? { tenantId: tenant.id, city: { active: true } } : { tenantId: tenant.id },
       orderBy: { name: 'asc' },
+      include: { city: { select: { name: true } } },
     }),
     getTenantSession(),
   ]);
@@ -62,7 +65,9 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
         id: seller.id,
         name: seller.name,
         image: seller.image,
+        cityName: seller.city?.name ?? null,
       }))}
+      cityGroupingEnabled={tenant.cityGroupingEnabled}
       isAdminLogged={session?.slug === slug}
     />
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useId, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { Icon } from './Icon';
 
 type Props = {
@@ -19,8 +19,59 @@ export default function CompanyLogoField({
   const [preview, setPreview] = useState('');
   const [error, setError] = useState('');
   const [fileName, setFileName] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
   const inputId = useId();
+  const fieldRef = useRef<HTMLDivElement>(null);
   const activePreview = preview || currentLogo || '';
+
+  useEffect(() => {
+    const form = fieldRef.current?.closest('form');
+    if (!form) return;
+
+    function handleSubmit(event: SubmitEvent) {
+      if (isProcessing) {
+        event.preventDefault();
+        event.stopPropagation();
+        setError('Aguarde a logo terminar de processar antes de salvar.');
+      }
+    }
+
+    form.addEventListener('submit', handleSubmit);
+    return () => form.removeEventListener('submit', handleSubmit);
+  }, [isProcessing]);
+
+  function resizeLogo(dataUrl: string) {
+    return new Promise<string>((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        const size = 640;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+
+        const context = canvas.getContext('2d');
+        if (!context) {
+          reject(new Error('Nao foi possivel processar a imagem.'));
+          return;
+        }
+
+        const scale = Math.min(size / image.width, size / image.height);
+        const width = image.width * scale;
+        const height = image.height * scale;
+        const x = (size - width) / 2;
+        const y = (size - height) / 2;
+
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, size, size);
+        context.drawImage(image, x, y, width, height);
+
+        const webp = canvas.toDataURL('image/webp', 0.9);
+        resolve(webp.startsWith('data:image/webp') ? webp : canvas.toDataURL('image/jpeg', 0.9));
+      };
+      image.onerror = () => reject(new Error('Nao foi possivel processar essa logo. Tente outro arquivo.'));
+      image.src = dataUrl;
+    });
+  }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -41,16 +92,35 @@ export default function CompanyLogoField({
     }
 
     const reader = new FileReader();
-    reader.onload = () => {
-      setError('');
-      setFileName(file.name);
-      setPreview(typeof reader.result === 'string' ? reader.result : '');
+    setIsProcessing(true);
+    setPreview('');
+    reader.onload = async () => {
+      try {
+        const result = typeof reader.result === 'string' ? reader.result : '';
+        const resizedLogo = await resizeLogo(result);
+        setError('');
+        setFileName(file.name);
+        setPreview(resizedLogo);
+      } catch (resizeError) {
+        setError(resizeError instanceof Error ? resizeError.message : 'Nao foi possivel processar essa logo.');
+        setFileName('');
+        setPreview('');
+        event.target.value = '';
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+    reader.onerror = () => {
+      setIsProcessing(false);
+      setFileName('');
+      setPreview('');
+      setError('Nao foi possivel ler esse arquivo. Tente outra imagem.');
     };
     reader.readAsDataURL(file);
   }
 
   return (
-    <div style={{ display: 'grid', gap: compact ? 8 : 10 }}>
+    <div ref={fieldRef} style={{ display: 'grid', gap: compact ? 8 : 10 }}>
       <input type="hidden" name={inputName} value={preview} />
       <label htmlFor={inputId} style={{ fontSize: 12, fontWeight: 800, color: '#18181b' }}>
         {label}
@@ -132,7 +202,7 @@ export default function CompanyLogoField({
             fontWeight: 700,
           }}
         >
-          {fileName || (activePreview ? 'Logo atual' : 'PNG, JPG ou WEBP')}
+          {isProcessing ? 'Processando...' : fileName || (activePreview ? 'Logo atual' : 'PNG, JPG ou WEBP')}
         </span>
       </label>
       {error ? <div style={{ color: '#dc2626', fontSize: 12, fontWeight: 700 }}>{error}</div> : null}

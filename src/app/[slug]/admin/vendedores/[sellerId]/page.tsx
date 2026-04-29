@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma';
 import { requireTenantAuth } from '@/lib/auth';
+import { ensureTenantCitySupport } from '@/lib/db-compat';
 import AdminSidebar from '@/components/AdminSidebar';
 import SellerImageField from '@/components/SellerImageField';
 import Link from 'next/link';
@@ -10,6 +11,8 @@ export const dynamic = 'force-dynamic';
 type PageProps = { params: Promise<{ slug: string; sellerId: string }> };
 
 export default async function EditSellerPage(props: PageProps) {
+  await ensureTenantCitySupport();
+
   const params = await props.params;
   const { slug, sellerId } = params;
   const { tenantId } = await requireTenantAuth(slug);
@@ -20,6 +23,12 @@ export default async function EditSellerPage(props: PageProps) {
       select: {
         id: true,
         name: true,
+        cityGroupingEnabled: true,
+        cities: {
+          where: { active: true },
+          orderBy: { name: 'asc' },
+          select: { id: true, name: true },
+        },
       },
     }),
     prisma.seller.findFirst({
@@ -138,6 +147,38 @@ export default async function EditSellerPage(props: PageProps) {
                 />
               </div>
             </div>
+
+            {tenant?.cityGroupingEnabled ? (
+              <div style={{ display: 'grid', gap: 8 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)' }}>Cidade do vendedor</label>
+                <select
+                  name="cityId"
+                  required
+                  defaultValue={seller.cityId ?? ''}
+                  style={{
+                    padding: '13px 16px',
+                    borderRadius: 12,
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-main)',
+                    color: 'var(--text-main)',
+                  }}
+                >
+                  <option value="" disabled>
+                    Selecione a cidade
+                  </option>
+                  {tenant.cities.map((city) => (
+                    <option key={city.id} value={city.id}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
+                {tenant.cities.length === 0 ? (
+                  <span style={{ fontSize: 12, color: '#be123c', fontWeight: 700 }}>
+                    Peça ao super admin para cadastrar uma cidade ativa.
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
 
             <div style={{ display: 'grid', gap: 12 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)' }}>Foto do vendedor</div>

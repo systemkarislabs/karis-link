@@ -1,8 +1,17 @@
 import Link from 'next/link';
 import { requireSuperAuth } from '@/lib/auth';
-import { ensureTenantLogoColumn } from '@/lib/db-compat';
+import { ensureTenantCitySupport, ensureTenantLogoColumn } from '@/lib/db-compat';
 import prisma from '@/lib/prisma';
-import { createTenant, deleteTenant, toggleTenant, updateTenantAdminPassword, updateTenantLogo } from './actions';
+import {
+  createTenant,
+  createTenantCity,
+  deleteTenant,
+  toggleTenant,
+  toggleTenantCity,
+  toggleTenantCityGrouping,
+  updateTenantAdminPassword,
+  updateTenantLogo,
+} from './actions';
 import AdminSidebar from '@/components/AdminSidebar';
 import CompanyLogoField from '@/components/CompanyLogoField';
 import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
@@ -23,6 +32,7 @@ function initials(name: string) {
 export default async function SuperAdminPage() {
   await requireSuperAuth();
   await ensureTenantLogoColumn();
+  await ensureTenantCitySupport();
 
   const tenants = await prisma.tenant.findMany({
     orderBy: { name: 'asc' },
@@ -33,6 +43,16 @@ export default async function SuperAdminPage() {
       adminUser: true,
       logo: true,
       active: true,
+      cityGroupingEnabled: true,
+      cities: {
+        orderBy: { name: 'asc' },
+        select: {
+          id: true,
+          name: true,
+          active: true,
+          _count: { select: { sellers: true } },
+        },
+      },
       _count: { select: { sellers: true } },
     },
   });
@@ -385,6 +405,168 @@ export default async function SuperAdminPage() {
                         <Icon name="key" size={15} />
                       </button>
                     </form>
+                    <div
+                      style={{
+                        marginTop: 4,
+                        paddingTop: 12,
+                        borderTop: '1px solid var(--border)',
+                        display: 'grid',
+                        gap: 10,
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                        <div>
+                          <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-main)' }}>Cidades/Filiais</div>
+                          <div style={{ fontSize: 11, color: 'var(--text-soft)', marginTop: 2 }}>
+                            {tenant.cityGroupingEnabled ? 'Agrupamento ativo na pagina publica.' : 'Agrupamento desativado.'}
+                          </div>
+                        </div>
+                        <span
+                          style={{
+                            padding: '3px 8px',
+                            borderRadius: 999,
+                            fontSize: 10,
+                            fontWeight: 800,
+                            background: tenant.cityGroupingEnabled ? '#f0fdf4' : '#f8fafc',
+                            color: tenant.cityGroupingEnabled ? '#15803d' : '#64748b',
+                            border: `1px solid ${tenant.cityGroupingEnabled ? '#bbf7d0' : '#e2e8f0'}`,
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {tenant.cityGroupingEnabled ? 'Ativo' : 'Inativo'}
+                        </span>
+                      </div>
+
+                      <form action={createTenantCity} style={{ display: 'flex', gap: 8 }}>
+                        <input type="hidden" name="tenantId" value={tenant.id} />
+                        <input
+                          name="cityName"
+                          placeholder="Ex: Recife"
+                          required
+                          maxLength={80}
+                          className="kl-soft-field"
+                          style={{ minWidth: 0, flex: 1, fontSize: 12 }}
+                        />
+                        <button
+                          type="submit"
+                          className="kl-press"
+                          aria-label={`Adicionar cidade para ${tenant.name}`}
+                          style={{
+                            width: 38,
+                            height: 38,
+                            border: 'none',
+                            borderRadius: 8,
+                            background: 'var(--brand-accent)',
+                            color: '#fff',
+                            display: 'grid',
+                            placeItems: 'center',
+                            cursor: 'pointer',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <Icon name="plus" size={15} color="#fff" />
+                        </button>
+                      </form>
+
+                      {tenant.cities.length > 0 ? (
+                        <div style={{ display: 'grid', gap: 6 }}>
+                          {tenant.cities.map((city) => (
+                            <div
+                              key={city.id}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: 8,
+                                padding: '8px 10px',
+                                border: '1px solid var(--border)',
+                                borderRadius: 8,
+                                background: city.active ? '#fff' : '#f8fafc',
+                              }}
+                            >
+                              <div style={{ minWidth: 0 }}>
+                                <div
+                                  style={{
+                                    fontSize: 12,
+                                    fontWeight: 800,
+                                    color: city.active ? 'var(--text-main)' : 'var(--text-soft)',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  {city.name}
+                                </div>
+                                <div style={{ fontSize: 10, color: 'var(--text-soft)', marginTop: 1 }}>
+                                  {city._count.sellers} {city._count.sellers === 1 ? 'vendedor' : 'vendedores'}
+                                </div>
+                              </div>
+                              <form action={toggleTenantCity} style={{ margin: 0 }}>
+                                <input type="hidden" name="tenantId" value={tenant.id} />
+                                <input type="hidden" name="cityId" value={city.id} />
+                                <button
+                                  type="submit"
+                                  title={city.active ? 'Desativar cidade' : 'Ativar cidade'}
+                                  style={{
+                                    width: 30,
+                                    height: 30,
+                                    border: '1px solid var(--border)',
+                                    borderRadius: 7,
+                                    background: '#fff',
+                                    color: city.active ? '#f59e0b' : '#16a34a',
+                                    display: 'grid',
+                                    placeItems: 'center',
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  <Icon name="power" size={13} />
+                                </button>
+                              </form>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: 11, color: 'var(--text-soft)', lineHeight: 1.45 }}>
+                          Cadastre ao menos uma cidade antes de ativar a separacao.
+                        </div>
+                      )}
+
+                      <form action={toggleTenantCityGrouping} style={{ display: 'grid', gap: 8 }}>
+                        <input type="hidden" name="tenantId" value={tenant.id} />
+                        {!tenant.cityGroupingEnabled && tenant._count.sellers > 0 && tenant.cities.some((city) => city.active) ? (
+                          <select
+                            name="defaultCityId"
+                            required
+                            className="kl-soft-field"
+                            style={{ fontSize: 12 }}
+                            defaultValue=""
+                          >
+                            <option value="" disabled>
+                              Cidade padrao para vendedores atuais
+                            </option>
+                            {tenant.cities
+                              .filter((city) => city.active)
+                              .map((city) => (
+                                <option key={city.id} value={city.id}>
+                                  {city.name}
+                                </option>
+                              ))}
+                          </select>
+                        ) : null}
+                        <button
+                          type="submit"
+                          className="kl-ghost-button kl-press"
+                          style={{
+                            width: '100%',
+                            fontSize: 12,
+                            color: tenant.cityGroupingEnabled ? '#f59e0b' : 'var(--brand-accent-strong)',
+                          }}
+                        >
+                          <Icon name={tenant.cityGroupingEnabled ? 'x' : 'check'} size={13} />
+                          {tenant.cityGroupingEnabled ? 'Desativar separacao' : 'Ativar separacao por cidade'}
+                        </button>
+                      </form>
+                    </div>
                   </div>
                 </div>
               ))}

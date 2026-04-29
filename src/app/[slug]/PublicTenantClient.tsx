@@ -10,6 +10,7 @@ type SellerCard = {
   id: string;
   name: string;
   image: string | null;
+  cityName?: string | null;
 };
 
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
   tenantLogo?: string | null;
   hasTrackingContext: boolean;
   sellers: SellerCard[];
+  cityGroupingEnabled: boolean;
   isAdminLogged: boolean;
 };
 
@@ -64,6 +66,7 @@ export default function PublicTenantClient({
   tenantLogo,
   hasTrackingContext,
   sellers,
+  cityGroupingEnabled,
   isAdminLogged,
 }: Props) {
   const [isLoginOpen, setIsLoginOpen] = React.useState(false);
@@ -92,6 +95,104 @@ export default function PublicTenantClient({
     background: 'var(--surface-muted)',
     color: 'var(--text-main)',
   };
+
+  const sellerSections = cityGroupingEnabled
+    ? Array.from(
+        sellers.reduce((sections, seller) => {
+          const cityName = seller.cityName || 'Outras cidades';
+          const citySellers = sections.get(cityName) ?? [];
+          citySellers.push(seller);
+          sections.set(cityName, citySellers);
+          return sections;
+        }, new Map<string, SellerCard[]>())
+      ).sort(([cityA], [cityB]) => cityA.localeCompare(cityB, 'pt-BR'))
+    : [];
+
+  function renderSellerCard(seller: SellerCard) {
+    return (
+      <a
+        key={seller.id}
+        href={`/api/redirect/${seller.id}${hasTrackingContext ? '?tracked=1' : ''}`}
+        className="seller-public-card kl-card kl-card-hover kl-press"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 16,
+          padding: '14px 17px',
+          background: 'var(--card-bg)',
+          color: 'var(--text-main)',
+          borderRadius: 16,
+          textDecoration: 'none',
+          boxShadow: '0 1px 2px rgba(55,50,47,.055), 0 8px 24px rgba(15,28,63,.06)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
+          <div
+            style={{
+              width: 46,
+              height: 46,
+              borderRadius: '999px',
+              overflow: 'hidden',
+              flexShrink: 0,
+              background: 'var(--brand-accent-soft)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--brand-accent-strong)',
+              fontWeight: 800,
+              fontSize: 14,
+              border: '1px solid rgba(22,163,74,0.18)',
+            }}
+          >
+            {seller.image ? (
+              <img
+                src={seller.image}
+                alt={seller.name}
+                loading="lazy"
+                decoding="async"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ) : (
+              getInitials(seller.name)
+            )}
+          </div>
+
+          <span
+            style={{
+              fontWeight: 800,
+              fontSize: 15,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            {seller.name}
+          </span>
+        </div>
+
+        <div
+          className="seller-whatsapp-bubble"
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: '999px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'var(--brand-accent-soft)',
+            color: 'var(--brand-accent)',
+            border: '1px solid rgba(22,163,74,0.18)',
+            flexShrink: 0,
+            transition: 'background 0.2s ease, color 0.2s ease',
+          }}
+        >
+          <Icon name="whatsapp" size={18} color="currentColor" />
+        </div>
+      </a>
+    );
+  }
 
   return (
     <div
@@ -223,89 +324,24 @@ export default function PublicTenantClient({
 
         {/* Lista de vendedores */}
         <div className="kl-stagger" style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
-          {sellers.map((seller) => (
-            <a
-              key={seller.id}
-              href={`/api/redirect/${seller.id}${hasTrackingContext ? '?tracked=1' : ''}`}
-              className="seller-public-card kl-card kl-card-hover kl-press"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 16,
-                padding: '14px 17px',
-                background: 'var(--card-bg)',
-                color: 'var(--text-main)',
-                borderRadius: 16,
-                textDecoration: 'none',
-                boxShadow: '0 1px 2px rgba(55,50,47,.055), 0 8px 24px rgba(15,28,63,.06)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-                <div
-                  style={{
-                    width: 46,
-                    height: 46,
-                    borderRadius: '999px',
-                    overflow: 'hidden',
-                    flexShrink: 0,
-                    background: 'var(--brand-accent-soft)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--brand-accent-strong)',
-                    fontWeight: 800,
-                    fontSize: 14,
-                    border: '1px solid rgba(22,163,74,0.18)',
-                  }}
-                >
-                  {seller.image ? (
-                    <img
-                      src={seller.image}
-                      alt={seller.name}
-                      loading="lazy"
-                      decoding="async"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  ) : (
-                    getInitials(seller.name)
-                  )}
-                </div>
-
-                <span
-                  style={{
-                    fontWeight: 800,
-                    fontSize: 15,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    letterSpacing: '-0.02em',
-                  }}
-                >
-                  {seller.name}
-                </span>
-              </div>
-
-              <div
-                className="seller-whatsapp-bubble"
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: '999px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'var(--brand-accent-soft)',
-                  color: 'var(--brand-accent)',
-                  border: '1px solid rgba(22,163,74,0.18)',
-                  flexShrink: 0,
-                  transition: 'background 0.2s ease, color 0.2s ease',
-                }}
-              >
-                <Icon name="whatsapp" size={18} color="currentColor" />
-              </div>
-            </a>
-          ))}
+          {cityGroupingEnabled
+            ? sellerSections.map(([cityName, citySellers]) => (
+                <section key={cityName} style={{ display: 'grid', gap: 10 }}>
+                  <h2
+                    style={{
+                      margin: '4px 4px 0',
+                      color: 'var(--text-main)',
+                      fontSize: 14,
+                      fontWeight: 850,
+                      letterSpacing: '-0.02em',
+                    }}
+                  >
+                    {cityName}
+                  </h2>
+                  <div style={{ display: 'grid', gap: 12 }}>{citySellers.map((seller) => renderSellerCard(seller))}</div>
+                </section>
+              ))
+            : sellers.map((seller) => renderSellerCard(seller))}
 
           {sellers.length === 0 && (
             <div

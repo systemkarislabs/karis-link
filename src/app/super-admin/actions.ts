@@ -9,7 +9,7 @@ import {
   verifyPassword,
 } from '@/lib/auth';
 import { logAuditEvent } from '@/lib/audit';
-import { ensureTenantLogoColumn } from '@/lib/db-compat';
+import { ensureTenantCitySupport, ensureTenantLogoColumn } from '@/lib/db-compat';
 import prisma from '@/lib/prisma';
 import { assertRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { ensureSuperAdminTableAvailable, findStoredSuperAdminAccount } from '@/lib/super-admin';
@@ -35,6 +35,16 @@ function assertPasswordPolicy(password: string, fieldLabel = 'A senha') {
 
   if (!isPasswordLengthAllowed(password)) {
     throw new Error(`${fieldLabel} deve ter no maximo 72 bytes para manter seguranca com bcrypt.`);
+  }
+}
+
+function normalizeCityName(value: string) {
+  return value.trim().replace(/\s+/g, ' ');
+}
+
+function assertValidTenantId(id: string) {
+  if (!id || id.length > 128 || !/^[A-Za-z0-9_-]+$/.test(id)) {
+    throw new Error('Empresa invalida.');
   }
 }
 
@@ -201,6 +211,175 @@ export async function updateTenantLogo(formData: FormData) {
   redirect('/super-admin');
 }
 
+export async function createTenantCity(formData: FormData) {
+  await requireSuperAuth();
+  await ensureTenantCitySupport();
+
+  const tenantId = String(formData.get('tenantId') || '').trim();
+  const name = normalizeCityName(String(formData.get('cityName') || ''));
+
+  assertValidTenantId(tenantId);
+
+  if (name.length < 2 || name.length > 80) {
+    throw new Error('Informe uma cidade com 2 a 80 caracteres.');
+  }
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: { id: true },
+  });
+
+  if (!tenant) {
+    throw new Error('Empresa nao encontrada.');
+  }
+
+  const existingCity = await prisma.tenantCity.findFirst({
+    where: {
+      tenantId,
+      name: { equals: name, mode: 'insensitive' },
+    },
+    select: { id: true },
+  });
+
+  if (existingCity) {
+    throw new Error('Essa cidade ja esta cadastrada para a empresa.');
+  }
+
+  const city = await prisma.tenantCity.create({
+    data: { tenantId, name },
+    select: { id: true },
+  });
+
+  await logAuditEvent({
+    event: 'tenant_city_create',
+    tenantId,
+    metadata: { cityId: city.id, name },
+  });
+
+  redirect('/super-admin');
+}
+
+export async function toggleTenantCity(formData: FormData) {
+  await requireSuperAuth();
+  await ensureTenantCitySupport();
+
+  const tenantId = String(formData.get('tenantId') || '').trim();
+  const cityId = String(formData.get('cityId') || '').trim();
+
+  assertValidTenantId(tenantId);
+  assertValidTenantId(cityId);
+
+  const city = await prisma.tenantCity.findFirst({
+    where: { id: cityId, tenantId },
+    select: {
+      id: true,
+      active: true,
+      _count: { select: { sellers: true } },
+      tenant: { select: { cityGroupingEnabled: true } },
+    },
+  });
+
+  if (!city) {
+    throw new Error('Cidade nao encontrada.');
+  }
+
+  if (city.active && city.tenant.cityGroupingEnabled && city._count.sellers > 0) {
+    throw new Error('Nao e possivel desativar uma cidade com vendedores enquanto a separacao por cidade estiver ativa.');
+  }
+
+  await prisma.tenantCity.update({
+    where: { id: city.id },
+    data: { active: !city.active },
+  });
+
+  await logAuditEvent({
+    event: 'tenant_city_toggle',
+    tenantId,
+    metadata: { cityId: city.id, newActive: !city.active },
+  });
+
+  redirect('/super-admin');
+}
+
+export async function toggleTenantCityGrouping(formData: FormData) {
+  await requireSuperAuth();
+  await ensureTenantCitySupport();
+
+  const tenantId = String(formData.get('tenantId') || '').trim();
+  const defaultCityId = String(formData.get('defaultCityId') || '').trim();
+
+  assertValidTenantId(tenantId);
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: {
+      id: true,
+      cityGroupingEnabled: true,
+      cities: { where: { active: true }, select: { id: true }, take: 1 },
+      _count: { select: { sellers: true } },
+    },
+  });
+
+  if (!tenant) {
+    throw new Error('Empresa nao encontrada.');
+  }
+
+  const shouldEnable = !tenant.cityGroupingEnabled;
+
+  if (!shouldEnable) {
+    await prisma.tenant.update({
+      where: { id: tenantId },
+      data: { cityGroupingEnabled: false },
+    });
+
+    await logAuditEvent({
+      event: 'tenant_city_grouping_toggle',
+      tenantId,
+      metadata: { enabled: false },
+    });
+
+    redirect('/super-admin');
+  }
+
+  if (tenant.cities.length === 0) {
+    throw new Error('Cadastre pelo menos uma cidade ativa antes de ativar a separacao por cidade.');
+  }
+
+  const sellersWithoutCity = await prisma.seller.count({
+    where: { tenantId, cityId: null },
+  });
+
+  if (sellersWithoutCity > 0) {
+    assertValidTenantId(defaultCityId);
+    const defaultCity = await prisma.tenantCity.findFirst({
+      where: { id: defaultCityId, tenantId, active: true },
+      select: { id: true },
+    });
+
+    if (!defaultCity) {
+      throw new Error('Selecione uma cidade padrao ativa para os vendedores atuais.');
+    }
+
+    await prisma.seller.updateMany({
+      where: { tenantId, cityId: null },
+      data: { cityId: defaultCity.id },
+    });
+  }
+
+  await prisma.tenant.update({
+    where: { id: tenantId },
+    data: { cityGroupingEnabled: true },
+  });
+
+  await logAuditEvent({
+    event: 'tenant_city_grouping_toggle',
+    tenantId,
+    metadata: { enabled: true, sellersAssigned: sellersWithoutCity },
+  });
+
+  redirect('/super-admin');
+}
+
 export async function toggleTenant(id: string, active: boolean) {
   await requireSuperAuth();
   await prisma.tenant.update({ where: { id }, data: { active: !active } });
@@ -284,6 +463,7 @@ export async function updateSuperAdminCredentials(formData: FormData) {
 
 export async function deleteTenant(formData: FormData) {
   await requireSuperAuth();
+  await ensureTenantCitySupport();
 
   const id = String(formData.get('id') || '').trim();
   if (!id) {
@@ -320,6 +500,10 @@ export async function deleteTenant(formData: FormData) {
     });
 
     await tx.seller.deleteMany({
+      where: { tenantId: tenant.id },
+    });
+
+    await tx.tenantCity.deleteMany({
       where: { tenantId: tenant.id },
     });
 

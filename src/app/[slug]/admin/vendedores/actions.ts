@@ -2,6 +2,7 @@
 
 import { requireTenantAuth } from '@/lib/auth';
 import { logAuditEvent } from '@/lib/audit';
+import { ensureTenantCitySupport } from '@/lib/db-compat';
 import { validateImageBuffer, validateImageDataUrl, validateImageFile } from '@/lib/image-validation';
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
@@ -50,10 +51,41 @@ async function resolveSellerImage(imageDataUrl: string, imageFile: File | null |
   return null;
 }
 
+async function resolveSellerCity(tenantId: string, cityId: string) {
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: { cityGroupingEnabled: true },
+  });
+
+  if (!tenant?.cityGroupingEnabled) {
+    return null;
+  }
+
+  if (!cityId) {
+    throw new Error('Selecione a cidade do vendedor.');
+  }
+
+  assertValidRecordId(cityId, 'Cidade');
+
+  const city = await prisma.tenantCity.findFirst({
+    where: { id: cityId, tenantId, active: true },
+    select: { id: true },
+  });
+
+  if (!city) {
+    throw new Error('Selecione uma cidade ativa da empresa.');
+  }
+
+  return city.id;
+}
+
 export async function createSeller(formData: FormData) {
+  await ensureTenantCitySupport();
+
   const name = String(formData.get('name') || '').trim();
   const phone = String(formData.get('phone') || '').trim();
   const slug = String(formData.get('slug') || '').trim().toLowerCase();
+  const cityId = String(formData.get('cityId') || '').trim();
   const imageFile = formData.get('image') as File | null;
   const imageDataUrl = String(formData.get('imageDataUrl') || '').trim();
 
@@ -62,6 +94,7 @@ export async function createSeller(formData: FormData) {
 
   validateSellerFields(name, phone);
   const imageBase64 = await resolveSellerImage(imageDataUrl, imageFile);
+  const resolvedCityId = await resolveSellerCity(tenantId, cityId);
 
   const seller = await prisma.seller.create({
     data: {
@@ -69,6 +102,7 @@ export async function createSeller(formData: FormData) {
       phone,
       image: imageBase64,
       tenantId,
+      cityId: resolvedCityId,
     },
     select: { id: true },
   });
@@ -108,10 +142,13 @@ export async function deleteSeller(formData: FormData) {
 }
 
 export async function updateSeller(formData: FormData) {
+  await ensureTenantCitySupport();
+
   const id = String(formData.get('id') || '').trim();
   const name = String(formData.get('name') || '').trim();
   const phone = String(formData.get('phone') || '').trim();
   const slug = String(formData.get('slug') || '').trim().toLowerCase();
+  const cityId = String(formData.get('cityId') || '').trim();
   const imageFile = formData.get('image') as File | null;
   const imageDataUrl = String(formData.get('imageDataUrl') || '').trim();
   const removeImage = String(formData.get('removeImage') || '') === 'on';
@@ -121,6 +158,7 @@ export async function updateSeller(formData: FormData) {
   const { tenantId } = await requireTenantAuth(slug);
 
   validateSellerFields(name, phone);
+  const resolvedCityId = await resolveSellerCity(tenantId, cityId);
 
   const seller = await prisma.seller.findFirst({
     where: { id, tenantId },
@@ -148,6 +186,7 @@ export async function updateSeller(formData: FormData) {
       name,
       phone,
       image: imageValue,
+      cityId: resolvedCityId,
     },
   });
 

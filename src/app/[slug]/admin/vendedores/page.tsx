@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma';
 import { requireTenantAuth } from '@/lib/auth';
+import { ensureTenantCitySupport } from '@/lib/db-compat';
 import AdminSidebar from '@/components/AdminSidebar';
 import SellerImageField from '@/components/SellerImageField';
 import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
@@ -15,6 +16,7 @@ type SellerMetric = {
   name: string;
   phone: string;
   image: string | null;
+  cityName: string | null;
   totalClicks: number;
   qrClicks: number;
   bioClicks: number;
@@ -32,20 +34,35 @@ function getInitials(name: string) {
 type PageProps = { params: Promise<{ slug: string }> };
 
 export default async function VendedoresPage(props: PageProps) {
+  await ensureTenantCitySupport();
+
   const params = await props.params;
   const { slug } = params;
   const { tenantId } = await requireTenantAuth(slug);
 
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
-    select: { id: true, name: true },
+    select: {
+      id: true,
+      name: true,
+      cityGroupingEnabled: true,
+      cities: {
+        where: { active: true },
+        orderBy: { name: 'asc' },
+        select: { id: true, name: true },
+      },
+    },
   });
 
   const analyticsStart = new Date();
   analyticsStart.setDate(analyticsStart.getDate() - 90);
 
   const [sellers, sellerEvents] = await Promise.all([
-    prisma.seller.findMany({ where: { tenantId }, orderBy: { name: 'asc' } }),
+    prisma.seller.findMany({
+      where: { tenantId },
+      orderBy: { name: 'asc' },
+      include: { city: { select: { name: true } } },
+    }),
     prisma.sellerClickEvent.findMany({
       where: { seller: { tenantId }, source: { in: ['qr', 'bio'] }, createdAt: { gte: analyticsStart } },
       orderBy: { createdAt: 'desc' },
@@ -60,6 +77,7 @@ export default async function VendedoresPage(props: PageProps) {
       name: seller.name,
       phone: seller.phone,
       image: seller.image,
+      cityName: seller.city?.name ?? null,
       totalClicks: events.length,
       qrClicks: events.filter((event) => event.source === 'qr').length,
       bioClicks: events.filter((event) => event.source === 'bio').length,
@@ -186,7 +204,12 @@ export default async function VendedoresPage(props: PageProps) {
                         {seller.name}
                       </div>
                       <div style={{ fontSize: 12, color: 'var(--text-soft)', marginTop: 1 }}>{seller.phone}</div>
-                      <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                      <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+                        {tenant?.cityGroupingEnabled && seller.cityName ? (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 6, fontSize: 11, fontWeight: 600, background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0' }}>
+                            {seller.cityName}
+                          </span>
+                        ) : null}
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 6, fontSize: 11, fontWeight: 600, background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0' }}>
                           {seller.qrClicks} QR
                         </span>
@@ -277,6 +300,26 @@ export default async function VendedoresPage(props: PageProps) {
                   <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>WhatsApp *</label>
                   <input name="phone" placeholder="55 (11) 99999-9999" required className="kl-soft-field" />
                 </div>
+                {tenant?.cityGroupingEnabled ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>Cidade *</label>
+                    <select name="cityId" required className="kl-soft-field" defaultValue="">
+                      <option value="" disabled>
+                        Selecione a cidade
+                      </option>
+                      {tenant.cities.map((city) => (
+                        <option key={city.id} value={city.id}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </select>
+                    {tenant.cities.length === 0 ? (
+                      <span style={{ fontSize: 11, color: '#be123c', fontWeight: 700 }}>
+                        Peça ao super admin para cadastrar uma cidade ativa.
+                      </span>
+                    ) : null}
+                  </div>
+                ) : null}
                 <SellerImageField />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 4 }}>
                   <button type="reset" className="kl-ghost-button kl-press" style={{ minHeight: 40 }}>
