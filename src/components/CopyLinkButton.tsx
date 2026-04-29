@@ -64,7 +64,7 @@ export default function CopyLinkButton({
   const variantStyle: React.CSSProperties =
     variant === 'primary'
       ? {
-          background: copied ? '#16a34a' : 'var(--brand-dark, #020515)',
+          background: copied ? '#16a34a' : 'var(--brand-navy)',
           color: '#fff',
           border: 'none',
         }

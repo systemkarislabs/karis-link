@@ -18,7 +18,7 @@ function SubmitButton() {
         marginTop: 8,
         padding: '12px',
         borderRadius: 8,
-        background: '#17DB4E',
+        background: 'var(--brand-accent)',
         color: '#fff',
         border: 'none',
         fontWeight: 700,
@@ -37,24 +37,23 @@ export default function LoginClient({ slug }: { slug: string }) {
   const inputStyle: React.CSSProperties = {
     padding: '11px 14px',
     borderRadius: 8,
-    border: '1px solid #e5e7eb',
+    border: '1px solid var(--border)',
     fontSize: 14,
     outline: 'none',
-    background: '#ffffff',
-    color: '#0f172a',
-    WebkitTextFillColor: '#0f172a',
-    caretColor: '#0f172a',
-    boxShadow: '0 0 0 1000px #ffffff inset',
+    background: 'var(--card-bg)',
+    color: 'var(--text-main)',
+    WebkitTextFillColor: 'var(--text-main)',
+    caretColor: 'var(--text-main)',
     appearance: 'none',
   };
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f4f6f8', fontFamily: 'Poppins, sans-serif', padding: 20 }}>
-      <div style={{ background: '#fff', borderRadius: 16, padding: 40, width: '100%', maxWidth: 380, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+    <div className="kl-login-grid-bg" style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div className="kl-card" style={{ padding: 40, width: '100%', maxWidth: 380 }}>
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#17DB4E', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff', fontWeight: 700, marginBottom: 12 }}>K</div>
+          <div className="kl-icon-bubble" style={{ width: 52, height: 52, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: 'var(--brand-accent)', fontWeight: 700, marginBottom: 12 }}>K</div>
           <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Painel Admin</h1>
-          <p style={{ color: '#6b7280', fontSize: 13, marginTop: 4 }}>/{slug}</p>
+          <p style={{ color: 'var(--text-soft)', fontSize: 13, marginTop: 4 }}>/{slug}</p>
         </div>
 
         {state?.error ? (
@@ -65,11 +64,11 @@ export default function LoginClient({ slug }: { slug: string }) {
 
         <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <input type="hidden" name="slug" value={slug} />
-          <label style={{ display: 'grid', gap: 6, fontSize: 12, fontWeight: 700, color: '#0f172a' }}>
+          <label style={{ display: 'grid', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--text-main)' }}>
             Usuario
             <input name="username" placeholder="Usuario" required autoComplete="username" style={inputStyle} />
           </label>
-          <label style={{ display: 'grid', gap: 6, fontSize: 12, fontWeight: 700, color: '#0f172a' }}>
+          <label style={{ display: 'grid', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--text-main)' }}>
             Senha
             <input name="password" type="password" placeholder="Senha" required autoComplete="current-password" style={inputStyle} />
           </label>
@@ -77,7 +76,7 @@ export default function LoginClient({ slug }: { slug: string }) {
         </form>
 
         <div style={{ textAlign: 'center', marginTop: 16 }}>
-          <Link href={`/${slug}`} style={{ color: '#9ca3af', fontSize: 12, textDecoration: 'none' }}>
+          <Link href={`/${slug}`} style={{ color: 'var(--text-soft)', fontSize: 12, textDecoration: 'none' }}>
             Voltar para a pagina publica
           </Link>
         </div>

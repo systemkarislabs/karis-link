@@ -106,7 +106,7 @@ export default async function SuperAdminPage() {
                       )}
 
                       <div style={{ minWidth: 0 }}>
-                        <h3 style={{ margin: 0, color: '#09090b', fontSize: 18, fontWeight: 900, letterSpacing: '-0.05em' }}>
+                        <h3 style={{ margin: 0, color: 'var(--text-main)', fontSize: 18, fontWeight: 900, letterSpacing: '-0.05em' }}>
                           {tenant.name}
                         </h3>
                         <p style={{ margin: '2px 0 0', color: '#71717a', fontSize: 12 }}>
@@ -166,7 +166,7 @@ export default async function SuperAdminPage() {
                             border: 0,
                             borderRadius: 9,
                             background: 'transparent',
-                            color: '#10b981',
+                            color: 'var(--brand-accent)',
                             cursor: 'pointer',
                           }}
                         >

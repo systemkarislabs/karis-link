@@ -55,7 +55,7 @@ export default function ThemeToggle() {
         position: 'relative',
         width: 50,
         height: 26,
-        background: dark ? '#17DB4E' : '#e2e8f0',
+        background: dark ? 'var(--brand-accent)' : '#e2e8f0',
         borderRadius: 13,
         cursor: 'pointer',
         transition: '0.3s',

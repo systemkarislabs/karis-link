@@ -72,7 +72,7 @@ export default function ConfirmDialog({
             borderRadius: '50%',
             display: 'grid',
             placeItems: 'center',
-            background: destructive ? 'rgba(225, 29, 72, 0.10)' : 'rgba(23, 219, 78, 0.12)',
+            background: destructive ? 'rgba(225, 29, 72, 0.10)' : 'var(--brand-accent-soft)',
             color: destructive ? '#e11d48' : '#16a34a',
             flexShrink: 0,
           }}
@@ -126,7 +126,7 @@ export default function ConfirmDialog({
             padding: '10px 18px',
             borderRadius: 10,
             border: 'none',
-            background: destructive ? '#e11d48' : '#17DB4E',
+            background: destructive ? '#e11d48' : 'var(--brand-accent)',
             color: '#fff',
             fontWeight: 700,
             cursor: 'pointer',
