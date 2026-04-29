@@ -103,18 +103,8 @@ export default function PublicTenantClient({
         padding: 'max(16px, env(safe-area-inset-top)) 18px 56px',
       }}
     >
-      {/* Header navy premium */}
-      <header className="premium-public-header" style={{ position: 'relative' }}>
-        <Image
-          src="/karis-link-logo-full.png"
-          alt="Karis Link"
-          width={220}
-          height={80}
-          priority
-          className="premium-public-logo"
-          style={{ width: 140, height: 'auto', objectFit: 'contain', display: 'block', margin: '0 auto' }}
-        />
-
+      {/* Acesso administrativo discreto */}
+      <header style={{ position: 'relative', width: '100%', maxWidth: 424, minHeight: 42, margin: '0 auto 10px' }}>
         {/* Botão de acesso admin — canto superior direito do header */}
         <div style={{ position: 'absolute', top: 0, right: 0 }}>
           {isAdminLogged ? (
@@ -126,12 +116,13 @@ export default function PublicTenantClient({
                 gap: 6,
                 padding: '7px 12px',
                 borderRadius: 8,
-                background: 'rgba(255,255,255,0.10)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                color: 'rgba(255,255,255,0.85)',
+                background: 'var(--card-bg)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-main)',
                 fontSize: 12,
                 fontWeight: 700,
                 textDecoration: 'none',
+                boxShadow: 'var(--shadow-soft)',
               }}
             >
               <Icon name="lock" size={13} color="currentColor" />
@@ -147,12 +138,13 @@ export default function PublicTenantClient({
                 gap: 6,
                 padding: '7px 12px',
                 borderRadius: 8,
-                background: 'rgba(255,255,255,0.10)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                color: 'rgba(255,255,255,0.85)',
+                background: 'var(--card-bg)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-main)',
                 fontSize: 12,
                 fontWeight: 700,
                 cursor: 'pointer',
+                boxShadow: 'var(--shadow-soft)',
               }}
             >
               <Icon name="lock" size={13} color="currentColor" />
