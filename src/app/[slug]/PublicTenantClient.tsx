@@ -106,7 +106,7 @@ export default function PublicTenantClient({
       {/* Acesso administrativo discreto */}
       <header className="premium-public-header" style={{ position: 'relative', minHeight: 92 }}>
         {/* Botão de acesso admin — canto superior direito do header */}
-        <div style={{ position: 'absolute', top: 0, right: 0 }}>
+        <div style={{ position: 'absolute', top: 16, right: 24 }}>
           {isAdminLogged ? (
             <a
               href={`/${slug}/admin`}
