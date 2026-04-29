@@ -104,7 +104,7 @@ export default function PublicTenantClient({
       }}
     >
       {/* Acesso administrativo discreto */}
-      <header style={{ position: 'relative', width: '100%', maxWidth: 424, minHeight: 42, margin: '0 auto 10px' }}>
+      <header style={{ position: 'relative', width: '100%', minHeight: 56, margin: '0 0 18px' }}>
         {/* Botão de acesso admin — canto superior direito do header */}
         <div style={{ position: 'absolute', top: 0, right: 0 }}>
           {isAdminLogged ? (
@@ -167,7 +167,7 @@ export default function PublicTenantClient({
         }}
       >
         {/* Identidade da empresa */}
-        <div style={{ textAlign: 'center', marginBottom: 28, marginTop: 8 }}>
+        <div style={{ textAlign: 'center', marginBottom: 28, marginTop: 0 }}>
           {tenantLogo ? (
             <div
               style={{
