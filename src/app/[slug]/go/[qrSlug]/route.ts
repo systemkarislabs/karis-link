@@ -8,12 +8,18 @@ export async function GET(
   { params }: { params: Promise<{ slug: string; qrSlug: string }> }
 ) {
   const { slug, qrSlug } = await params;
+  const safeSlug = slug.trim().toLowerCase();
+  const safeQrSlug = qrSlug.trim().toLowerCase();
+
+  if (!/^[a-z0-9]{3,50}$/.test(safeSlug) || !/^[a-z0-9]{6,32}$/.test(safeQrSlug)) {
+    return NextResponse.json({ error: 'QR Code nao encontrado' }, { status: 404 });
+  }
 
   try {
     let qrCode = await prisma.qrCode.findFirst({
       where: {
-        slug: qrSlug,
-        tenant: { slug },
+        slug: safeQrSlug,
+        tenant: { slug: safeSlug },
       },
       select: {
         tenantId: true,
@@ -23,7 +29,7 @@ export async function GET(
 
     if (!qrCode) {
       const matches = await prisma.qrCode.findMany({
-        where: { slug: qrSlug },
+        where: { slug: safeQrSlug },
         select: {
           tenantId: true,
           tenant: { select: { slug: true } },
@@ -44,7 +50,7 @@ export async function GET(
       data: {
         tenantId: qrCode.tenantId,
         source: 'qr',
-        campaign: qrSlug,
+        campaign: safeQrSlug,
       },
       select: {
         id: true,

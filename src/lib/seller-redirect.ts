@@ -3,7 +3,7 @@ import { clearTrackingCookieFromResponse, getTrackingCookie } from '@/lib/tracki
 import { NextResponse } from 'next/server';
 
 export async function handleSellerRedirect(sellerId: string, allowTracking = false) {
-  if (!sellerId) {
+  if (!sellerId || sellerId.length > 128 || !/^[A-Za-z0-9_-]+$/.test(sellerId)) {
     return NextResponse.json({ error: 'Missing sellerId' }, { status: 400 });
   }
 

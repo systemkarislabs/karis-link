@@ -210,6 +210,7 @@ export default async function SuperAdminPage() {
                               <Link
                                 href={buildTenantPublicUrl(tenant.slug)}
                                 target="_blank"
+                                rel="noopener noreferrer"
                                 title="Acessar página pública"
                                 style={{
                                   width: 30,

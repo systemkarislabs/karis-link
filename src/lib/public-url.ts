@@ -19,9 +19,9 @@ export function getPublicBaseUrl() {
 
 export function buildCampaignUrl(tenantSlug: string, channel: 'qr' | 'bio', campaignSlug: string) {
   const channelPath = channel === 'bio' ? 'bio' : 'go';
-  return `${getPublicBaseUrl()}/${tenantSlug}/${channelPath}/${campaignSlug}`;
+  return `${getPublicBaseUrl()}/${encodeURIComponent(tenantSlug)}/${channelPath}/${encodeURIComponent(campaignSlug)}`;
 }
 
 export function buildTenantPublicUrl(tenantSlug: string) {
-  return `${getPublicBaseUrl()}/${tenantSlug}`;
+  return `${getPublicBaseUrl()}/${encodeURIComponent(tenantSlug)}`;
 }

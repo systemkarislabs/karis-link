@@ -3,16 +3,9 @@ import type { NextConfig } from 'next';
 /**
  * Content Security Policy.
  *
- * O app ainda usa muitos `style` inline e fontes do Google, então a CSP
- * é relaxada com `unsafe-inline` em styles. Quando todos os estilos forem
- * migrados para CSS modules / Tailwind, remover `unsafe-inline` e
- * adicionar nonces.
- *
- * - default-src 'self': base segura.
- * - img-src: aceita data URIs (avatares em base64) e https (CDNs).
- * - font-src: Google Fonts.
- * - connect-src: necessário para o Resend (envio de email) em runtime.
- * - frame-ancestors: bloqueia iframe externo (já reforçado por X-Frame-Options).
+ * The app still has inline styles, so style-src remains relaxed until the UI is
+ * fully moved to CSS modules/Tailwind. The rest of the policy stays narrow:
+ * same-origin scripts/connect, no external framing, no plugins/objects.
  */
 const csp = [
   "default-src 'self'",
@@ -20,7 +13,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   "img-src 'self' data: blob: https:",
-  "connect-src 'self' https://api.resend.com",
+  "connect-src 'self'",
   "frame-ancestors 'self'",
   "base-uri 'self'",
   "form-action 'self' https://wa.me",

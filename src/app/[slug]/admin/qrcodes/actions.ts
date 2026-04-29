@@ -3,6 +3,7 @@
 import { randomBytes } from 'crypto';
 import { Prisma } from '@prisma/client';
 import { requireTenantAuth } from '@/lib/auth';
+import { logAuditEvent } from '@/lib/audit';
 import prisma from '@/lib/prisma';
 import { buildCampaignUrl } from '@/lib/public-url';
 import { revalidatePath } from 'next/cache';
@@ -15,10 +16,17 @@ function generateCampaignCode(length = 8) {
   return Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join('');
 }
 
+function assertValidTenantSlug(slug: string) {
+  if (!/^[a-z0-9]{3,50}$/.test(slug)) {
+    throw new Error('Empresa invalida.');
+  }
+}
+
 export async function createQrCode(formData: FormData) {
   const slug = String(formData.get('tenantSlug') || '').trim().toLowerCase();
   const name = String(formData.get('name') || '').trim();
   const channel = String(formData.get('channel') || 'qr').trim().toLowerCase();
+  assertValidTenantSlug(slug);
   const { tenantId } = await requireTenantAuth(slug);
   const normalizedChannel = channel === 'bio' ? 'bio' : 'qr';
 
@@ -44,6 +52,12 @@ export async function createQrCode(formData: FormData) {
         },
       });
 
+      await logAuditEvent({
+        event: 'qrcode_create',
+        tenantId,
+        metadata: { channel: normalizedChannel, campaignCode },
+      });
+
       revalidatePath(`/${slug}/admin/qrcodes`);
       redirect(`/${slug}/admin/qrcodes`);
     } catch (error) {
@@ -61,10 +75,20 @@ export async function createQrCode(formData: FormData) {
 export async function deleteQrCode(formData: FormData) {
   const id = String(formData.get('id') || '');
   const slug = String(formData.get('slug') || '').trim().toLowerCase();
+  assertValidTenantSlug(slug);
   const { tenantId } = await requireTenantAuth(slug);
+
+  if (!id || id.length > 128) {
+    throw new Error('Campanha invalida.');
+  }
 
   try {
     await prisma.qrCode.deleteMany({ where: { id, tenantId } });
+    await logAuditEvent({
+      event: 'qrcode_delete',
+      tenantId,
+      metadata: { id },
+    });
     revalidatePath(`/${slug}/admin/qrcodes`);
   } catch (error) {
     console.error('Delete error:', error);

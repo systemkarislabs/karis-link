@@ -4,6 +4,7 @@ import {
   clearTenantSession,
   hashPassword,
   isPasswordHash,
+  isPasswordLengthAllowed,
   setTenantSession,
   verifyPassword,
 } from '@/lib/auth';
@@ -14,7 +15,7 @@ import { redirect } from 'next/navigation';
 
 export async function handleTenantLogin(_: unknown, formData: FormData) {
   const slug = String(formData.get('slug') || '').trim().toLowerCase();
-  const user = String(formData.get('username') || '').trim();
+  const user = String(formData.get('username') || '').trim().toLowerCase();
   const pass = String(formData.get('password') || '');
   const ip = await getRequestIp();
 
@@ -25,6 +26,22 @@ export async function handleTenantLogin(_: unknown, formData: FormData) {
     windowMs: 10 * 60 * 1000,
     message: 'Muitas tentativas de login. Aguarde alguns minutos e tente novamente.',
   });
+
+  const hasSafeInput =
+    /^[a-z0-9]{3,50}$/.test(slug) &&
+    user.length >= 3 &&
+    user.length <= 50 &&
+    pass.length > 0 &&
+    isPasswordLengthAllowed(pass);
+
+  if (!hasSafeInput) {
+    await logAuditEvent({
+      event: 'tenant_login_failure',
+      actor: user || null,
+      metadata: { slug },
+    });
+    return { error: 'Usuario ou senha invalidos.' };
+  }
 
   const tenant = await prisma.tenant.findFirst({
     where: { slug, active: true },
@@ -38,7 +55,7 @@ export async function handleTenantLogin(_: unknown, formData: FormData) {
   });
   const passwordMatches = tenant ? await verifyPassword(pass, tenant.adminPass) : false;
 
-  if (!tenant || tenant.adminUser !== user || !passwordMatches) {
+  if (!tenant || tenant.adminUser.trim().toLowerCase() !== user || !passwordMatches) {
     await logAuditEvent({
       event: 'tenant_login_failure',
       actor: user,

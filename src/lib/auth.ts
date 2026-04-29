@@ -7,6 +7,7 @@ import prisma from './prisma';
 const SESSION_COOKIE = 'kl_session';
 const SUPER_COOKIE = 'kl_super';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
+const BCRYPT_MAX_PASSWORD_BYTES = 72;
 
 type TenantSession = {
   role: 'tenant';
@@ -33,7 +34,7 @@ function getCookieOptions() {
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
+    sameSite: 'strict' as const,
     path: '/',
   };
 }
@@ -68,12 +69,21 @@ export function isPasswordHash(value: string | null | undefined) {
   return typeof value === 'string' && /^\$2[aby]\$\d{2}\$/.test(value);
 }
 
+export function isPasswordLengthAllowed(password: string) {
+  return new TextEncoder().encode(password).length <= BCRYPT_MAX_PASSWORD_BYTES;
+}
+
 export async function hashPassword(password: string) {
+  if (!isPasswordLengthAllowed(password)) {
+    throw new Error('Password exceeds the safe bcrypt length limit.');
+  }
+
   return bcrypt.hash(password, 12);
 }
 
 export async function verifyPassword(password: string, storedValue: string | null | undefined) {
   if (!storedValue) return false;
+  if (!isPasswordLengthAllowed(password)) return false;
   if (isPasswordHash(storedValue)) return bcrypt.compare(password, storedValue);
   return password === storedValue;
 }

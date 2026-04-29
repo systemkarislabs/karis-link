@@ -3,6 +3,7 @@
 import {
   clearSuperSession,
   hashPassword,
+  isPasswordLengthAllowed,
   requireSuperAuth,
   setSuperSession,
   verifyPassword,
@@ -12,7 +13,7 @@ import { ensureTenantLogoColumn } from '@/lib/db-compat';
 import prisma from '@/lib/prisma';
 import { assertRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { ensureSuperAdminTableAvailable, findStoredSuperAdminAccount } from '@/lib/super-admin';
-import { validateImageDataUrl, validateImageFile } from '@/lib/image-validation';
+import { validateImageBuffer, validateImageDataUrl, validateImageFile } from '@/lib/image-validation';
 import { redirect } from 'next/navigation';
 
 function normalizeTenantSlug(value: string) {
@@ -27,6 +28,16 @@ function isValidSlug(value: string) {
   return /^[a-z0-9]+$/.test(value);
 }
 
+function assertPasswordPolicy(password: string, fieldLabel = 'A senha') {
+  if (password.length < 8) {
+    throw new Error(`${fieldLabel} deve ter pelo menos 8 caracteres.`);
+  }
+
+  if (!isPasswordLengthAllowed(password)) {
+    throw new Error(`${fieldLabel} deve ter no maximo 72 bytes para manter seguranca com bcrypt.`);
+  }
+}
+
 async function resolveTenantLogo(logoDataUrl: string, logoFile: File | null | undefined) {
   if (logoDataUrl) {
     validateImageDataUrl(logoDataUrl);
@@ -36,6 +47,7 @@ async function resolveTenantLogo(logoDataUrl: string, logoFile: File | null | un
   if (logoFile && logoFile.size > 0) {
     validateImageFile(logoFile);
     const buffer = Buffer.from(await logoFile.arrayBuffer());
+    validateImageBuffer(buffer, logoFile.type);
     return `data:${logoFile.type};base64,${buffer.toString('base64')}`;
   }
 
@@ -55,6 +67,11 @@ export async function handleSuperLogin(_: unknown, formData: FormData) {
     windowMs: 10 * 60 * 1000,
     message: 'Muitas tentativas de login. Aguarde alguns minutos e tente novamente.',
   });
+
+  if (user.length < 3 || user.length > 50 || !pass || !isPasswordLengthAllowed(pass)) {
+    await logAuditEvent({ event: 'super_login_failure', actor: user || null });
+    return { error: 'Credenciais invalidas.' };
+  }
 
   const storedAccount = await findStoredSuperAdminAccount();
 
@@ -101,7 +118,7 @@ export async function createTenant(formData: FormData) {
 
   const name = String(formData.get('name') || '').trim();
   const slug = normalizeTenantSlug(name);
-  const adminUser = String(formData.get('adminUser') || '').trim();
+  const adminUser = String(formData.get('adminUser') || '').trim().toLowerCase();
   const adminPass = String(formData.get('adminPass') || '');
   const logoDataUrl = String(formData.get('logoDataUrl') || '').trim();
   const logoFile = formData.get('logo') as File | null;
@@ -131,9 +148,7 @@ export async function createTenant(formData: FormData) {
     throw new Error('O usuário administrador deve ter entre 3 e 50 caracteres.');
   }
 
-  if (adminPass.length < 8) {
-    throw new Error('A senha inicial deve ter pelo menos 8 caracteres.');
-  }
+  assertPasswordPolicy(adminPass, 'A senha inicial');
 
   const created = await prisma.tenant.create({
     data: {
@@ -207,9 +222,7 @@ export async function updateTenantAdminPassword(formData: FormData) {
     throw new Error('Empresa invalida para atualizar senha.');
   }
 
-  if (adminPass.length < 8) {
-    throw new Error('A nova senha da empresa deve ter pelo menos 8 caracteres.');
-  }
+  assertPasswordPolicy(adminPass, 'A nova senha da empresa');
 
   await prisma.tenant.update({
     where: { id },
@@ -228,7 +241,7 @@ export async function updateTenantAdminPassword(formData: FormData) {
 export async function updateSuperAdminCredentials(formData: FormData) {
   await requireSuperAuth();
 
-  const username = String(formData.get('username') || '').trim();
+  const username = String(formData.get('username') || '').trim().toLowerCase();
   const password = String(formData.get('password') || '');
   const confirmPassword = String(formData.get('confirmPassword') || '');
 
@@ -240,9 +253,7 @@ export async function updateSuperAdminCredentials(formData: FormData) {
     throw new Error('O usuário deve ter entre 3 e 50 caracteres.');
   }
 
-  if (password.length < 8) {
-    throw new Error('A senha precisa ter pelo menos 8 caracteres.');
-  }
+  assertPasswordPolicy(password, 'A senha');
 
   if (password !== confirmPassword) {
     throw new Error('A confirmação da senha não confere.');

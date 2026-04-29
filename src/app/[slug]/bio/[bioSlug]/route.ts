@@ -8,12 +8,18 @@ export async function GET(
   { params }: { params: Promise<{ slug: string; bioSlug: string }> }
 ) {
   const { slug, bioSlug } = await params;
+  const safeSlug = slug.trim().toLowerCase();
+  const safeBioSlug = bioSlug.trim().toLowerCase();
+
+  if (!/^[a-z0-9]{3,50}$/.test(safeSlug) || !/^[a-z0-9]{6,32}$/.test(safeBioSlug)) {
+    return NextResponse.json({ error: 'Link da bio nao encontrado' }, { status: 404 });
+  }
 
   try {
     let bioCampaign = await prisma.qrCode.findFirst({
       where: {
-        slug: bioSlug,
-        tenant: { slug },
+        slug: safeBioSlug,
+        tenant: { slug: safeSlug },
       },
       select: {
         tenantId: true,
@@ -23,7 +29,7 @@ export async function GET(
 
     if (!bioCampaign) {
       const matches = await prisma.qrCode.findMany({
-        where: { slug: bioSlug },
+        where: { slug: safeBioSlug },
         select: {
           tenantId: true,
           tenant: { select: { slug: true } },
@@ -44,7 +50,7 @@ export async function GET(
       data: {
         tenantId: bioCampaign.tenantId,
         source: 'bio',
-        campaign: bioSlug,
+        campaign: safeBioSlug,
       },
       select: {
         id: true,
