@@ -86,9 +86,9 @@ export default async function VendedoresPage(props: PageProps) {
           <div className="skin-stat-grid" style={{ marginBottom: 28 }}>
             {[
               { label: 'Vendedores ativos', value: sellerMetrics.length, color: '#a855f7', bg: '#faf5ff', icon: 'users' },
-              { label: 'Leads via QR', value: totalQrClicks, color: '#10b981', bg: '#ecfdf5', icon: 'target' },
+              { label: 'Leads via QR', value: totalQrClicks, color: 'var(--brand-accent)', bg: 'var(--brand-accent-soft)', icon: 'target' },
               { label: 'Leads via Bio', value: totalBioClicks, color: '#3b82f6', bg: '#eff6ff', icon: 'megaphone' },
-              { label: 'Total de escolhas', value: totalClicks, color: '#050505', bg: '#f4f4f5', icon: 'mouse' },
+              { label: 'Total de escolhas', value: totalClicks, color: 'var(--text-main)', bg: 'var(--surface-muted)', icon: 'mouse' },
             ].map((item) => (
               <article key={item.label} className="kl-card kl-card-hover skin-stat-card">
                 <div className="skin-stat-top">
@@ -105,9 +105,9 @@ export default async function VendedoresPage(props: PageProps) {
 
           <div className="seller-admin-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.25fr) 340px', gap: 20, alignItems: 'start' }}>
             <section className="kl-card" style={{ padding: 32 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, paddingBottom: 18, marginBottom: 20, borderBottom: '1px solid #f1f1f2' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, paddingBottom: 18, marginBottom: 20, borderBottom: '1px solid var(--border)' }}>
                 <h2 style={{ margin: 0, fontSize: 16, fontWeight: 900, letterSpacing: '-0.035em' }}>Vendedores Cadastrados</h2>
-                <span style={{ color: '#71717a', fontSize: 12 }}>Tempo real</span>
+                <span style={{ color: 'var(--text-soft)', fontSize: 12 }}>Tempo real</span>
               </div>
 
               <div className="kl-stagger" style={{ display: 'grid', gap: 12 }}>
@@ -116,8 +116,8 @@ export default async function VendedoresPage(props: PageProps) {
                     key={seller.id}
                     className="kl-card-hover"
                     style={{
-                      background: '#fafafa',
-                      border: '1px solid #f1f1f2',
+                      background: 'var(--surface-muted)',
+                      border: '1px solid var(--border)',
                       borderRadius: 16,
                       padding: 18,
                       display: 'flex',
@@ -141,13 +141,13 @@ export default async function VendedoresPage(props: PageProps) {
                             width: 50,
                             height: 50,
                             borderRadius: '50%',
-                            background: '#dff8ee',
-                            border: '1px solid #b7efd8',
+                            background: 'var(--brand-accent-soft)',
+                            border: '1px solid rgba(22,163,74,0.22)',
                             display: 'grid',
                             placeItems: 'center',
                             fontSize: 14,
                             fontWeight: 900,
-                            color: '#10b981',
+                            color: 'var(--brand-accent-strong)',
                             flexShrink: 0,
                           }}
                         >
@@ -155,8 +155,8 @@ export default async function VendedoresPage(props: PageProps) {
                         </div>
                       )}
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 900, color: '#09090b', fontSize: 15 }}>{seller.name}</div>
-                        <div style={{ fontSize: 13, color: '#71717a' }}>{seller.phone}</div>
+                        <div style={{ fontWeight: 900, color: 'var(--text-main)', fontSize: 15 }}>{seller.name}</div>
+                        <div style={{ fontSize: 13, color: 'var(--text-soft)' }}>{seller.phone}</div>
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
                           <span className="skin-badge">{seller.qrClicks} leads QR</span>
                           <span className="skin-badge" style={{ background: '#eff6ff', color: '#3b82f6' }}>
@@ -176,10 +176,10 @@ export default async function VendedoresPage(props: PageProps) {
                           height: 36,
                           display: 'grid',
                           placeItems: 'center',
-                          color: '#71717a',
+                          color: 'var(--text-soft)',
                           border: '1px solid var(--border)',
                           borderRadius: 10,
-                          background: '#ffffff',
+                          background: 'var(--card-bg)',
                         }}
                       >
                         <Icon name="edit" size={16} />
@@ -196,10 +196,10 @@ export default async function VendedoresPage(props: PageProps) {
                             height: 36,
                             display: 'grid',
                             placeItems: 'center',
-                            background: '#ffffff',
+                            background: 'var(--card-bg)',
                             border: '1px solid var(--border)',
                             borderRadius: 10,
-                            color: '#71717a',
+                            color: 'var(--text-soft)',
                             cursor: 'pointer',
                             padding: 0,
                           }}

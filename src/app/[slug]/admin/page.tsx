@@ -126,7 +126,7 @@ export default async function TenantAdminPage(props: PageProps) {
   const recentClicks = sellerClicksAll.slice(0, 8);
 
   const cards: MetricCard[] = [
-    { label: 'Visitas no Link', value: totalVisits, icon: 'eye', color: '#10b981', bg: '#ecfdf5' },
+    { label: 'Visitas no Link', value: totalVisits, icon: 'eye', color: 'var(--brand-accent)', bg: 'var(--brand-accent-soft)' },
     { label: 'Cliques por Vendedor', value: totalClicksInPeriod, icon: 'mouse', color: '#3b82f6', bg: '#eff6ff' },
     { label: 'Conversao Real', value: `${conversion}%`, icon: 'trending', color: '#f59e0b', bg: '#fffbeb' },
     { label: 'Vendedores Ativos', value: allSellers.length, icon: 'users', color: '#a855f7', bg: '#faf5ff' },
@@ -395,7 +395,7 @@ export default async function TenantAdminPage(props: PageProps) {
                 {sellers.slice(0, 3).map((seller, index) => (
                   <div key={seller.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 13 }}>
                     <span style={{ color: '#52525b' }}>
-                      <b style={{ color: ['#10b981', '#3b82f6', '#f59e0b'][index] }}>●</b> {seller.name}
+                      <b style={{ color: [undefined, '#3b82f6', '#f59e0b'][index] ?? 'var(--brand-accent)' }}>●</b> {seller.name}
                     </span>
                     <strong>{seller.periodClicks}</strong>
                   </div>
@@ -461,7 +461,7 @@ export default async function TenantAdminPage(props: PageProps) {
                         >
                           Bio {seller.bioClicks}
                         </span>
-                        <span style={{ fontWeight: 800, color: '#10b981', fontSize: 15 }}>
+                        <span style={{ fontWeight: 800, color: 'var(--brand-accent)', fontSize: 15 }}>
                           {seller.periodClicks}
                         </span>
                       </div>
