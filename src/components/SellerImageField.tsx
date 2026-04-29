@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useId, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 
 type Props = {
   inputName?: string;
@@ -23,6 +23,7 @@ export default function SellerImageField({
   const [offsetY, setOffsetY] = useState(0);
   const [error, setError] = useState('');
   const fileInputId = useId();
+  const fieldRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!source) {
@@ -52,12 +53,33 @@ export default function SellerImageField({
 
       setPreview(canvas.toDataURL('image/jpeg', 0.92));
     };
+    image.onerror = () => {
+      if (!active) return;
+      setPreview('');
+      setError('Nao foi possivel processar essa imagem. Tente outro arquivo.');
+    };
     image.src = source;
 
     return () => {
       active = false;
     };
   }, [offsetX, offsetY, source, zoom]);
+
+  useEffect(() => {
+    const form = fieldRef.current?.closest('form');
+    if (!form) return;
+
+    function handleSubmit(event: SubmitEvent) {
+      if (source && !preview) {
+        event.preventDefault();
+        event.stopPropagation();
+        setError('Aguarde a foto terminar de processar antes de salvar.');
+      }
+    }
+
+    form.addEventListener('submit', handleSubmit);
+    return () => form.removeEventListener('submit', handleSubmit);
+  }, [preview, source]);
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -79,6 +101,7 @@ export default function SellerImageField({
     fileReader.onload = () => {
       const result = typeof fileReader.result === 'string' ? fileReader.result : '';
       setError('');
+      setPreview('');
       setSource(result);
       setZoom(1);
       setOffsetX(0);
@@ -97,7 +120,7 @@ export default function SellerImageField({
   }
 
   return (
-    <div className="seller-image-field" style={{ display: 'grid', gap: 12 }}>
+    <div ref={fieldRef} className="seller-image-field" style={{ display: 'grid', gap: 12 }}>
       <input type="hidden" name={inputName} value={preview} />
 
       <label htmlFor={fileInputId} style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)' }}>
