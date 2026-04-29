@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 export default function SuperAdminError({
   error,
   reset,
@@ -7,6 +9,26 @@ export default function SuperAdminError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const errorText = error.message || error.digest || '';
+  const isStaleServerActionError =
+    errorText.includes('Server Action') && errorText.includes('was not found on the server');
+
+  useEffect(() => {
+    if (!isStaleServerActionError) return;
+
+    const target = `${window.location.pathname}${window.location.search}`;
+    window.location.replace(target);
+  }, [isStaleServerActionError]);
+
+  function handleRetry() {
+    if (isStaleServerActionError) {
+      window.location.replace(`${window.location.pathname}${window.location.search}`);
+      return;
+    }
+
+    reset();
+  }
+
   return (
     <main
       style={{
@@ -51,7 +73,7 @@ export default function SuperAdminError({
         </pre>
         <button
           type="button"
-          onClick={reset}
+          onClick={handleRetry}
           style={{
             marginTop: 18,
             padding: '11px 16px',
