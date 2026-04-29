@@ -90,7 +90,7 @@ export default async function VendedoresPage(props: PageProps) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Stat cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+          <div className="kl-kpi-grid">
             {[
               { label: 'Ativos', value: String(sellerMetrics.length), icon: 'users' as const, color: '#16a34a', bg: '#f0fdf4' },
               { label: 'Leads QR', value: String(totalQrClicks), icon: 'qrcode' as const, color: '#3b82f6', bg: '#eff6ff' },
@@ -124,7 +124,7 @@ export default async function VendedoresPage(props: PageProps) {
           </div>
 
           {/* Sellers list + Add form */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.25fr) 340px', gap: 16, alignItems: 'start' }}>
+          <div className="kl-main-form-grid">
             {/* Sellers list */}
             <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden', boxShadow: 'var(--shadow-soft)' }}>
               <div style={{ padding: '18px 22px 14px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -277,10 +277,7 @@ export default async function VendedoresPage(props: PageProps) {
                   <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>WhatsApp *</label>
                   <input name="phone" placeholder="55 (11) 99999-9999" required className="kl-soft-field" />
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>Foto (Opcional)</label>
-                  <SellerImageField />
-                </div>
+                <SellerImageField />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 4 }}>
                   <button type="reset" className="kl-ghost-button kl-press" style={{ minHeight: 40 }}>
                     Cancelar

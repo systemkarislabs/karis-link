@@ -185,7 +185,7 @@ export default async function TenantAdminPage(props: PageProps) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* KPI Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+          <div className="kl-kpi-grid">
             {[
               { label: 'Visitas', value: totalVisits.toLocaleString('pt-BR'), icon: 'eye' as const, color: '#16a34a', bg: '#f0fdf4' },
               { label: 'Escolhas', value: totalClicksInPeriod.toLocaleString('pt-BR'), icon: 'mouse' as const, color: '#3b82f6', bg: '#eff6ff' },
@@ -218,7 +218,7 @@ export default async function TenantAdminPage(props: PageProps) {
           </div>
 
           {/* Chart + Top Sellers */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16 }}>
+          <div className="kl-chart-sellers">
             <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 10, padding: '20px 22px', boxShadow: 'var(--shadow-soft)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                 <div>
@@ -363,7 +363,7 @@ export default async function TenantAdminPage(props: PageProps) {
           </div>
 
           {/* Origin + Conversion */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div className="kl-two-col">
             <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 10, padding: '20px 22px', boxShadow: 'var(--shadow-soft)' }}>
               <h3 style={{ margin: '0 0 20px', fontSize: 14, fontWeight: 700, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
                 Origem das Visitas
@@ -437,7 +437,7 @@ export default async function TenantAdminPage(props: PageProps) {
           </div>
 
           {/* Ranking Table + Activity Feed */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 16 }}>
+          <div className="kl-ranking-feed">
             <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden', boxShadow: 'var(--shadow-soft)' }}>
               <div style={{ padding: '18px 22px 14px', borderBottom: '1px solid var(--border)' }}>
                 <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>

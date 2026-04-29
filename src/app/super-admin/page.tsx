@@ -57,7 +57,7 @@ export default async function SuperAdminPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Stat cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+          <div className="kl-kpi-grid">
             {[
               { label: 'Empresas', value: String(tenants.length), icon: 'building' as const, color: '#0f1c3f', bg: 'rgba(15,28,63,0.08)' },
               { label: 'Ativas', value: String(activeCount), icon: 'power' as const, color: '#16a34a', bg: '#f0fdf4' },
@@ -90,7 +90,7 @@ export default async function SuperAdminPage() {
           </div>
 
           {/* Companies table + Add form */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 16, alignItems: 'start' }}>
+          <div className="kl-main-form-grid">
             {/* Companies table */}
             <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden', boxShadow: 'var(--shadow-soft)' }}>
               <div style={{ padding: '18px 22px 14px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

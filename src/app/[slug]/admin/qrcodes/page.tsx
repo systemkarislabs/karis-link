@@ -97,100 +97,157 @@ export default async function QrCodesPage(props: PageProps) {
   const qrScans = qrCampaigns.reduce((sum, item) => sum + item.visits, 0);
   const bioVisits = bioCampaigns.reduce((sum, item) => sum + item.visits, 0);
 
-  const stats = [
-    { label: 'Campanhas ativas', value: qrMetrics.length, icon: 'qrcode', color: '#10b981', bg: '#ecfdf5' },
-    { label: 'Scans via QR', value: qrScans, icon: 'target', color: '#ef4444', bg: '#fef2f2' },
-    { label: 'Acessos via bio', value: bioVisits, icon: 'link', color: '#06b6d4', bg: '#ecfeff' },
-    { label: 'Escolhas de vendedor', value: totalChoices, icon: 'users', color: '#3b82f6', bg: '#eff6ff' },
-    { label: 'Conversao media por link', value: `${averageConversion}%`, icon: 'trending', color: '#f59e0b', bg: '#fffbeb' },
-  ];
-
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
       <AdminSidebar slug={slug} tenantName={tenant?.name} isSuper={false} />
 
-      <main className="main-content kl-page-enter skin-page">
-        <header className="skin-header">
-          <div>
-            <h1>Campanhas</h1>
-            <p>Gere QR Codes e links de bio com codigos unicos criados no servidor.</p>
-          </div>
-        </header>
-
-        <div className="skin-stat-grid">
-          {stats.map((item) => (
-            <div key={item.label} className="kl-card kl-card-hover skin-stat-card">
-              <div className="skin-stat-top">
-                <span className="skin-stat-title">{item.label}</span>
-                <div className="skin-stat-icon" style={{ background: item.bg, color: item.color }}>
-                  <Icon name={item.icon} size={15} color="currentColor" />
-                </div>
-              </div>
-              <p className="skin-stat-value" style={{ color: item.color }}>{item.value}</p>
-              <div className="skin-stat-foot">Metrica por link rastreavel</div>
-            </div>
-          ))}
+      <main className="main-content kl-page-enter">
+        {/* Header */}
+        <div style={{ marginBottom: 24 }}>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.04em' }}>
+            Campanhas
+          </h1>
+          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-soft)' }}>
+            Gere QR Codes e links de bio com códigos únicos rastreáveis.
+          </p>
         </div>
 
-        <section className="kl-card" style={{ padding: 32 }}>
-          <h2 className="skin-card-title">Nova campanha</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Stat cards */}
+          <div className="kl-kpi-grid">
+            {[
+              { label: 'Campanhas', value: String(qrMetrics.length), icon: 'qrcode' as const, color: '#16a34a', bg: '#f0fdf4' },
+              { label: 'Scans QR', value: String(qrScans), icon: 'target' as const, color: '#3b82f6', bg: '#eff6ff' },
+              { label: 'Acessos Bio', value: String(bioVisits), icon: 'link' as const, color: '#8b5cf6', bg: '#f5f3ff' },
+              { label: 'Escolhas', value: String(totalChoices), icon: 'mouse' as const, color: '#f59e0b', bg: '#fffbeb' },
+            ].map((card) => (
+              <div
+                key={card.label}
+                style={{
+                  background: 'var(--card-bg)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 10,
+                  padding: '18px 20px',
+                  boxShadow: 'var(--shadow-soft)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-soft)', letterSpacing: '.04em', textTransform: 'uppercase' }}>
+                    {card.label}
+                  </span>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: card.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Icon name={card.icon} size={14} color={card.color} />
+                  </div>
+                </div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.04em' }}>
+                  {card.value}
+                </div>
+                {card.label === 'Escolhas' && (
+                  <div style={{ fontSize: 11, color: 'var(--text-soft)', marginTop: 2 }}>Conv. média {averageConversion}%</div>
+                )}
+              </div>
+            ))}
+          </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18 }}>
+          {/* Create campaign forms */}
+          <div className="kl-two-col">
             {[
               {
-                title: 'QR Code rastreavel',
+                title: 'QR Code rastreável',
                 description: 'Ideal para mesas, panfletos, vitrine, fachada e eventos.',
-                channel: 'qr',
-                namePlaceholder: 'Nome da campanha (ex: Mesa 01)',
+                channel: 'qr' as const,
+                namePlaceholder: 'Ex: Mesa 01',
                 buttonLabel: 'Gerar QR Code',
-                accent: '#10b981',
-                background: '#ecfdf5',
+                color: '#16a34a',
+                bg: '#f0fdf4',
+                border: '#bbf7d0',
+                icon: 'qrcode' as const,
               },
               {
                 title: 'Link da bio do Instagram',
-                description: 'Cria um link rastreavel para medir acessos vindos da bio.',
-                channel: 'bio',
-                namePlaceholder: 'Nome da campanha (ex: Bio Instagram)',
+                description: 'Cria um link rastreável para medir acessos vindos da bio.',
+                channel: 'bio' as const,
+                namePlaceholder: 'Ex: Bio Instagram',
                 buttonLabel: 'Gerar link da bio',
-                accent: '#3b82f6',
-                background: '#eff6ff',
+                color: '#3b82f6',
+                bg: '#eff6ff',
+                border: '#bfdbfe',
+                icon: 'link' as const,
               },
             ].map((campaign) => (
-              <form
+              <div
                 key={campaign.channel}
-                action={createQrCode}
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 14,
-                  padding: 20,
-                  borderRadius: 18,
+                  background: 'var(--card-bg)',
                   border: '1px solid var(--border)',
-                  background: campaign.background,
+                  borderRadius: 10,
+                  padding: '20px 22px',
+                  boxShadow: 'var(--shadow-soft)',
                 }}
               >
-                <input type="hidden" name="tenantSlug" value={slug} />
-                <input type="hidden" name="channel" value={campaign.channel} />
-
-                <div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: '#09090b', marginBottom: 6 }}>
-                    {campaign.title}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <div
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 9,
+                      background: campaign.bg,
+                      border: `1px solid ${campaign.border}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Icon name={campaign.icon} size={18} color={campaign.color} />
                   </div>
-                  <div style={{ fontSize: 13, color: '#52525b', lineHeight: 1.5 }}>
-                    {campaign.description}
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+                      {campaign.title}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--text-soft)', marginTop: 1 }}>
+                      {campaign.description}
+                    </div>
                   </div>
                 </div>
-
-                <input name="name" placeholder={campaign.namePlaceholder} required className="skin-input" />
-                <button type="submit" className="skin-btn" style={{ background: campaign.accent }}>
-                  {campaign.buttonLabel}
-                </button>
-              </form>
+                <form action={createQrCode} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <input type="hidden" name="tenantSlug" value={slug} />
+                  <input type="hidden" name="channel" value={campaign.channel} />
+                  <input
+                    name="name"
+                    placeholder={campaign.namePlaceholder}
+                    required
+                    className="kl-soft-field"
+                    style={{ fontSize: 13 }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      height: 40,
+                      background: campaign.color,
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 8,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
+                    }}
+                  >
+                    <Icon name="plus" size={14} color="#fff" />
+                    {campaign.buttonLabel}
+                  </button>
+                </form>
+              </div>
             ))}
           </div>
-        </section>
 
-        <QrCodesClient qrCodes={qrMetrics} slug={slug} deleteAction={deleteQrCode} />
+          {/* Campaign list */}
+          <QrCodesClient qrCodes={qrMetrics} slug={slug} deleteAction={deleteQrCode} />
+        </div>
       </main>
     </div>
   );

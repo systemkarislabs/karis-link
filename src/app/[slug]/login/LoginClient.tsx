@@ -84,8 +84,8 @@ export default function LoginClient({ slug }: { slug: string }) {
           </p>
         </div>
         <Image
-          src="/karis-negocios-logo.png"
-          alt="Karis Negocios"
+          src="/karis-link-logo-full.png"
+          alt="Karis Link"
           width={180}
           height={76}
           style={{ marginTop: 'auto', width: 124, height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.46 }}
