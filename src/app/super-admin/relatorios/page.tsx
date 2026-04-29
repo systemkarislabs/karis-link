@@ -3,6 +3,7 @@ import { requireSuperAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
 import Link from 'next/link';
 import { getRecifePeriodStartDate } from '@/lib/recife-time';
+import { ensureTenantCitySupport } from '@/lib/db-compat';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,7 @@ type PageProps = {
 
 export default async function ReportsPage(props: PageProps) {
   await requireSuperAuth();
+  await ensureTenantCitySupport();
   const searchParams = await props.searchParams;
   const tenantId = searchParams?.tenantId || 'all';
   const period = searchParams?.period || '30';

@@ -9,6 +9,7 @@ import {
   toggleTenant,
   toggleTenantCity,
   toggleTenantCityGrouping,
+  updateTenantAdminEmail,
   updateTenantAdminPassword,
   updateTenantLogo,
 } from './actions';
@@ -41,6 +42,7 @@ export default async function SuperAdminPage() {
       name: true,
       slug: true,
       adminUser: true,
+      adminEmail: true,
       logo: true,
       active: true,
       cityGroupingEnabled: true,
@@ -321,6 +323,10 @@ export default async function SuperAdminPage() {
                     <input name="adminUser" placeholder="admin" required className="kl-soft-field" />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>E-mail de recuperação</label>
+                    <input name="adminEmail" type="email" placeholder="contato@empresa.com.br" className="kl-soft-field" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                     <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>Senha inicial</label>
                     <input name="adminPass" type="password" placeholder="••••••••" required className="kl-soft-field" />
                   </div>
@@ -403,6 +409,38 @@ export default async function SuperAdminPage() {
                         }}
                       >
                         <Icon name="key" size={15} />
+                      </button>
+                    </form>
+                    <form action={updateTenantAdminEmail} style={{ position: 'relative' }}>
+                      <input type="hidden" name="id" value={tenant.id} />
+                      <input
+                        name="adminEmail"
+                        type="email"
+                        defaultValue={tenant.adminEmail || ''}
+                        placeholder="E-mail de recuperacao"
+                        className="kl-soft-field"
+                        style={{ paddingRight: 42, fontSize: 13 }}
+                      />
+                      <button
+                        type="submit"
+                        aria-label={`Atualizar e-mail de recuperacao de ${tenant.name}`}
+                        className="kl-press"
+                        style={{
+                          position: 'absolute',
+                          right: 8,
+                          top: 7,
+                          width: 30,
+                          height: 30,
+                          display: 'grid',
+                          placeItems: 'center',
+                          border: 0,
+                          borderRadius: 7,
+                          background: 'transparent',
+                          color: 'var(--brand-accent)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <Icon name="mail" size={15} />
                       </button>
                     </form>
                     <div

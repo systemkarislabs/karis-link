@@ -28,6 +28,14 @@ function isValidSlug(value: string) {
   return /^[a-z0-9]+$/.test(value);
 }
 
+function normalizeEmail(value: string) {
+  return value.trim().toLowerCase();
+}
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
+}
+
 function assertPasswordPolicy(password: string, fieldLabel = 'A senha') {
   if (password.length < 8) {
     throw new Error(`${fieldLabel} deve ter pelo menos 8 caracteres.`);
@@ -125,11 +133,13 @@ export async function execLogout() {
 export async function createTenant(formData: FormData) {
   await requireSuperAuth();
   await ensureTenantLogoColumn();
+  await ensureTenantCitySupport();
 
   const name = String(formData.get('name') || '').trim();
   const slug = normalizeTenantSlug(name);
   const adminUser = String(formData.get('adminUser') || '').trim().toLowerCase();
   const adminPass = String(formData.get('adminPass') || '');
+  const adminEmail = normalizeEmail(String(formData.get('adminEmail') || ''));
   const logoDataUrl = String(formData.get('logoDataUrl') || '').trim();
   const logoFile = formData.get('logo') as File | null;
 
@@ -160,11 +170,16 @@ export async function createTenant(formData: FormData) {
 
   assertPasswordPolicy(adminPass, 'A senha inicial');
 
+  if (adminEmail && !isValidEmail(adminEmail)) {
+    throw new Error('Informe um e-mail de recuperacao valido.');
+  }
+
   const created = await prisma.tenant.create({
     data: {
       name,
       slug,
       adminUser,
+      adminEmail: adminEmail || null,
       adminPass: await hashPassword(adminPass),
       logo: await resolveTenantLogo(logoDataUrl, logoFile),
     },
@@ -175,6 +190,35 @@ export async function createTenant(formData: FormData) {
     event: 'tenant_create',
     tenantId: created.id,
     metadata: { name, slug, adminUser },
+  });
+
+  redirect('/super-admin');
+}
+
+export async function updateTenantAdminEmail(formData: FormData) {
+  await requireSuperAuth();
+  await ensureTenantCitySupport();
+
+  const id = String(formData.get('id') || '').trim();
+  const adminEmail = normalizeEmail(String(formData.get('adminEmail') || ''));
+
+  if (!id) {
+    throw new Error('Empresa invalida para atualizar e-mail.');
+  }
+
+  if (adminEmail && !isValidEmail(adminEmail)) {
+    throw new Error('Informe um e-mail de recuperacao valido.');
+  }
+
+  await prisma.tenant.update({
+    where: { id },
+    data: { adminEmail: adminEmail || null },
+  });
+
+  await logAuditEvent({
+    event: 'tenant_password_update_by_super',
+    tenantId: id,
+    metadata: { adminEmailUpdated: Boolean(adminEmail) },
   });
 
   redirect('/super-admin');
@@ -504,6 +548,10 @@ export async function deleteTenant(formData: FormData) {
     });
 
     await tx.tenantCity.deleteMany({
+      where: { tenantId: tenant.id },
+    });
+
+    await tx.passwordResetToken.deleteMany({
       where: { tenantId: tenant.id },
     });
 

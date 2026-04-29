@@ -31,6 +31,7 @@ export const Icon = ({ name, size = 16, color = 'currentColor', style = {} }: Ic
     lock: <svg {...p} viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>,
     search: <svg {...p} viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>,
     bell: <svg {...p} viewBox="0 0 24 24"><path d="M18 8a6 6 0 00-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>,
+    mail: <svg {...p} viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>,
     clock: <svg {...p} viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>,
     shield: <svg {...p} viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
     key: <svg {...p} viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M12 11l9-9"/><path d="M17 6l2 2"/><path d="M14 9l2 2"/></svg>,

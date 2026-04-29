@@ -75,6 +75,12 @@ export default function LoginClient({ slug }: { slug: string }) {
           <SubmitButton />
         </form>
 
+        <div style={{ textAlign: 'right', marginTop: 12 }}>
+          <Link href={`/${slug}/recuperar-senha`} style={{ color: 'var(--brand-accent)', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+            Esqueci minha senha
+          </Link>
+        </div>
+
         <div style={{ textAlign: 'center', marginTop: 16 }}>
           <Link href={`/${slug}`} style={{ color: 'var(--text-soft)', fontSize: 12, textDecoration: 'none' }}>
             Voltar para a pagina publica
