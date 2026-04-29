@@ -7,6 +7,16 @@ function estimateBase64Bytes(base64Payload: string) {
   return Math.floor((base64Payload.length * 3) / 4) - padding;
 }
 
+function normalizeBase64Payload(base64Payload: string) {
+  const remainder = base64Payload.length % 4;
+
+  if (remainder === 1) {
+    throw new Error('Formato de imagem invalido.');
+  }
+
+  return remainder === 0 ? base64Payload : base64Payload.padEnd(base64Payload.length + 4 - remainder, '=');
+}
+
 function hasValidMagicBytes(buffer: Buffer, mimeType: string) {
   if (mimeType === 'image/png') {
     return buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
@@ -68,13 +78,15 @@ export function validateImageDataUrl(dataUrl: string) {
     throw new Error('Use uma imagem JPG, PNG ou WEBP.');
   }
 
-  if (!BASE64_IMAGE_PAYLOAD.test(payload) || payload.length % 4 !== 0) {
+  if (!BASE64_IMAGE_PAYLOAD.test(payload)) {
     throw new Error('Formato de imagem invalido.');
   }
 
-  if (estimateBase64Bytes(payload) > MAX_IMAGE_BYTES) {
+  const normalizedPayload = normalizeBase64Payload(payload);
+
+  if (estimateBase64Bytes(normalizedPayload) > MAX_IMAGE_BYTES) {
     throw new Error('A imagem deve ter no maximo 2 MB.');
   }
 
-  validateImageBuffer(Buffer.from(payload, 'base64'), mimeType);
+  validateImageBuffer(Buffer.from(normalizedPayload, 'base64'), mimeType);
 }

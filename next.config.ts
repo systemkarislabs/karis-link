@@ -57,6 +57,11 @@ const publicNoStoreHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '5mb',
+    },
+  },
 
   async headers() {
     return [
