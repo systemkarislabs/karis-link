@@ -5,6 +5,9 @@ import { updateSuperAdminCredentials } from '../actions';
 import ThemeToggle from '@/components/ThemeToggle';
 import { Icon } from '@/components/Icon';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function SettingsPage() {
   await requireSuperAuth();
 

@@ -47,6 +47,13 @@ const privateNoStoreHeaders = [
   { key: 'Expires', value: '0' },
 ];
 
+const publicNoStoreHeaders = [
+  ...securityHeaders,
+  { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate, proxy-revalidate' },
+  { key: 'Pragma', value: 'no-cache' },
+  { key: 'Expires', value: '0' },
+];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -66,6 +73,14 @@ const nextConfig: NextConfig = {
         headers: privateNoStoreHeaders,
       },
       {
+        source: '/admin/:path*',
+        headers: privateNoStoreHeaders,
+      },
+      {
+        source: '/admin',
+        headers: privateNoStoreHeaders,
+      },
+      {
         source: '/:slug/admin/:path*',
         headers: privateNoStoreHeaders,
       },
@@ -79,7 +94,31 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/:slug/recuperar-senha/:path*',
-        headers: noIndexHeaders,
+        headers: privateNoStoreHeaders,
+      },
+      {
+        source: '/:slug/recuperar-senha',
+        headers: privateNoStoreHeaders,
+      },
+      {
+        source: '/api/redirect/:path*',
+        headers: publicNoStoreHeaders,
+      },
+      {
+        source: '/api/redirect',
+        headers: publicNoStoreHeaders,
+      },
+      {
+        source: '/:slug/go/:path*',
+        headers: publicNoStoreHeaders,
+      },
+      {
+        source: '/:slug/bio/:path*',
+        headers: publicNoStoreHeaders,
+      },
+      {
+        source: '/:slug',
+        headers: publicNoStoreHeaders,
       },
     ];
   },

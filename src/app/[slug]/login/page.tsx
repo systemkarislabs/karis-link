@@ -2,6 +2,9 @@ import { getTenantSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import LoginClient from './LoginClient';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 type PageProps = { params: Promise<{ slug: string }> };
 
 export default async function TenantLoginPage(props: PageProps) {

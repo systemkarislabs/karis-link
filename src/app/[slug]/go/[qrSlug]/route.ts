@@ -3,6 +3,16 @@ import prisma from '@/lib/prisma';
 import { attachTrackingCookie } from '@/lib/tracking';
 import { buildTenantPublicUrl } from '@/lib/public-url';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+function markNoStore(response: NextResponse) {
+  response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  response.headers.set('Pragma', 'no-cache');
+  response.headers.set('Expires', '0');
+  return response;
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string; qrSlug: string }> }
@@ -12,7 +22,7 @@ export async function GET(
   const safeQrSlug = qrSlug.trim().toLowerCase();
 
   if (!/^[a-z0-9]{3,50}$/.test(safeSlug) || !/^[a-z0-9]{6,32}$/.test(safeQrSlug)) {
-    return NextResponse.json({ error: 'QR Code nao encontrado' }, { status: 404 });
+    return markNoStore(NextResponse.json({ error: 'QR Code nao encontrado' }, { status: 404 }));
   }
 
   try {
@@ -43,7 +53,7 @@ export async function GET(
     }
 
     if (!qrCode) {
-      return NextResponse.json({ error: 'QR Code nao encontrado' }, { status: 404 });
+      return markNoStore(NextResponse.json({ error: 'QR Code nao encontrado' }, { status: 404 }));
     }
 
     const pageClickEvent = await prisma.pageClickEvent.create({
@@ -59,12 +69,12 @@ export async function GET(
 
     const redirectUrl = new URL(buildTenantPublicUrl(qrCode.tenant.slug));
     redirectUrl.searchParams.set('kl_track', '1');
-    const response = NextResponse.redirect(redirectUrl);
+    const response = markNoStore(NextResponse.redirect(redirectUrl));
     await attachTrackingCookie(response, pageClickEvent.id, qrCode.tenantId);
 
     return response;
   } catch (error) {
     console.error('QR Redirect Error:', error);
-    return NextResponse.json({ error: 'Erro ao redirecionar' }, { status: 500 });
+    return markNoStore(NextResponse.json({ error: 'Erro ao redirecionar' }, { status: 500 }));
   }
 }
