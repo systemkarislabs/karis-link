@@ -47,6 +47,13 @@ const noIndexHeaders = [
   { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
 ];
 
+const privateNoStoreHeaders = [
+  ...noIndexHeaders,
+  { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate, proxy-revalidate' },
+  { key: 'Pragma', value: 'no-cache' },
+  { key: 'Expires', value: '0' },
+];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -59,15 +66,23 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/super-admin/:path*',
-        headers: noIndexHeaders,
+        headers: privateNoStoreHeaders,
+      },
+      {
+        source: '/super-admin',
+        headers: privateNoStoreHeaders,
       },
       {
         source: '/:slug/admin/:path*',
-        headers: noIndexHeaders,
+        headers: privateNoStoreHeaders,
+      },
+      {
+        source: '/:slug/admin',
+        headers: privateNoStoreHeaders,
       },
       {
         source: '/:slug/login',
-        headers: noIndexHeaders,
+        headers: privateNoStoreHeaders,
       },
       {
         source: '/:slug/recuperar-senha/:path*',

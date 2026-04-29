@@ -1,4 +1,3 @@
-'use client';
 import { execLogout } from '@/app/super-admin/actions';
 import { handleTenantLogout } from '@/app/[slug]/admin/auth-actions';
 import { Icon } from './Icon';
@@ -9,43 +8,32 @@ type Props = {
 };
 
 export default function LogoutButton({ isSuper = true, slug = '' }: Props) {
-  const handle = async () => {
-    try {
-      if (isSuper) {
-        await execLogout();
-        window.location.href = '/super-admin/login';
-      } else {
-        await handleTenantLogout(slug);
-        window.location.href = `/${slug}`;
-      }
-    } catch {
-      window.location.href = isSuper ? '/super-admin/login' : `/${slug}`;
-    }
-  };
+  const logoutAction = isSuper ? execLogout : handleTenantLogout.bind(null, slug);
 
   return (
-    <button
-      type="button"
-      onClick={handle}
-      className="sidebar-link kl-press"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '8px 12px',
-        borderRadius: 8,
-        color: 'rgba(255,255,255,.38)',
-        cursor: 'pointer',
-        fontSize: 12,
-        fontWeight: 600,
-        width: '100%',
-        border: 'none',
-        background: 'transparent',
-        textAlign: 'left',
-      }}
-    >
-      <Icon name="logout" size={16} color="currentColor" />
-      <span>Sair</span>
-    </button>
+    <form action={logoutAction}>
+      <button
+        type="submit"
+        className="sidebar-link kl-press"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '8px 12px',
+          borderRadius: 8,
+          color: 'rgba(255,255,255,.38)',
+          cursor: 'pointer',
+          fontSize: 12,
+          fontWeight: 600,
+          width: '100%',
+          border: 'none',
+          background: 'transparent',
+          textAlign: 'left',
+        }}
+      >
+        <Icon name="logout" size={16} color="currentColor" />
+        <span>Sair</span>
+      </button>
+    </form>
   );
 }

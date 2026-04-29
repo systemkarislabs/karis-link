@@ -1039,3 +1039,73 @@ a {
     animation: none !important;
   }
 }
+
+/* ── Dashboard grid layouts ──────────────────────────────────── */
+
+.kl-dash-kpi {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.kl-dash-row-chart {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 16px;
+}
+
+.kl-dash-row-mid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.kl-dash-row-bottom {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+}
+
+/* ── Shared table hover ──────────────────────────────────────── */
+
+.kl-table-row:hover,
+.super-table-row:hover {
+  background: var(--bg-main) !important;
+}
+
+/* ── Stat grids (4-col and 5-col) ────────────────────────────── */
+
+.kl-stat-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.kl-stat-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .kl-dash-kpi,
+  .kl-stat-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .kl-stat-5 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .kl-dash-row-chart,
+  .kl-dash-row-mid,
+  .kl-dash-row-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .kl-stat-5 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
