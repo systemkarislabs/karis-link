@@ -1,5 +1,15 @@
 import type { NextConfig } from 'next';
 
+function getSupabaseImageHost() {
+  if (!process.env.SUPABASE_URL) return null;
+
+  try {
+    return new URL(process.env.SUPABASE_URL).hostname;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Content Security Policy.
  *
@@ -57,6 +67,17 @@ const publicNoStoreHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  images: {
+    remotePatterns: getSupabaseImageHost()
+      ? [
+          {
+            protocol: 'https',
+            hostname: getSupabaseImageHost()!,
+            pathname: '/storage/v1/object/public/**',
+          },
+        ]
+      : [],
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '5mb',

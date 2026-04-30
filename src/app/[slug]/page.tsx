@@ -50,7 +50,12 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
     prisma.seller.findMany({
       where: tenant.cityGroupingEnabled ? { tenantId: tenant.id, city: { active: true } } : { tenantId: tenant.id },
       orderBy: { name: 'asc' },
-      include: { city: { select: { name: true } } },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        city: { select: { name: true } },
+      },
     }),
     getTenantSession(),
   ]);

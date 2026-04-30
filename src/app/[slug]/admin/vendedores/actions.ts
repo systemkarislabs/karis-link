@@ -3,7 +3,7 @@
 import { requireTenantAuth } from '@/lib/auth';
 import { logAuditEvent } from '@/lib/audit';
 import { ensureTenantCitySupport } from '@/lib/db-compat';
-import { validateImageBuffer, validateImageDataUrl, validateImageFile } from '@/lib/image-validation';
+import { uploadPublicImage } from '@/lib/asset-storage';
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -35,20 +35,17 @@ function validateSellerFields(name: string, phone: string) {
   }
 }
 
-async function resolveSellerImage(imageDataUrl: string, imageFile: File | null | undefined) {
-  if (imageDataUrl) {
-    validateImageDataUrl(imageDataUrl);
-    return imageDataUrl;
-  }
-
-  if (imageFile && imageFile.size > 0) {
-    validateImageFile(imageFile);
-    const buffer = Buffer.from(await imageFile.arrayBuffer());
-    validateImageBuffer(buffer, imageFile.type);
-    return `data:${imageFile.type};base64,${buffer.toString('base64')}`;
-  }
-
-  return null;
+async function resolveSellerImage(
+  tenantId: string,
+  sellerId: string,
+  imageDataUrl: string,
+  imageFile: File | null | undefined
+) {
+  return uploadPublicImage({
+    folder: `tenants/${tenantId}/sellers/${sellerId}`,
+    dataUrl: imageDataUrl || null,
+    file: imageFile,
+  });
 }
 
 async function resolveSellerCity(tenantId: string, cityId: string) {
@@ -93,19 +90,30 @@ export async function createSeller(formData: FormData) {
   const { tenantId } = await requireTenantAuth(slug);
 
   validateSellerFields(name, phone);
-  const imageBase64 = await resolveSellerImage(imageDataUrl, imageFile);
   const resolvedCityId = await resolveSellerCity(tenantId, cityId);
 
   const seller = await prisma.seller.create({
     data: {
       name,
       phone,
-      image: imageBase64,
       tenantId,
       cityId: resolvedCityId,
     },
     select: { id: true },
   });
+
+  try {
+    const image = await resolveSellerImage(tenantId, seller.id, imageDataUrl, imageFile);
+    if (image) {
+      await prisma.seller.update({
+        where: { id: seller.id },
+        data: { image },
+      });
+    }
+  } catch (error) {
+    await prisma.seller.delete({ where: { id: seller.id } }).catch(() => null);
+    throw error;
+  }
 
   await logAuditEvent({
     event: 'seller_create',
@@ -175,7 +183,7 @@ export async function updateSeller(formData: FormData) {
     imageValue = null;
   }
 
-  const newImage = await resolveSellerImage(imageDataUrl, imageFile);
+  const newImage = await resolveSellerImage(tenantId, id, imageDataUrl, imageFile);
   if (newImage) {
     imageValue = newImage;
   }

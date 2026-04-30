@@ -225,7 +225,7 @@ export default function AdminSidebar({
 
   return (
     <>
-      <AuthCacheGuard />
+      <AuthCacheGuard scope={isSuper ? 'super' : 'tenant'} slug={slug} />
 
       {/* Mobile header */}
       <div

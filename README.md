@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Karis Link
 
-## Getting Started
+Karis Link é uma plataforma multiempresa para criar páginas públicas de atendimento via WhatsApp e medir a origem dos leads por campanhas de QR Code e bio do Instagram.
 
-First, run the development server:
+## Stack
+
+- Next.js App Router
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+- Supabase Storage para novos uploads de logos e fotos
+- Resend para recuperação de senha por e-mail
+- Railway como ambiente principal de deploy
+
+## Fluxo principal
+
+- Página pública da empresa: `/{slug}`
+- Link rastreável de QR Code: `/{slug}/go/{codigo}`
+- Link rastreável de bio: `/{slug}/bio/{codigo}`
+- Admin da empresa: `/{slug}/admin`
+- Super admin: `/super-admin`
+
+O acesso direto em `/{slug}` exibe a página pública, mas não entra nas métricas rastreáveis. As métricas principais contam apenas visitas vindas de QR Code ou Bio Instagram e conversões quando o visitante escolhe um vendedor após entrar por um desses links.
+
+## Comandos
 
 ```bash
+npm install
+npx prisma generate
+npx prisma validate
+npm run lint
+npm run build
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Para aplicar schema em ambiente de desenvolvimento:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npx prisma db push
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Variáveis de ambiente
 
-## Learn More
+Use `.env.example` como base. Em produção, configure no Railway:
 
-To learn more about Next.js, take a look at the following resources:
+- `DATABASE_URL`
+- `DIRECT_URL`
+- `AUTH_SECRET`
+- `NEXT_PUBLIC_BASE_URL`
+- `SUPER_ADMIN_USER`
+- `SUPER_ADMIN_PASS` ou `SUPER_ADMIN_PASS_HASH`
+- `RESEND_API_KEY`
+- `EMAIL_FROM`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_STORAGE_BUCKET`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+O bucket `SUPABASE_STORAGE_BUCKET` deve ser público, pois logos de empresas e fotos de vendedores aparecem na página pública.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy Railway
 
-## Deploy on Vercel
+1. Configure as variáveis de ambiente.
+2. Garanta que o banco PostgreSQL esteja acessível por `DATABASE_URL`.
+3. Rode `npx prisma db push` ou a estratégia de migração adotada para produção.
+4. Faça push para o repositório conectado ao Railway.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Segurança de sessão
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+As áreas administrativas usam cookies `httpOnly`, `secure` em produção e `sameSite: strict`. Ao sair do painel ou restaurar página pelo botão voltar, o app valida a sessão no servidor e redireciona para login quando necessário.
+
+## Uploads
+
+Novos uploads de logo e foto são validados por MIME, tamanho e magic bytes, depois enviados para Supabase Storage. Campos antigos com `data:image/...` continuam renderizando para compatibilidade, mas novos cadastros devem salvar URLs do storage.

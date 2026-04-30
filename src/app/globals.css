@@ -650,6 +650,90 @@ a {
   border-radius: 10px !important;
 }
 
+.kl-ui-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+}
+
+.kl-ui-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.kl-ui-title {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+}
+
+.kl-ui-subtitle {
+  margin: 6px 0 0;
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.kl-ui-field {
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 14px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+  background: var(--surface-muted) !important;
+  color: var(--text-main) !important;
+}
+
+.kl-ui-field:focus {
+  border-color: var(--brand-accent) !important;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.14) !important;
+}
+
+.kl-ui-button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-main);
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.kl-ui-button-primary {
+  border-color: var(--brand-accent);
+  background: var(--brand-accent);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(22, 163, 74, 0.16);
+}
+
+.kl-ui-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-soft);
+}
+
+.kl-ui-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .kl-card::before,
 .kl-surface::before {
   content: none;

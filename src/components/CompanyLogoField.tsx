@@ -121,7 +121,7 @@ export default function CompanyLogoField({
 
   return (
     <div ref={fieldRef} style={{ display: 'grid', gap: compact ? 8 : 10 }}>
-      <input type="hidden" name={inputName} value={activePreview} />
+      <input type="hidden" name={inputName} value={preview} />
       <label htmlFor={inputId} style={{ fontSize: 12, fontWeight: 800, color: '#18181b' }}>
         {label}
       </label>

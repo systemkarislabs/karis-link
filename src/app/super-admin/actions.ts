@@ -13,7 +13,7 @@ import { ensureTenantCitySupport, ensureTenantLogoColumn } from '@/lib/db-compat
 import prisma from '@/lib/prisma';
 import { assertRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { ensureSuperAdminTableAvailable, findStoredSuperAdminAccount } from '@/lib/super-admin';
-import { validateImageBuffer, validateImageDataUrl, validateImageFile } from '@/lib/image-validation';
+import { uploadPublicImage } from '@/lib/asset-storage';
 import { redirect } from 'next/navigation';
 
 function normalizeTenantSlug(value: string) {
@@ -56,20 +56,12 @@ function assertValidTenantId(id: string) {
   }
 }
 
-async function resolveTenantLogo(logoDataUrl: string, logoFile: File | null | undefined) {
-  if (logoDataUrl) {
-    validateImageDataUrl(logoDataUrl);
-    return logoDataUrl;
-  }
-
-  if (logoFile && logoFile.size > 0) {
-    validateImageFile(logoFile);
-    const buffer = Buffer.from(await logoFile.arrayBuffer());
-    validateImageBuffer(buffer, logoFile.type);
-    return `data:${logoFile.type};base64,${buffer.toString('base64')}`;
-  }
-
-  return null;
+async function resolveTenantLogo(tenantId: string, logoDataUrl: string, logoFile: File | null | undefined) {
+  return uploadPublicImage({
+    folder: `tenants/${tenantId}/logo`,
+    dataUrl: logoDataUrl || null,
+    file: logoFile,
+  });
 }
 
 export async function handleSuperLogin(_: unknown, formData: FormData) {
@@ -181,10 +173,22 @@ export async function createTenant(formData: FormData) {
       adminUser,
       adminEmail: adminEmail || null,
       adminPass: await hashPassword(adminPass),
-      logo: await resolveTenantLogo(logoDataUrl, logoFile),
     },
     select: { id: true },
   });
+
+  try {
+    const logo = await resolveTenantLogo(created.id, logoDataUrl, logoFile);
+    if (logo) {
+      await prisma.tenant.update({
+        where: { id: created.id },
+        data: { logo },
+      });
+    }
+  } catch (error) {
+    await prisma.tenant.delete({ where: { id: created.id } }).catch(() => null);
+    throw error;
+  }
 
   await logAuditEvent({
     event: 'tenant_create',
@@ -236,7 +240,7 @@ export async function updateTenantLogo(formData: FormData) {
     throw new Error('Empresa inválida para atualizar logo.');
   }
 
-  const logo = await resolveTenantLogo(logoDataUrl, logoFile);
+  const logo = await resolveTenantLogo(id, logoDataUrl, logoFile);
   if (!logo) {
     throw new Error('Selecione uma imagem para atualizar a logo.');
   }

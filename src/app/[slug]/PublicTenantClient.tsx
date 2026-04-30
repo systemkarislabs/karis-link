@@ -34,6 +34,38 @@ function getInitials(name: string) {
     .join('');
 }
 
+function TenantImage({
+  src,
+  alt,
+  sizes,
+}: {
+  src: string;
+  alt: string;
+  sizes: string;
+}) {
+  if (src.startsWith('data:image/')) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes={sizes}
+      style={{ objectFit: 'cover' }}
+    />
+  );
+}
+
 function SubmitButton() {
   const { pending } = useFormStatus();
 
@@ -143,15 +175,14 @@ export default function PublicTenantClient({
               fontWeight: 800,
               fontSize: 14,
               border: '1px solid rgba(22,163,74,0.18)',
+              position: 'relative',
             }}
           >
             {seller.image ? (
-              <img
+              <TenantImage
                 src={seller.image}
                 alt={seller.name}
-                loading="lazy"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                sizes="46px"
               />
             ) : (
               getInitials(seller.name)
@@ -280,12 +311,13 @@ export default function PublicTenantClient({
                 display: 'inline-grid',
                 placeItems: 'center',
                 marginBottom: 14,
+                position: 'relative',
               }}
             >
-              <img
+              <TenantImage
                 src={tenantLogo}
                 alt={`Logo ${tenantName}`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                sizes="88px"
               />
             </div>
           ) : (
