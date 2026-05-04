@@ -23,9 +23,7 @@ function getStorageConfig() {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const bucket = process.env.SUPABASE_STORAGE_BUCKET || 'karis-link-assets';
 
-  if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error('Storage de imagens nao configurado. Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY.');
-  }
+  if (!supabaseUrl || !serviceRoleKey) return null;
 
   return { supabaseUrl, serviceRoleKey, bucket };
 }
@@ -68,7 +66,16 @@ export async function uploadPublicImage({ folder, dataUrl, file }: UploadInput) 
   const preparedImage = await prepareImage({ dataUrl, file });
   if (!preparedImage) return null;
 
-  const { supabaseUrl, serviceRoleKey, bucket } = getStorageConfig();
+  const storageConfig = getStorageConfig();
+
+  // Fallback: if Supabase Storage is not configured, persist as inline base64 data URL.
+  // This keeps image uploads working even without SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY.
+  if (!storageConfig) {
+    console.warn('[asset-storage] Supabase Storage not configured — saving image as inline base64.');
+    return `data:${preparedImage.mimeType};base64,${preparedImage.buffer.toString('base64')}`;
+  }
+
+  const { supabaseUrl, serviceRoleKey, bucket } = storageConfig;
   const extension = MIME_EXTENSIONS[preparedImage.mimeType] || 'webp';
   const safeFolder = folder.replace(/^\/+|\/+$/g, '');
   const objectPath = `${safeFolder}/${randomBytes(16).toString('hex')}.${extension}`;
