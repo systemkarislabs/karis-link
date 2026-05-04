@@ -68,10 +68,12 @@ model Seller {
   tenant    Tenant   @relation(fields: [tenantId], references: [id])
   cityId    String?
   city      TenantCity? @relation(fields: [cityId], references: [id])
+  sortOrder Int         @default(0)
   events    SellerClickEvent[]
 
   @@index([tenantId])
   @@index([cityId])
+  @@index([tenantId, sortOrder])
 }
 
 model QrCode {

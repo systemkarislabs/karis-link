@@ -55,6 +55,8 @@ export const Icon = ({ name, size = 16, color = 'currentColor', style = {} }: Ic
     menu: <svg {...p} viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>,
     qrcode: <svg {...p} viewBox="0 0 24 24"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><path d="M15 15h2v2h-2z"/><path d="M19 15h2"/><path d="M15 19h6"/><path d="M11 4h1"/><path d="M11 8h1"/><path d="M4 11h1"/><path d="M8 11h1"/><path d="M11 11h2v2"/></svg>,
     spark: <svg {...p} viewBox="0 0 24 24"><path d="M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6L12 2z"/><path d="M19 17l.7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7L19 17z"/></svg>,
+    'chevron-up': <svg {...p} viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>,
+    'chevron-down': <svg {...p} viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>,
   };
 
   return icons[name] || null;

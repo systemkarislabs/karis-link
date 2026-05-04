@@ -49,7 +49,7 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
   const [sellers, session] = await Promise.all([
     prisma.seller.findMany({
       where: tenant.cityGroupingEnabled ? { tenantId: tenant.id, city: { active: true } } : { tenantId: tenant.id },
-      orderBy: { name: 'asc' },
+      orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
       select: {
         id: true,
         name: true,

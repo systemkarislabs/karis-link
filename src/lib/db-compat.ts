@@ -70,6 +70,8 @@ export async function ensureTenantCitySupport() {
   await tryDDL(`CREATE INDEX IF NOT EXISTS "TenantCity_tenantId_active_idx" ON "TenantCity"("tenantId", "active")`);
   await tryDDL(`CREATE UNIQUE INDEX IF NOT EXISTS "TenantCity_tenantId_name_key" ON "TenantCity"("tenantId", "name")`);
   await tryDDL(`CREATE INDEX IF NOT EXISTS "Seller_cityId_idx" ON "Seller"("cityId")`);
+  await tryDDL(`ALTER TABLE "Seller" ADD COLUMN IF NOT EXISTS "sortOrder" INTEGER NOT NULL DEFAULT 0`);
+  await tryDDL(`CREATE INDEX IF NOT EXISTS "Seller_tenantId_sortOrder_idx" ON "Seller"("tenantId", "sortOrder")`);
   await tryDDL(`CREATE UNIQUE INDEX IF NOT EXISTS "PasswordResetToken_tokenHash_key" ON "PasswordResetToken"("tokenHash")`);
   await tryDDL(`CREATE INDEX IF NOT EXISTS "PasswordResetToken_tenantId_expiresAt_idx" ON "PasswordResetToken"("tenantId", "expiresAt")`);
 

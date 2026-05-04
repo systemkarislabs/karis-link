@@ -5,7 +5,7 @@ import AdminSidebar from '@/components/AdminSidebar';
 import SellerImageField from '@/components/SellerImageField';
 import ConfirmSubmitButton from '@/components/ConfirmSubmitButton';
 import PendingButton from '@/components/PendingButton';
-import { createSeller, deleteSeller } from './actions';
+import { createSeller, deleteSeller, reorderSeller } from './actions';
 import Link from 'next/link';
 import { Icon } from '@/components/Icon';
 
@@ -60,7 +60,7 @@ export default async function VendedoresPage(props: PageProps) {
   const [sellers, sellerEvents] = await Promise.all([
     prisma.seller.findMany({
       where: { tenantId },
-      orderBy: { name: 'asc' },
+      orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
       include: { city: { select: { name: true } } },
     }),
     prisma.sellerClickEvent.findMany({
@@ -238,6 +238,56 @@ export default async function VendedoresPage(props: PageProps) {
 
                     {/* Actions */}
                     <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                      <form action={reorderSeller}>
+                        <input type="hidden" name="sellerId" value={seller.id} />
+                        <input type="hidden" name="direction" value="up" />
+                        <input type="hidden" name="slug" value={slug} />
+                        <button
+                          type="submit"
+                          aria-label={`Mover ${seller.name} para cima`}
+                          disabled={i === 0}
+                          style={{
+                            width: 32,
+                            height: 32,
+                            border: '1px solid var(--border)',
+                            borderRadius: 8,
+                            background: 'var(--card-bg)',
+                            cursor: i === 0 ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0,
+                            opacity: i === 0 ? 0.3 : 1,
+                          }}
+                        >
+                          <Icon name="chevron-up" size={14} />
+                        </button>
+                      </form>
+                      <form action={reorderSeller}>
+                        <input type="hidden" name="sellerId" value={seller.id} />
+                        <input type="hidden" name="direction" value="down" />
+                        <input type="hidden" name="slug" value={slug} />
+                        <button
+                          type="submit"
+                          aria-label={`Mover ${seller.name} para baixo`}
+                          disabled={i === sellerMetrics.length - 1}
+                          style={{
+                            width: 32,
+                            height: 32,
+                            border: '1px solid var(--border)',
+                            borderRadius: 8,
+                            background: 'var(--card-bg)',
+                            cursor: i === sellerMetrics.length - 1 ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0,
+                            opacity: i === sellerMetrics.length - 1 ? 0.3 : 1,
+                          }}
+                        >
+                          <Icon name="chevron-down" size={14} />
+                        </button>
+                      </form>
                       <Link
                         href={`/${slug}/admin/vendedores/${seller.id}`}
                         aria-label={`Editar vendedor ${seller.name}`}

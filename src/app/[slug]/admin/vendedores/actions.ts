@@ -149,6 +149,43 @@ export async function deleteSeller(formData: FormData) {
   }
 }
 
+export async function reorderSeller(formData: FormData) {
+  const sellerId = String(formData.get('sellerId') || '').trim();
+  const direction = String(formData.get('direction') || '').trim() as 'up' | 'down';
+  const slug = String(formData.get('slug') || '').trim().toLowerCase();
+
+  assertValidTenantSlug(slug);
+  assertValidRecordId(sellerId, 'Vendedor');
+  const { tenantId } = await requireTenantAuth(slug);
+
+  const sellers = await prisma.seller.findMany({
+    where: { tenantId },
+    orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
+    select: { id: true, sortOrder: true },
+  });
+
+  const index = sellers.findIndex((s) => s.id === sellerId);
+  if (index === -1) return;
+  if (direction === 'up' && index === 0) return;
+  if (direction === 'down' && index === sellers.length - 1) return;
+
+  const swapIndex = direction === 'up' ? index - 1 : index + 1;
+
+  // Normalize all sortOrders first, then swap the two targets
+  const updates = sellers.map((s, i) =>
+    prisma.seller.update({ where: { id: s.id }, data: { sortOrder: i } })
+  );
+
+  // After normalization, the two positions are `index` and `swapIndex`
+  const swapA = prisma.seller.update({ where: { id: sellers[index].id }, data: { sortOrder: swapIndex } });
+  const swapB = prisma.seller.update({ where: { id: sellers[swapIndex].id }, data: { sortOrder: index } });
+
+  await prisma.$transaction([...updates, swapA, swapB]);
+
+  revalidatePath(`/${slug}/admin/vendedores`);
+  revalidatePath(`/${slug}`);
+}
+
 export async function updateSeller(formData: FormData) {
   await ensureTenantCitySupport();
 
