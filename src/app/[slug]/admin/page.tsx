@@ -3,6 +3,7 @@ import { requireTenantAuth } from '@/lib/auth';
 import AdminSidebar from '@/components/AdminSidebar';
 import { Icon } from '@/components/Icon';
 import { formatRecifeDateTime, getRecifePeriodStartDate } from '@/lib/recife-time';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -478,12 +479,18 @@ export default async function TenantAdminPage(props: PageProps) {
                       sellers.map((s, i) => {
                         const pct = grandTotal > 0 ? ((s.periodClicks / grandTotal) * 100).toFixed(1) : '0.0';
                         return (
-                          <tr key={s.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                          <tr
+                            key={s.id}
+                            style={{ borderBottom: '1px solid var(--border)', cursor: s.periodClicks > 0 ? 'pointer' : 'default' }}
+                          >
                             <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: 'var(--text-soft)', fontSize: 12 }}>
                               {i + 1}
                             </td>
                             <td style={{ padding: '12px 16px' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <Link
+                                href={`/${slug}/admin/vendedores/${s.id}`}
+                                style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}
+                              >
                                 <div
                                   style={{
                                     width: 28,
@@ -503,14 +510,24 @@ export default async function TenantAdminPage(props: PageProps) {
                                   {initials(s.name)}
                                 </div>
                                 <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>{s.name}</span>
-                              </div>
+                              </Link>
                             </td>
                             <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, color: 'var(--text-main)' }}>{s.qrClicks}</td>
                             <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, color: 'var(--text-main)' }}>{s.bioClicks}</td>
                             <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: 'var(--text-main)' }}>{s.periodClicks}</td>
                             <td style={{ padding: '12px 16px', textAlign: 'right' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
-                                <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: 12 }}>{pct}%</span>
+                                <Link
+                                  href={`/${slug}/admin/vendedores/${s.id}`}
+                                  style={{
+                                    fontWeight: 700, color: 'var(--text-main)', fontSize: 12,
+                                    textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4,
+                                  }}
+                                  title="Ver detalhes e atividade"
+                                >
+                                  {pct}%
+                                  <Icon name="arrowRight" size={11} color="var(--text-soft)" />
+                                </Link>
                                 <div style={{ height: 4, width: 60, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
                                   <div
                                     style={{
