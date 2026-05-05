@@ -370,6 +370,22 @@ export default async function VendedoresPage(props: PageProps) {
                     ) : null}
                   </div>
                 ) : null}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                  <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>
+                    Horários de atendimento
+                    <span style={{ fontWeight: 400, color: 'var(--text-soft)', marginLeft: 4 }}>(opcional)</span>
+                  </label>
+                  <textarea
+                    name="schedule"
+                    placeholder={'Ex: Segunda a Sexta: 8h às 18h\nSábado: 8h às 12h'}
+                    rows={3}
+                    className="kl-soft-field"
+                    style={{ resize: 'vertical', fontSize: 12, lineHeight: 1.5 }}
+                  />
+                  <span style={{ fontSize: 11, color: 'var(--text-soft)' }}>
+                    Uma linha por turno. Quando preenchido, o cliente verá os horários antes de entrar em contato.
+                  </span>
+                </div>
                 <SellerImageField />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 4 }}>
                   <button type="reset" className="kl-ghost-button kl-press" style={{ minHeight: 40 }}>

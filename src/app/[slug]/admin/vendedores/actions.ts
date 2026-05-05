@@ -83,6 +83,7 @@ export async function createSeller(formData: FormData) {
   const phone = String(formData.get('phone') || '').trim();
   const slug = String(formData.get('slug') || '').trim().toLowerCase();
   const cityId = String(formData.get('cityId') || '').trim();
+  const schedule = String(formData.get('schedule') || '').trim() || null;
   const imageFile = formData.get('image') as File | null;
   const imageDataUrl = String(formData.get('imageDataUrl') || '').trim();
 
@@ -98,6 +99,7 @@ export async function createSeller(formData: FormData) {
       phone,
       tenantId,
       cityId: resolvedCityId,
+      schedule,
     },
     select: { id: true },
   });
@@ -194,6 +196,7 @@ export async function updateSeller(formData: FormData) {
   const phone = String(formData.get('phone') || '').trim();
   const slug = String(formData.get('slug') || '').trim().toLowerCase();
   const cityId = String(formData.get('cityId') || '').trim();
+  const schedule = String(formData.get('schedule') || '').trim() || null;
   const imageFile = formData.get('image') as File | null;
   const imageDataUrl = String(formData.get('imageDataUrl') || '').trim();
   const removeImage = String(formData.get('removeImage') || '') === 'on';
@@ -232,6 +235,7 @@ export async function updateSeller(formData: FormData) {
       phone,
       image: imageValue,
       cityId: resolvedCityId,
+      schedule,
     },
   });
 

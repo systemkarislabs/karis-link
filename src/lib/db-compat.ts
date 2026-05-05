@@ -109,6 +109,8 @@ export async function ensureTenantCitySupport() {
     END $$;
   `);
 
+  await tryDDL(`ALTER TABLE "Seller" ADD COLUMN IF NOT EXISTS "schedule" TEXT`);
+
   tenantCitySupportReady = true;
 }
 

@@ -70,6 +70,7 @@ model Seller {
   cityId    String?
   city      TenantCity? @relation(fields: [cityId], references: [id])
   sortOrder Int         @default(0)
+  schedule  String?
   events    SellerClickEvent[]
 
   @@index([tenantId])

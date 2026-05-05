@@ -54,6 +54,7 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
         id: true,
         name: true,
         image: true,
+        schedule: true,
         city: { select: { name: true } },
       },
     }),
@@ -70,6 +71,7 @@ export default async function PublicTenantPage({ params, searchParams }: PublicT
         id: seller.id,
         name: seller.name,
         image: seller.image,
+        schedule: seller.schedule ?? null,
         cityName: seller.city?.name ?? null,
       }))}
       cityGroupingEnabled={tenant.cityGroupingEnabled}

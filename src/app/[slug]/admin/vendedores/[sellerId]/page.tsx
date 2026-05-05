@@ -294,6 +294,24 @@ export default async function EditSellerPage(props: PageProps) {
                   </div>
                 ) : null}
 
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                  <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>
+                    Horários de atendimento
+                    <span style={{ fontWeight: 400, color: 'var(--text-soft)', marginLeft: 4 }}>(opcional)</span>
+                  </label>
+                  <textarea
+                    name="schedule"
+                    defaultValue={seller.schedule ?? ''}
+                    placeholder={'Ex: Segunda a Sexta: 8h às 18h\nSábado: 8h às 12h'}
+                    rows={3}
+                    className="kl-soft-field"
+                    style={{ resize: 'vertical', fontSize: 12, lineHeight: 1.5 }}
+                  />
+                  <span style={{ fontSize: 11, color: 'var(--text-soft)' }}>
+                    Uma linha por turno. Quando preenchido, o cliente verá os horários antes de entrar em contato.
+                  </span>
+                </div>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>Foto do vendedor</div>
                   {seller.image && (

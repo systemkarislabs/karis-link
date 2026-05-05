@@ -10,6 +10,7 @@ type SellerCard = {
   id: string;
   name: string;
   image: string | null;
+  schedule: string | null;
   cityName?: string | null;
 };
 
@@ -102,20 +103,23 @@ export default function PublicTenantClient({
   isAdminLogged,
 }: Props) {
   const [isLoginOpen, setIsLoginOpen] = React.useState(false);
+  const [scheduleSheet, setScheduleSheet] = React.useState<SellerCard | null>(null);
   const [state, formAction] = useActionState<LoginState, FormData>(handleTenantLogin, null);
 
   useEffect(() => {
-    if (!isLoginOpen) return;
+    const anyOpen = isLoginOpen || !!scheduleSheet;
+    if (!anyOpen) return;
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setIsLoginOpen(false);
+        setScheduleSheet(null);
       }
     }
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isLoginOpen]);
+  }, [isLoginOpen, scheduleSheet]);
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
@@ -141,24 +145,11 @@ export default function PublicTenantClient({
     : [];
 
   function renderSellerCard(seller: SellerCard) {
-    return (
-      <a
-        key={seller.id}
-        href={`/api/redirect/${seller.id}${hasTrackingContext ? '?tracked=1' : ''}`}
-        className="seller-public-card kl-card kl-card-hover kl-press"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 16,
-          padding: '14px 17px',
-          background: 'var(--card-bg)',
-          color: 'var(--text-main)',
-          borderRadius: 16,
-          textDecoration: 'none',
-          boxShadow: '0 1px 2px rgba(55,50,47,.055), 0 8px 24px rgba(15,28,63,.06)',
-        }}
-      >
+    const redirectUrl = `/api/redirect/${seller.id}${hasTrackingContext ? '?tracked=1' : ''}`;
+    const hasSchedule = !!seller.schedule?.trim();
+
+    const cardInner = (
+      <>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
           <div
             style={{
@@ -179,28 +170,33 @@ export default function PublicTenantClient({
             }}
           >
             {seller.image ? (
-              <TenantImage
-                src={seller.image}
-                alt={seller.name}
-                sizes="46px"
-              />
+              <TenantImage src={seller.image} alt={seller.name} sizes="46px" />
             ) : (
               getInitials(seller.name)
             )}
           </div>
 
-          <span
-            style={{
-              fontWeight: 800,
-              fontSize: 15,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            {seller.name}
-          </span>
+          <div style={{ minWidth: 0 }}>
+            <span
+              style={{
+                display: 'block',
+                fontWeight: 800,
+                fontSize: 15,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              {seller.name}
+            </span>
+            {hasSchedule && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--text-soft)', marginTop: 2 }}>
+                <Icon name="clock" size={11} color="var(--text-soft)" />
+                Ver horários
+              </span>
+            )}
+          </div>
         </div>
 
         <div
@@ -219,8 +215,51 @@ export default function PublicTenantClient({
             transition: 'background 0.2s ease, color 0.2s ease',
           }}
         >
-          <Icon name="whatsapp" size={18} color="currentColor" />
+          <Icon name={hasSchedule ? 'clock' : 'whatsapp'} size={18} color="currentColor" />
         </div>
+      </>
+    );
+
+    const cardStyle: React.CSSProperties = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 16,
+      padding: '14px 17px',
+      background: 'var(--card-bg)',
+      color: 'var(--text-main)',
+      borderRadius: 16,
+      textDecoration: 'none',
+      boxShadow: '0 1px 2px rgba(55,50,47,.055), 0 8px 24px rgba(15,28,63,.06)',
+      cursor: 'pointer',
+      width: '100%',
+      border: 'none',
+      fontFamily: 'inherit',
+      textAlign: 'left' as const,
+    };
+
+    if (hasSchedule) {
+      return (
+        <button
+          key={seller.id}
+          type="button"
+          onClick={() => setScheduleSheet(seller)}
+          className="seller-public-card kl-card kl-card-hover kl-press"
+          style={cardStyle}
+        >
+          {cardInner}
+        </button>
+      );
+    }
+
+    return (
+      <a
+        key={seller.id}
+        href={redirectUrl}
+        className="seller-public-card kl-card kl-card-hover kl-press"
+        style={{ ...cardStyle, cursor: 'pointer' }}
+      >
+        {cardInner}
       </a>
     );
   }
@@ -535,6 +574,125 @@ export default function PublicTenantClient({
               />
               <SubmitButton />
             </form>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Schedule bottom sheet */}
+      {scheduleSheet ? (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.42)',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            zIndex: 40,
+            padding: '0 0 env(safe-area-inset-bottom)',
+          }}
+          onClick={() => setScheduleSheet(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="schedule-sheet-title"
+        >
+          <div
+            className="kl-page-enter"
+            style={{
+              width: '100%',
+              maxWidth: 480,
+              background: 'var(--card-bg)',
+              borderRadius: '20px 20px 0 0',
+              padding: '8px 22px 32px',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Handle */}
+            <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 10, marginBottom: 18 }}>
+              <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--border)' }} />
+            </div>
+
+            {/* Seller header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+              <div style={{
+                width: 52, height: 52, borderRadius: '999px', overflow: 'hidden', flexShrink: 0,
+                background: 'var(--brand-accent-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--brand-accent-strong)', fontWeight: 800, fontSize: 16,
+                border: '1px solid rgba(22,163,74,0.18)', position: 'relative',
+              }}>
+                {scheduleSheet.image ? (
+                  <TenantImage src={scheduleSheet.image} alt={scheduleSheet.name} sizes="52px" />
+                ) : (
+                  getInitials(scheduleSheet.name)
+                )}
+              </div>
+              <div>
+                <div id="schedule-sheet-title" style={{ fontSize: 17, fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.03em' }}>
+                  {scheduleSheet.name}
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--text-soft)', marginTop: 2 }}>
+                  Horários de atendimento
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setScheduleSheet(null)}
+                style={{
+                  marginLeft: 'auto', width: 32, height: 32, borderRadius: '999px',
+                  border: '1px solid var(--border)', background: 'var(--surface-muted)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', flexShrink: 0,
+                }}
+                aria-label="Fechar"
+              >
+                <Icon name="x" size={14} color="var(--text-soft)" />
+              </button>
+            </div>
+
+            {/* Schedule lines */}
+            <div style={{
+              background: 'var(--bg-main)', borderRadius: 12, padding: '14px 16px',
+              marginBottom: 20, border: '1px solid var(--border)',
+            }}>
+              {scheduleSheet.schedule?.trim().split('\n').filter(Boolean).map((line, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 10,
+                    padding: i > 0 ? '10px 0 0' : '0',
+                    borderTop: i > 0 ? '1px solid var(--border)' : 'none',
+                    marginTop: i > 0 ? 10 : 0,
+                  }}
+                >
+                  <div style={{
+                    width: 24, height: 24, borderRadius: 7, flexShrink: 0, marginTop: 1,
+                    background: 'var(--brand-accent-soft)', border: '1px solid rgba(22,163,74,0.18)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Icon name="clock" size={12} color="var(--brand-accent-strong)" />
+                  </div>
+                  <span style={{ fontSize: 13, color: 'var(--text-main)', lineHeight: 1.5, fontWeight: 500 }}>
+                    {line}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* WhatsApp CTA */}
+            <a
+              href={`/api/redirect/${scheduleSheet.id}${hasTrackingContext ? '?tracked=1' : ''}`}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                width: '100%', padding: '15px 20px', borderRadius: 14,
+                background: '#16a34a', color: '#fff',
+                fontSize: 15, fontWeight: 800, textDecoration: 'none', letterSpacing: '-0.02em',
+                boxShadow: '0 4px 14px rgba(22,163,74,0.35)',
+              }}
+            >
+              <Icon name="whatsapp" size={20} color="#fff" />
+              Entrar em contato
+            </a>
           </div>
         </div>
       ) : null}
