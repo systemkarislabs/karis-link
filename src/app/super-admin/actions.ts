@@ -509,6 +509,46 @@ export async function updateSuperAdminCredentials(formData: FormData) {
   redirect('/super-admin/configuracoes');
 }
 
+export async function reorderSellerAsSuper(formData: FormData) {
+  await requireSuperAuth();
+
+  const tenantSlug = String(formData.get('tenantSlug') || '').trim().toLowerCase();
+  const sellerId = String(formData.get('sellerId') || '').trim();
+  const direction = String(formData.get('direction') || '').trim() as 'up' | 'down';
+
+  if (!/^[a-z0-9]{3,50}$/.test(tenantSlug)) throw new Error('Empresa invalida.');
+  if (!sellerId || sellerId.length > 128 || !/^[A-Za-z0-9_-]+$/.test(sellerId)) throw new Error('Vendedor invalido.');
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { slug: tenantSlug },
+    select: { id: true },
+  });
+  if (!tenant) throw new Error('Empresa nao encontrada.');
+
+  const sellers = await prisma.seller.findMany({
+    where: { tenantId: tenant.id },
+    orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
+    select: { id: true, sortOrder: true },
+  });
+
+  const index = sellers.findIndex((s) => s.id === sellerId);
+  if (index === -1) return;
+  if (direction === 'up' && index === 0) return;
+  if (direction === 'down' && index === sellers.length - 1) return;
+
+  const swapIndex = direction === 'up' ? index - 1 : index + 1;
+
+  const updates = sellers.map((s, i) =>
+    prisma.seller.update({ where: { id: s.id }, data: { sortOrder: i } })
+  );
+  const swapA = prisma.seller.update({ where: { id: sellers[index].id }, data: { sortOrder: swapIndex } });
+  const swapB = prisma.seller.update({ where: { id: sellers[swapIndex].id }, data: { sortOrder: index } });
+
+  await prisma.$transaction([...updates, swapA, swapB]);
+
+  redirect(`/super-admin/empresas/${tenantSlug}/vendedores`);
+}
+
 export async function deleteTenant(formData: FormData) {
   await requireSuperAuth();
   await ensureTenantCitySupport();

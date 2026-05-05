@@ -57,6 +57,8 @@ export const Icon = ({ name, size = 16, color = 'currentColor', style = {} }: Ic
     spark: <svg {...p} viewBox="0 0 24 24"><path d="M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6L12 2z"/><path d="M19 17l.7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7L19 17z"/></svg>,
     'chevron-up': <svg {...p} viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>,
     'chevron-down': <svg {...p} viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>,
+    download: <svg {...p} viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
+    globe: <svg {...p} viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>,
   };
 
   return icons[name] || null;

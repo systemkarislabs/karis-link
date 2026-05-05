@@ -249,6 +249,24 @@ export default async function SuperAdminPage() {
                               >
                                 <Icon name="external" size={13} />
                               </Link>
+                              <Link
+                                href={`/super-admin/empresas/${tenant.slug}/vendedores`}
+                                title="Reordenar vendedores"
+                                style={{
+                                  width: 30,
+                                  height: 30,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  border: '1px solid var(--border)',
+                                  borderRadius: 7,
+                                  background: 'var(--card-bg)',
+                                  color: 'var(--text-soft)',
+                                  textDecoration: 'none',
+                                }}
+                              >
+                                <Icon name="users" size={13} />
+                              </Link>
 
                               <form action={toggleTenant.bind(null, tenant.id, tenant.active)} style={{ margin: 0 }}>
                                 <button

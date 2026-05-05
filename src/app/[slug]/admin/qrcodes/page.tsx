@@ -1,9 +1,10 @@
 import prisma from '@/lib/prisma';
 import { requireTenantAuth } from '@/lib/auth';
+import { ensureDestinationLinksSupport } from '@/lib/db-compat';
 import AdminSidebar from '@/components/AdminSidebar';
-import { createQrCode, deleteQrCode } from './actions';
+import { createQrCode, deleteQrCode, createDestinationLink, deleteDestinationLink } from './actions';
 import QrCodesClient from './QrCodesClient';
-import { buildCampaignUrl } from '@/lib/public-url';
+import { buildCampaignUrl, buildDestUrl } from '@/lib/public-url';
 import { formatRecifeDateTime } from '@/lib/recife-time';
 import { Icon } from '@/components/Icon';
 
@@ -26,6 +27,16 @@ type QrCodeMetric = {
   }>;
 };
 
+type DestinationCard = {
+  id: string;
+  name: string;
+  slug: string;
+  shortUrl: string;
+  destination: string;
+  clicks: number;
+  createdAtLabel: string;
+};
+
 type PageProps = { params: Promise<{ slug: string }> };
 
 export default async function QrCodesPage(props: PageProps) {
@@ -38,7 +49,9 @@ export default async function QrCodesPage(props: PageProps) {
     select: { id: true, name: true },
   });
 
-  const [qrcodes, pageVisits, sellerChoices] = await Promise.all([
+  await ensureDestinationLinksSupport();
+
+  const [qrcodes, pageVisits, sellerChoices, destLinks] = await Promise.all([
     prisma.qrCode.findMany({
       where: { tenantId },
       orderBy: { createdAt: 'desc' },
@@ -51,6 +64,13 @@ export default async function QrCodesPage(props: PageProps) {
       where: { source: { in: ['qr', 'bio'] }, seller: { tenantId } },
       orderBy: { createdAt: 'desc' },
       include: { seller: true },
+    }),
+    prisma.destinationLink.findMany({
+      where: { tenantId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        _count: { select: { events: true } },
+      },
     }),
   ]);
 
@@ -89,6 +109,16 @@ export default async function QrCodesPage(props: PageProps) {
     };
   });
 
+  const destinationCards: DestinationCard[] = destLinks.map((link) => ({
+    id: link.id,
+    name: link.name,
+    slug: link.slug,
+    shortUrl: buildDestUrl(slug, link.slug),
+    destination: link.destination,
+    clicks: link._count.events,
+    createdAtLabel: formatRecifeDateTime(link.createdAt),
+  }));
+
   const totalAccesses = qrMetrics.reduce((sum, qr) => sum + qr.visits, 0);
   const totalChoices = qrMetrics.reduce((sum, qr) => sum + qr.clicks, 0);
   const averageConversion = totalAccesses > 0 ? ((totalChoices / totalAccesses) * 100).toFixed(1) : '0';
@@ -96,6 +126,7 @@ export default async function QrCodesPage(props: PageProps) {
   const bioCampaigns = qrMetrics.filter((item) => item.channel === 'bio');
   const qrScans = qrCampaigns.reduce((sum, item) => sum + item.visits, 0);
   const bioVisits = bioCampaigns.reduce((sum, item) => sum + item.visits, 0);
+  const totalDestClicks = destinationCards.reduce((sum, d) => sum + d.clicks, 0);
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex' }}>
@@ -119,7 +150,7 @@ export default async function QrCodesPage(props: PageProps) {
               { label: 'Campanhas', value: String(qrMetrics.length), icon: 'qrcode' as const, color: '#16a34a', bg: '#f0fdf4' },
               { label: 'Scans QR', value: String(qrScans), icon: 'target' as const, color: '#3b82f6', bg: '#eff6ff' },
               { label: 'Acessos Bio', value: String(bioVisits), icon: 'link' as const, color: '#8b5cf6', bg: '#f5f3ff' },
-              { label: 'Escolhas', value: String(totalChoices), icon: 'mouse' as const, color: '#f59e0b', bg: '#fffbeb' },
+              { label: 'Cliques Destino', value: String(totalDestClicks), icon: 'external' as const, color: '#f59e0b', bg: '#fffbeb' },
             ].map((card) => (
               <div
                 key={card.label}
@@ -245,8 +276,15 @@ export default async function QrCodesPage(props: PageProps) {
             ))}
           </div>
 
-          {/* Campaign list */}
-          <QrCodesClient qrCodes={qrMetrics} slug={slug} deleteAction={deleteQrCode} />
+          {/* Campaign list + Destination links */}
+          <QrCodesClient
+            qrCodes={qrMetrics}
+            slug={slug}
+            deleteAction={deleteQrCode}
+            destinationLinks={destinationCards}
+            createDestAction={createDestinationLink}
+            deleteDestAction={deleteDestinationLink}
+          />
         </div>
       </main>
     </div>

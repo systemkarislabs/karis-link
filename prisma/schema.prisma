@@ -23,6 +23,7 @@ model Tenant {
   qrcodes             QrCode[]
   cities              TenantCity[]
   passwordResetTokens PasswordResetToken[]
+  destinationLinks    DestinationLink[]
 }
 
 model PasswordResetToken {
@@ -109,6 +110,29 @@ model SellerClickEvent {
 
   @@index([sellerId])
   @@index([source, campaign, createdAt])
+}
+
+model DestinationLink {
+  id          String                  @id @default(cuid())
+  name        String
+  slug        String
+  destination String
+  tenantId    String
+  tenant      Tenant                  @relation(fields: [tenantId], references: [id])
+  events      DestinationClickEvent[]
+  createdAt   DateTime                @default(now())
+
+  @@unique([tenantId, slug])
+  @@index([tenantId, createdAt(sort: Desc)])
+}
+
+model DestinationClickEvent {
+  id        String          @id @default(cuid())
+  linkId    String
+  link      DestinationLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  createdAt DateTime        @default(now())
+
+  @@index([linkId, createdAt])
 }
 
 // Rate-limiting compartilhado entre instâncias.

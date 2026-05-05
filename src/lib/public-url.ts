@@ -25,3 +25,7 @@ export function buildCampaignUrl(tenantSlug: string, channel: 'qr' | 'bio', camp
 export function buildTenantPublicUrl(tenantSlug: string) {
   return `${getPublicBaseUrl()}/${encodeURIComponent(tenantSlug)}`;
 }
+
+export function buildDestUrl(tenantSlug: string, destSlug: string) {
+  return `${getPublicBaseUrl()}/${encodeURIComponent(tenantSlug)}/dest/${encodeURIComponent(destSlug)}`;
+}

@@ -2,6 +2,7 @@ import prisma from './prisma';
 
 let tenantLogoColumnReady = false;
 let tenantCitySupportReady = false;
+let destinationLinksReady = false;
 
 /** Executes a raw DDL statement, ignoring errors caused by objects that already exist. */
 async function tryDDL(sql: string) {
@@ -109,4 +110,58 @@ export async function ensureTenantCitySupport() {
   `);
 
   tenantCitySupportReady = true;
+}
+
+export async function ensureDestinationLinksSupport() {
+  if (destinationLinksReady) return;
+
+  await tryDDL(`
+    CREATE TABLE IF NOT EXISTS "DestinationLink" (
+      "id"          TEXT NOT NULL,
+      "name"        TEXT NOT NULL,
+      "slug"        TEXT NOT NULL,
+      "destination" TEXT NOT NULL,
+      "tenantId"    TEXT NOT NULL,
+      "createdAt"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT "DestinationLink_pkey" PRIMARY KEY ("id")
+    )
+  `);
+
+  await tryDDL(`
+    CREATE TABLE IF NOT EXISTS "DestinationClickEvent" (
+      "id"        TEXT NOT NULL,
+      "linkId"    TEXT NOT NULL,
+      "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT "DestinationClickEvent_pkey" PRIMARY KEY ("id")
+    )
+  `);
+
+  await tryDDL(`CREATE UNIQUE INDEX IF NOT EXISTS "DestinationLink_tenantId_slug_key" ON "DestinationLink"("tenantId", "slug")`);
+  await tryDDL(`CREATE INDEX IF NOT EXISTS "DestinationLink_tenantId_createdAt_idx" ON "DestinationLink"("tenantId", "createdAt" DESC)`);
+  await tryDDL(`CREATE INDEX IF NOT EXISTS "DestinationClickEvent_linkId_createdAt_idx" ON "DestinationClickEvent"("linkId", "createdAt")`);
+
+  await tryDDL(`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'DestinationLink_tenantId_fkey'
+      ) THEN
+        ALTER TABLE "DestinationLink"
+        ADD CONSTRAINT "DestinationLink_tenantId_fkey"
+        FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id")
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+      END IF;
+
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'DestinationClickEvent_linkId_fkey'
+      ) THEN
+        ALTER TABLE "DestinationClickEvent"
+        ADD CONSTRAINT "DestinationClickEvent_linkId_fkey"
+        FOREIGN KEY ("linkId") REFERENCES "DestinationLink"("id")
+        ON DELETE CASCADE ON UPDATE CASCADE;
+      END IF;
+    END $$;
+  `);
+
+  destinationLinksReady = true;
 }

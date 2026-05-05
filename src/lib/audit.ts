@@ -29,7 +29,9 @@ export type AuditEvent =
   | 'seller_update'
   | 'seller_delete'
   | 'qrcode_create'
-  | 'qrcode_delete';
+  | 'qrcode_delete'
+  | 'destination_link_create'
+  | 'destination_link_delete';
 
 type LogParams = {
   event: AuditEvent;
